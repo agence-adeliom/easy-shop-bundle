@@ -1,0 +1,125 @@
+{# templates/admin/business_stats/index.html.twig #}
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title 'sylius.ui.inventory'|trans  %}
+
+{% block content_title %}
+    {%- apply spaceless -%}
+        {{ 'sylius.ui.inventory'|trans }}
+    {%- endapply -%}
+{% endblock %}
+
+{% block page_content %}
+
+    {% if tracked|length %}
+        <table class="table datagrid mb-5">
+            <thead>
+                <th width="10px">
+                    <div class="form-check">
+                        <span><input type="checkbox" class="form-check-input form-batch-checkbox-all"></span>
+                    </div>
+                </th>
+                <th><span>{{ "sylius.ui.name"|trans }}</span></th>
+                <th><span>{{ "sylius.ui.code"|trans }}</span></th>
+                <th><span>{{ "sylius.ui.inventory"|trans }}</span></th>
+                <th >
+                    <span class="sr-only">{{ 'action.entity_actions'|trans(ea.i18n.translationParameters, 'EasyAdminBundle') }}</span>
+                </th>
+            </thead>
+            <tbody>
+            {% for variant in tracked %}
+                <tr>
+                    <td class="batch-actions-selector">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input form-batch-checkbox" value="{{ variant.id }}">
+                        </div>
+                    </td>
+                    <td>{{ variant.name }}</td>
+                    <td>{{ variant.code }}</td>
+                    <td class="text-left field-boolean">
+                        {% if variant.tracked == true %}
+                            <span class="badge {{ variant.onHand > 0 ? 'badge-success' : 'badge-danger' }}">
+                                {{ variant.onHand }} {{ 'sylius.ui.available_on_hand'|trans }}
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td class="actions">
+                                {% set editUrlVariant = ea_url()
+                                    .setController(ea.crud.controllerFqcn)
+                                    .setAction('editVariant')
+                                    .setEntityId(variant.product.id)
+                                    .set("variantId", variant.id)
+                                %}
+                                <a class="action-edit" href="{{ editUrlVariant }}" data-action-name="edit">{{ 'sylius.ui.edit_product_variant'|trans }}</a>
+                                {% set editUrlProduct = ea_url()
+                                    .setController(ea.crud.controllerFqcn)
+                                    .setAction('edit')
+                                    .setEntityId(variant.product.id)
+                                %}
+                                <a class="action-edit" href="{{ editUrlProduct }}" data-action-name="edit">{{ 'sylius.ui.edit_product'|trans }}</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    {% else %}
+        <table class="table datagrid datagrid-empty">
+        <tbody>
+        {% for i in 1..14 %}
+            <tr class="empty-row">
+                <td><span></span></td>
+                <td><span></span></td>
+                <td><span></span></td>
+                <td><span></span></td>
+                <td><span></span></td>
+                <td><span></span></td>
+            </tr>
+
+            {% if 3 == loop.index %}
+                <tr class="no-results">
+                    <td colspan="100">
+                        {{ 'datagrid.no_results'|trans(ea.i18n.translationParameters, 'EasyAdminBundle') }}
+                    </td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+    {% dump(tracked) %}
+    <div class="list-pagination">
+        <div class="list-pagination-counter">
+            {{ 'paginator.results'|trans({'%count%': tracked.nbResults|format}, 'EasyAdminBundle')|raw }}
+        </div>
+
+        <nav class="pager list-pagination-paginator {{ not tracked.hasPreviousPage ? 'first-page' }} {{ not tracked.hasNextPage ? 'last-page' }}">
+            <ul class="pagination">
+                <li class="page-item {{ not tracked.hasPreviousPage ? 'disabled' }}">
+                    <a class="page-link" href="{{ not tracked.hasPreviousPage ? '#' : ea_url({'page': tracked.previousPage}) }}">
+                        <i class="fa fa-angle-left mx-1"></i> <span class="btn-label">{{ 'paginator.previous'|trans({}, 'EasyAdminBundle') }}</span>
+                    </a>
+                </li>
+
+                {% for page in range(1, tracked.nbPages) %}
+                    <li class="page-item {{ page == tracked.currentPage ? 'active' }} {{ page is null ? 'disabled' }}">
+                        {% if page is null %}
+                            <span class="page-link">&hellip;</span>
+                        {% else %}
+                            <a class="page-link" href="{{ ea_url({'page': page}) }}">{{ page }}</a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+
+                <li class="page-item {{ not tracked.hasNextPage ? 'disabled' }}">
+                    <a class="page-link" href="{{ not tracked.hasNextPage ? '#' :  ea_url({'page': tracked.nextPage}) }}">
+                        <span class="btn-label">{{ 'paginator.next'|trans({}, 'EasyAdminBundle') }}</span> <i class="fa fa-angle-right mx-1"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    {{ include('@EasyAdmin/crud/includes/_batch_action_modal.html.twig', {}, with_context = false) }}
+
+{% endblock %}

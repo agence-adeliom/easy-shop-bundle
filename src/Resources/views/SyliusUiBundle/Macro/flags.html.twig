@@ -1,0 +1,16 @@
+{% macro fromCountryCode(country_code) %}
+    <span class="field-country">
+        <img class="country-flag" src="/bundles/easyadmin/images/flags/{{ country_code }}.png">
+    </span>
+{% endmacro %}
+
+{% macro fromLocaleCode(locale_code) %}
+    {% import _self as flags %}
+
+    {% set country_code = locale_code|sylius_locale_country %}
+    {% if country_code %}
+        {{ flags.fromCountryCode(country_code) }}
+    {% else %}
+        {{ flags.fromCountryCode(locale_code|upper) }}
+    {% endif %}
+{% endmacro %}

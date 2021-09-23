@@ -1,0 +1,15 @@
+<address {{ sylius_test_html_attribute('address-context', "%s %s"|format(address.firstName, address.lastName)) }}>
+    {% if address.company is not null %}
+        <strong>{{ address.company }}</strong><br>
+    {% endif %}
+    <strong {{ sylius_test_html_attribute('full-name ', "%s %s"|format(address.firstName, address.lastName)) }}>{{ address.firstName }} {{ address.lastName }}</strong><br>
+    {{ address.street }}<br/>
+    {{ address.postcode }} {{ address.city }}<br/>
+    {% if address|sylius_province_name is not empty %}
+        {{ address|sylius_province_name }}<br/>
+    {% endif %}
+    {{ address.countryCode|sylius_country_name|upper }}
+    {% if address.phoneNumber is not null %}
+        <br/>{{ address.phoneNumber }}
+    {% endif %}
+</address>

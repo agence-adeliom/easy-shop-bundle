@@ -1,0 +1,46 @@
+{% import "@EasyShop/front/Common/Macro/money.html.twig" as money %}
+
+<div class="item mb-2">
+    <div class="content mb-2">
+        {% include '@EasyShop/crud/Common/Label/paymentState.html.twig' with {'data': payment.state} %}
+    </div>
+    <h5 class="d-flex justify-content-between">
+        {{ payment.method }}
+        <div>
+            <span class="badge badge-secondary">{{ money.format(payment.amount, payment.order.currencyCode) }}</span>
+        </div>
+    </h5>
+
+    {% if sm_can(payment, 'complete', 'sylius_payment') %}
+    <div class="d-block">
+{#        {{ path('sylius_admin_order_payment_complete', {'orderId': order.id, 'id': payment.id}) }}#}
+        {% set paymentCompleteUrl = ea_url()
+            .setController(ea.crud.controllerFqcn)
+            .setAction('paymentComplete')
+            .setEntityId(order.id)
+            .set("payment_id", payment.id)
+        %}
+        <form action="{{ paymentCompleteUrl }}" method="post" novalidate>
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token(payment.id) }}" />
+            <input type="hidden" name="_method" value="PUT">
+            <button type="submit" class="btn btn-primary d-block w-100"><i class="fa fa-check"></i> {{ 'sylius.ui.complete'|trans }}</button>
+        </form>
+    </div>
+    {% endif %}
+    {% if sm_can(payment, 'refund', 'sylius_payment') %}
+        <div class="d-block">
+{#            {{ path('sylius_admin_order_payment_refund', {'orderId': order.id, 'id': payment.id}) }}#}
+            {% set paymentRefundUrl = ea_url()
+                .setController(ea.crud.controllerFqcn)
+                .setAction('paymentRefund')
+                .setEntityId(order.id)
+                .set("payment_id", payment.id)
+            %}
+            <form action="{{ paymentRefundUrl }}" method="post" novalidate>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token(payment.id) }}" />
+                <input type="hidden" name="_method" value="PUT">
+                <button type="submit" class="btn btn-outline-secondary d-block w-100"><i class="fa fa-reply"></i> {{ 'sylius.ui.refund'|trans }}</button>
+            </form>
+        </div>
+    {% endif %}
+</div>

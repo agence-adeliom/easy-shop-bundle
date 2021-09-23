@@ -1,0 +1,173 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    Adeliom\EasyShopBundle\Command\SetupCommand:
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@security.password_hasher"
+            - "@easy_admin_user.validator"
+            - "@easy_admin_user.user_repository"
+            - "@sylius.setup.currency"
+            - "@sylius.setup.locale"
+            - "@sylius.setup.channel"
+            - "@sylius.repository.shop_user"
+            - "@sylius.manager.shop_user"
+            - "@sylius.factory.shop_user"
+        tags:
+            - { name: 'console.command', command: 'easyshop:install:setup' }
+
+    Adeliom\EasyShopBundle\Validators\UniqueReviewerEmailValidator:
+        decorates: 'sylius.validator.unique_reviewer_email'
+        arguments:
+            - '@sylius.repository.shop_user'
+            - '@security.token_storage'
+            - '@security.authorization_checker'
+        tags:
+            - { name: validator.constraint_validator, alias: sylius_unique_reviewer_email_validator }
+
+    kernel.listener.admin_exception:
+        class: Adeliom\EasyShopBundle\EventListener\AdminExceptionListener
+        arguments:
+            - "@translator.default"
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
+
+    Adeliom\EasyShopBundle\Locale\SyliusLocalProvider:
+        arguments:
+            - "@sylius.repository.locale"
+        public: true
+
+    sylius.form.type.shipping_method_rule:
+        class: Adeliom\EasyShopBundle\Form\Type\ShippingBundle\ShippingMethodRuleType
+        arguments:
+            - "%sylius.model.shipping_method_rule.class%"
+            - "%sylius.form.type.shipping_method_rule.validation_groups%"
+            - "@sylius.form_registry.shipping_method_rule_checker"
+            - "%sylius.shipping_method_rules%"
+        tags: [ form.type ]
+
+    sylius.form.type.shipping_calculators:
+        class: Adeliom\EasyShopBundle\Form\Type\ShippingBundle\ShippingMethodCalculatorType
+        arguments:
+            - "%sylius.shipping_calculators%"
+        tags: [ form.type ]
+
+    sylius.form.type.easy.channel_collection:
+        class: Adeliom\EasyShopBundle\Form\Type\ProductBundle\ChannelCollectionType
+        arguments:
+            - "@sylius.repository.channel"
+        tags: [ form.type ]
+
+    sylius.form.type.sylius_product_associations:
+        class: Adeliom\EasyShopBundle\Form\Type\ProductBundle\ProductAssociationsType
+        arguments:
+          - "@sylius.repository.product_association_type"
+          - "@sylius.repository.product"
+          - "@sylius.form.type.easy.data_transformer.products_to_product_associations"
+        tags: [ form.type ]
+
+    sylius.form.type.easy.data_transformer.products_to_product_associations:
+        class: Adeliom\EasyShopBundle\Form\Transformer\ProductsToProductAssociationsTransformer
+        arguments:
+            - "@sylius.factory.product_association"
+            - "@sylius.repository.product"
+            - "@sylius.repository.product_association_type"
+
+    Adeliom\EasyShopBundle\Form\Type\ProductBundle\ProductAttributesCollectionType:
+        arguments:
+            - "@parameter_bag"
+            - "@sylius.repository.product_attribute"
+            - "@sylius.repository.locale"
+            - "@sylius.form_registry.attribute_type"
+            - "@form.factory"
+        tags: [ form.type ]
+
+
+    Adeliom\EasyShopBundle\Form\Type\ProductBundle\ProductImageType:
+        arguments:
+            - "@parameter_bag"
+        tags: [ form.type ]
+
+    Adeliom\EasyShopBundle\Form\Type\ProductBundle\ProductAttributesCollectionEntryType:
+        arguments:
+            - "@sylius.form_registry.attribute_type"
+            - "@sylius.repository.locale"
+        tags: [ form.type ]
+
+    Adeliom\EasyShopBundle\Form\Admin\Configurator\ProductAttributesConfigurator:
+        public: true
+
+    Adeliom\EasyShopBundle\Form\Type\ProductBundle\ProductAssociationEntityType:
+        class: Adeliom\EasyShopBundle\Form\Type\ProductBundle\ProductAssociationEntityType
+        arguments:
+            - "@sylius.repository.product_association_type"
+            - "@sylius.repository.product"
+            - "@sylius.form.type.data_transformer.products_to_product_associations"
+        tags: [ form.type ]
+
+
+    sylius.form.type.easy.promotion_rule:
+        class: Adeliom\EasyShopBundle\Form\Type\PromotionBundle\PromotionRuleType
+        arguments:
+            - "%sylius.promotion_rules%"
+            - "@sylius.form_registry.promotion_rule_checker"
+            - "%sylius.model.promotion_rule.class%"
+        tags: [ form.type ]
+
+    Adeliom\EasyShopBundle\Form\Type\PromotionBundle\ContainsProductConfigurationType:
+        arguments:
+            - "@sylius.repository.product"
+        tags: [ form.type ]
+
+    Adeliom\EasyShopBundle\Form\Type\PromotionBundle\HasTaxonConfigurationType:
+        arguments:
+            - "@sylius.repository.taxon"
+            - "@sylius.form.type.data_transformer.taxons_to_codes"
+        tags: [ form.type ]
+
+    Adeliom\EasyShopBundle\Form\Type\PromotionBundle\TotalOfItemsFromTaxonConfigurationType:
+        arguments:
+            - "@sylius.repository.taxon"
+        tags: [ form.type ]
+
+    sylius.form.type.easy.promotion_action:
+        class: Adeliom\EasyShopBundle\Form\Type\PromotionBundle\PromotionActionType
+        arguments:
+            - "%sylius.promotion_actions%"
+            - "@sylius.form_registry.promotion_action"
+            - "%sylius.model.promotion_action.class%"
+        tags: [ form.type ]
+
+    Adeliom\EasyShopBundle\EventListener\SeoListener:
+        arguments:
+            - "@sylius.repository.taxon"
+            - "@sylius.repository.product"
+            - '@sylius.context.channel'
+            - '@sylius.context.locale'
+        tags:
+            - kernel.event_subscriber
+
+    Adeliom\EasyShopBundle\AttributeType\EasyMediaAttributeType:
+        tags:
+            - { name: sylius.attribute.type, attribute_type: "easy_media", label: "Media", form_type: Adeliom\EasyShopBundle\Form\Type\AttributeBundle\EasyMediaAttributeType, configuration_form_type: Adeliom\EasyShopBundle\AttributeType\Configuration\EasyMediaAttributeConfigurationType }
+
+    Adeliom\EasyShopBundle\Form\Type\ProductBundle\ProductTaxonType:
+        arguments:
+            - "@sylius.factory.product_taxon"
+            - "@sylius.repository.product_taxon"
+            - "@sylius.repository.taxon"
+        tags: [ form.type ]
+
+    Adeliom\EasyShopBundle\Form\Type\PromotionBundle\Filter\TaxonFilterConfigurationType:
+        arguments:
+            - "@sylius.form.type.data_transformer.taxons_to_codes"
+            - "%sylius.model.taxon.class%"
+        tags: [ form.type ]
+
+    Adeliom\EasyShopBundle\Form\Type\PromotionBundle\Filter\ProductFilterConfigurationType:
+        arguments:
+            - "@sylius.form.type.data_transformer.products_to_codes"
+            - "%sylius.model.product.class%"
+        tags: [ form.type ]

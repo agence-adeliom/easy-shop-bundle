@@ -1,0 +1,38 @@
+{% set product = variant.product %}
+{% set slug = product.slug %}
+{% if product.mainTaxon %}
+    {% set slug = product.mainTaxon.tree ~ '/' ~ slug %}
+{% endif %}
+
+<div class="d-flex gap-3 align-items-center mb-2">
+    <div class="product-image" style="width: 4rem">
+        {% if variant.hasImages %}
+            {% include '@EasyShop/front/Product/_mainImage.html.twig' with {'product': variant, 'filter': 'easy_shop_product_tiny_thumbnail'} %}
+        {% else %}
+            {% include '@EasyShop/front/Product/_mainImage.html.twig' with {'product': product, 'filter': 'easy_shop_product_tiny_thumbnail'} %}
+        {% endif %}
+    </div>
+    <div class="content">
+        <a href="{{ path('easy_shop_product_show', {'slug': slug}) }}" class="link-primary text-decoration-none">
+            <div class="sylius-product-name fw-bolder" {{ sylius_test_html_attribute('product-name', item.productName) }}>{{ item.productName }}</div>
+            <span class="sylius-product-variant-code small text-dark" {{ sylius_test_html_attribute('product-variant-code') }}>
+                {{ variant.code }}
+            </span>
+        </a>
+    </div>
+</div>
+{% if product.hasOptions() %}
+    <div class="d-flex gap-2 sylius-product-options" {{ sylius_test_html_attribute('product-options') }}>
+        {% for optionValue in variant.optionValues %}
+            <div class="badge bg-secondary rounded-pill bg-opacity-75" data-sylius-option-name="{{ optionValue.name }}" {{ sylius_test_html_attribute('option-name', optionValue.name) }}>
+                {{ optionValue.value }}
+            </div>
+        {% endfor %}
+    </div>
+{% elseif item.variantName is not null %}
+    <div class="d-flex">
+        <div class="badge bg-secondary rounded-pill bg-opacity-75 sylius-product-variant-name" {{ sylius_test_html_attribute('product-variant-name') }}>
+            {{ item.variantName }}
+        </div>
+    </div>
+{% endif %}

@@ -1,0 +1,24 @@
+{% import '@EasyShop/front/Common/Macro/money.html.twig' as money %}
+
+<div class="card mb-3" {{ sylius_test_html_attribute('shipping-item') }}>
+    <div class="row g-0 align-items-center">
+        <div class="col-md-2 text-center">
+            <div class="ui radio checkbox" {{ sylius_test_html_attribute('shipping-method-checkbox') }}>
+                {{ form_widget(form, sylius_test_form_attribute('shipping-method-select')) }}
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div class="card-body">
+                <h5 class="card-title" {{ sylius_test_html_attribute('shipping-method-label') }}>{{ form_label(form) }}</h5>
+                {% if method.description is not null %}
+                    <p class="card-text">{{ method.description }}</p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-3 text-end">
+            <div class="px-4" {{ sylius_test_html_attribute('shipping-method-fee') }}>
+                {{ money.convertAndFormat(fee) }}
+            </div>
+        </div>
+    </div>
+</div>

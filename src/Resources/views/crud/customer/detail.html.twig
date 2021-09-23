@@ -1,0 +1,168 @@
+{# templates/admin/business_stats/index.html.twig #}
+{% extends '@EasyAdmin/crud/detail.html.twig' %}
+
+{% block detail_fields %}
+
+    <div class="mb-3">
+        {{ block("statistics") }}
+    </div>
+
+    <div class="row">
+        <div class="col-12 col-sm-6 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    {{ block("customer") }}
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 mb-3">
+            <div class="card">
+                <div class="card-header">{{ 'sylius.ui.default_address'|trans }}</div>
+                <div class="card-body">
+                    {{ block("addresses") }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block statistics %}
+    {% import "@EasyShop/front/Common/Macro/money.html.twig" as money %}
+
+    {% set statistics = app.request().get('statistics') %}
+
+    <div id="statistics">
+        {% if statistics.perChannelsStatistics is not empty %}
+            <div class="accordion" id="chs_stats">
+                {% for statistic in statistics.perChannelsStatistics %}
+                    {{ block("statistics_per_hannel") }}
+                {% endfor %}
+            </div>
+        {% else %}
+            <h4 class="mb-0">{{ 'sylius.ui.this_customer_has_not_completed_any_orders_yet'|trans }}</h4>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block statistics_per_hannel %}
+    {% import "@EasyShop/front/Common/Macro/money.html.twig" as money %}
+
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="ch_{{ loop.index }}">
+            <button class="accordion-button {% if not loop.first %}collapsed{% endif %}" aria-expanded="{{ loop.first ? "true" : 'false' }}" type="button" data-bs-toggle="collapse" data-bs-target="#ch_collapse_{{ loop.index }}" aria-expanded="false" aria-controls="ch_collapse_{{ loop.index }}">
+                {{ statistic.channel.name }}
+            </button>
+        </h2>
+        <div id="ch_collapse_{{ loop.index }}" class="accordion-collapse collapse {{ loop.first ? "show" : '' }}" aria-labelledby="ch_{{ loop.index }}" data-bs-parent="#chs_stats">
+            <div class="accordion-body">
+                <div class="row">
+                    <div class="col-12 col-sm-6 col-md-3 text-center ">
+                        <div class="sylius-channel-name fs-2">
+                            {{ statistic.channel.name }}
+                        </div>
+                        <div class="label">
+                            {{ 'sylius.ui.channel'|trans }}
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-sm-6 col-md-3 text-center ">
+                        <div class="sylius-orders-count fs-2">
+                            {{ statistic.ordersCount }}
+                        </div>
+                        <div class="label">
+                            {{ 'sylius.ui.orders'|trans }}
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-sm-6 col-md-3 text-center ">
+                        <div class="sylius-orders-total fs-2">
+                            {{ money.format(statistic.ordersValue, statistic.channel.baseCurrency.code) }}
+                        </div>
+                        <div class="label">
+                            {{ 'sylius.ui.total_value_of_orders'|trans }}
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-sm-6 col-md-3 text-center ">
+                        <div class="sylius-average-order-value fs-2">
+                            {{ money.format(statistic.averageOrderValue, statistic.channel.baseCurrency.code) }}
+                        </div>
+                        <div class="label">
+                            {{ 'sylius.ui.average_order_value'|trans }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block customer %}
+    {% set customer = entity.instance %}
+
+    {% set customerUrl = ea_url()
+        .setController(ea.crud.controllerFqcn)
+        .setAction('edit')
+        .setEntityId(customer.id)
+    %}
+
+    <div class="content border-bottom mb-2 pb-2">
+        <a href="{{ customerUrl }}" class="header">
+            {{ customer.fullName|default('sylius.ui.guest_customer'|trans) }}
+        </a>
+        <div class="meta">
+            <span class="date">{{ 'sylius.ui.customer_since'|trans }} {{ customer.createdAt|date }}</span>
+            <br />
+            {% if customer.group is not null %}
+                <span class="group">{{ 'sylius.ui.group_membership'|trans }}: {{ customer.group }}</span>
+            {% endif %}
+        </div>
+    </div>
+
+    {% import '@EasyShop/SyliusUiBundle/Macro/buttons.html.twig' as buttons %}
+
+    <div class="content border-bottom mb-2 pb-2">
+        <div id="subscribed-to-newsletter">
+            <i class="fa {{ customer.subscribedToNewsletter ? 'fa-check text-success' : 'fa-ban text-danger' }}"></i>
+            {{ 'sylius.ui.subscribed_to_newsletter'|trans }}
+        </div>
+        {% if customer.user is not null %}
+            {% set user = customer.user %}
+            <div id="verified-email">
+                <i class="fa {{ user.verified ? 'fa-check text-success' : 'fa-ban text-danger' }}"></i>
+                {{ 'sylius.ui.email_verified'|trans }}
+            </div>
+            {% if is_granted("ROLE_ALLOWED_TO_SWITCH") %}
+                <div class="mt-2">
+                    {% set impersonateCustomerUrl = ea_url()
+                        .setController(ea.crud.controllerFqcn)
+                        .setAction('impersonate')
+                        .setEntityId(customer.id)
+                    %}
+                    {{ buttons.default(impersonateCustomerUrl, 'sylius.ui.impersonate', 'impersonate', 'fa-eye', 'btn-secondary') }}
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <div class="extra content">
+        <a href="mailto:{{ customer.email }}">
+            <i class="fa fa-envelope"></i> {{ customer.email }}
+        </a>
+        {% if customer.phoneNumber is not null %}
+            <div id="phone-number">
+                <i class="fa fa-phone"></i> {{ customer.phoneNumber }}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block addresses %}
+    {% set customer = entity.instance %}
+    {% if customer.defaultAddress is not null %}
+        {% include '@EasyShop/crud/Common/_address.html.twig' with {'address': customer.defaultAddress} %}
+    {% else %}
+        {{ 'sylius.ui.this_customer_does_not_have_a_default_address'|trans }}
+    {% endif %}
+{% endblock %}

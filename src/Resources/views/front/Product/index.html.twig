@@ -1,0 +1,13 @@
+{% extends '@EasyShop/front/layout.html.twig' %}
+
+{% block content %}
+{% include '@EasyShop/front/Product/Index/_header.html.twig' %}
+<div class="row">
+    <div class="col-4">
+        {% include '@EasyShop/front/Product/Index/_sidebar.html.twig' %}
+    </div>
+    <div class="col-8">
+        {% include '@EasyShop/front/Product/Index/_main.html.twig' %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% if type is defined %}
+    {% set type = type ~ '-' %}
+{% else %}
+    {% set type = null %}
+{% endif %}
+
+<div class="row">
+    <div class="col-12 col-sm-6">
+        {{ form_row(form.firstName, sylius_test_form_attribute(type ~ 'first-name')) }}
+    </div>
+    <div class="col-12 col-sm-6">
+        {{ form_row(form.lastName, sylius_test_form_attribute(type ~ 'last-name')) }}
+    </div>
+</div>
+{{ form_row(form.company, sylius_test_form_attribute(type ~ 'company')) }}
+{{ form_row(form.street, sylius_test_form_attribute(type ~ 'street')) }}
+
+{% include '@EasyShop/front/Common/Form/_countryCode.html.twig' with {'form': form.countryCode} %}
+
+<div class="province-container mb-3" data-url="{{ path('easy_shop_ajax_render_province_form') }}">
+    {% if form.provinceCode is defined %}
+        {{ form_row(form.provinceCode, sylius_test_form_attribute('province-code')|sylius_merge_recursive( {'label_attr': {'class': 'form-label'}})) }}
+    {% elseif form.provinceName is defined %}
+        {{ form_row(form.provinceName, sylius_test_form_attribute('province-name')|sylius_merge_recursive( {'label_attr': {'class': 'form-label'}})) }}
+    {% endif %}
+</div>
+
+{% if form.provinceCode is defined %}
+    {{ form_errors(form) }}
+{% endif %}
+
+<div class="row">
+    <div class="col-12 col-sm-6">
+        {{ form_row(form.city, sylius_test_form_attribute(type ~ 'city')) }}
+    </div>
+    <div class="col-12 col-sm-6">
+        {{ form_row(form.postcode, sylius_test_form_attribute(type ~ 'postcode')) }}
+    </div>
+</div>
+
+{{ form_row(form.phoneNumber) }}

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<container xmlns="http://symfony.com/schema/dic/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <defaults public="true" />
+
+        <service id="sylius.shop.locale_switcher" class="Adeliom\EasyShopBundle\Locale\StorageBasedLocaleSwitcher" public="false">
+            <argument type="service" id="sylius.storage.locale" />
+            <argument type="service" id="sylius.context.channel" />
+        </service>
+
+        <service id="sylius.storage.locale" class="Sylius\Component\Core\Locale\LocaleStorage">
+            <argument type="service" id="sylius.storage.session" />
+        </service>
+        <service id="Sylius\Component\Core\Locale\LocaleStorageInterface" alias="sylius.storage.locale" />
+
+        <service id="sylius.context.locale.storage_based" class="Sylius\Component\Core\Locale\Context\StorageBasedLocaleContext">
+            <argument type="service" id="sylius.context.channel" />
+            <argument type="service" id="sylius.storage.locale" />
+            <argument type="service" id="sylius.locale_provider" />
+            <tag name="sylius.context.locale" priority="-64" />
+        </service>
+
+        <service id="sylius.shop.locale_stripping_router" class="Adeliom\EasyShopBundle\Router\LocaleStrippingRouter"
+                 decorates="router" decoration-priority="1024">
+            <argument type="service" id="sylius.shop.locale_stripping_router.inner" />
+            <argument type="service" id="sylius.context.locale" />
+        </service>
+    </services>
+</container>

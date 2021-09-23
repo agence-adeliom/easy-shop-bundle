@@ -1,0 +1,21 @@
+<div class="form-group mb-3" id="sylius-api-login">
+    {{ form_errors(form.email, sylius_test_form_attribute('login-errors')) }}
+    {% set ajax_user_check_action_path = path('easy_shop_ajax_user_check_action')  %}
+    {{ form_row(form.email, sylius_test_form_attribute('login-email')|sylius_merge_recursive({'attr': {'data-url': ajax_user_check_action_path}})) }}
+
+    <div class="form-group" id="sylius-api-login-form">
+        <div class="d-flex gap-2">
+            <input type="password" class="form-control" placeholder="{{ 'sylius.ui.password'|trans }}" {{ sylius_test_html_attribute('password-input') }}>
+            <input type="hidden" name="_csrf_shop_security_token" value="{{ csrf_token('shop_authenticate') }}">
+            <a class="btn btn-primary" href="#" id="sylius-api-login-submit" {{ sylius_test_html_attribute('login-button') }} data-url="{{ path('easy_shop_login_check') }}">
+                {{ 'sylius.ui.sign_in'|trans }}
+            </a>
+        </div>
+    </div>
+    <div
+        class="text-danger hidden sylius-validation-error"
+        id="sylius-api-validation-error"
+        {{ sylius_test_html_attribute('login-validation-error') }}
+    >
+    </div>
+</div>

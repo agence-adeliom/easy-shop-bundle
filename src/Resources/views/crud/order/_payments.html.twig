@@ -1,0 +1,23 @@
+{% if order.hasPayments %}
+<div class="card" id="payment-state">
+    {% include '@EasyShop/crud/Common/Label/PaymentState/' ~ order.paymentState ~ '.html.twig' with { 'value': 'sylius.ui.' ~ order.paymentState, 'attached': true } %}
+    <div class="card-body">
+        <h4>{{ 'sylius.ui.payments'|trans }}</h4>
+        <div id="sylius-payments">
+            <ul class="list-group">
+                {% for payment in order.payments %}
+                <li class="list-group-item">
+                    {% include '@EasyShop/crud/order/_payment.html.twig' %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="card" id="no-payments">
+    <div class="card-body">
+        <i>{{ 'sylius.ui.no_payments'|trans }}</i>
+    </div>
+</div>
+{% endif %}

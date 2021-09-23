@@ -1,0 +1,310 @@
+{% extends '@!EasyAdmin/crud/form_theme.html.twig' %}
+
+{% block sylius_select_attribute_choices_collection_widget %}
+    <script src='/bundles/easyadmin/form-type-collection.js'></script>
+    {{ block('collection_widget') }}
+    <style>
+        #{{ form.parent.vars.id }} .accordion-button{display: none;}
+        #{{ form.parent.vars.id }} .accordion-collapse{ display: block !important; }
+        #{{ form.parent.vars.id }} .field-collection-delete-button{float: right}
+    </style>
+{% endblock sylius_select_attribute_choices_collection_widget %}
+
+{% block sylius_select_attribute_value_translations_label %}
+{% endblock sylius_select_attribute_value_translations_label %}
+
+{% block _ProductAttribute_configuration_choices_entry_entry_label %}
+    <label>{{ name|sylius_locale_name|capitalize }}</label>
+{% endblock _ProductAttribute_configuration_choices_entry_entry_label %}
+
+{% block sylius_channel_pricing_widget %}
+    <div class="row">
+        {% for child in form %}
+            <div class="col-6">
+                {{ form_row(child) }}
+            </div>
+        {% endfor %}
+    </div>
+{% endblock sylius_channel_pricing_widget %}
+
+
+{% block sylius_translations_row %}
+    {{ form_errors(form) }}
+    <div class="a2lix_translations">
+        {% if form|length > 1 %}
+            <ul class="a2lix_translationsLocales nav nav-pills" role="tablist">
+                {% for translationsFields in form %}
+                    {% set locale = translationsFields.vars.name %}
+                    <li class="nav-item">
+                        <button class="nav-link {% if app.request.locale == locale %}active{% endif %}" data-bs-toggle="pill" data-bs-target="#{{ translationsFields.vars.id }}_a2lix_translations-fields" type="button" role="tab" aria-selected="true">
+                            {{ translationsFields.vars.label|default(locale)|locale_name|capitalize|trans }}
+                        </button>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <div class="a2lix_translationsFields tab-content">
+            {% for translationsFields in form %}
+                {% set locale = translationsFields.vars.name %}
+                <div id="{{ translationsFields.vars.id }}_a2lix_translations-fields" class="tab-pane {% if app.request.locale == locale %}show active{% endif %} {% if not form.vars.valid %}sonata-ba-field-error{% endif %}" role="tabpanel">
+                    {{ form_errors(translationsFields) }}
+                    {{ form_widget(translationsFields) }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock sylius_translations_row %}
+
+
+{#{% block sylius_translations_widget %}#}
+{#    {{ form_errors(form) }}#}
+{#    <div class="a2lix_translations">#}
+{#        {% if form|length > 1 %}#}
+{#            <ul class="a2lix_translationsLocales nav nav-pills" role="tablist">#}
+{#                {% for translationsFields in form %}#}
+{#                    {% set locale = translationsFields.vars.name %}#}
+{#                    <li class="nav-item">#}
+{#                        <button class="nav-link {% if app.request.locale == locale %}active{% endif %}" data-bs-toggle="pill" data-bs-target="#{{ translationsFields.vars.id }}_a2lix_translations-fields" type="button" role="tab" aria-selected="true">#}
+{#                            {{ translationsFields.vars.label|default(locale)|locale_name|capitalize|trans }}#}
+{#                        </button>#}
+{#                    </li>#}
+{#                {% endfor %}#}
+{#            </ul>#}
+{#        {% endif %}#}
+
+{#        <div class="a2lix_translationsFields tab-content">#}
+{#            {% for translationsFields in form %}#}
+{#                {% set locale = translationsFields.vars.name %}#}
+{#                <div id="{{ translationsFields.vars.id }}_a2lix_translations-fields" class="tab-pane {% if app.request.locale == locale %}show active{% endif %} {% if not form.vars.valid %}sonata-ba-field-error{% endif %}" role="tabpanel">#}
+{#                    {{ form_errors(translationsFields) }}#}
+{#                    {{ form_widget(translationsFields) }}#}
+{#                </div>#}
+{#            {% endfor %}#}
+{#        </div>#}
+{#    </div>#}
+{#{% endblock sylius_translations_widget %}#}
+
+{% block sylius_product_variant_generation_label %}{% endblock sylius_product_variant_generation_label %}
+{% block sylius_product_variant_generation_widget %}
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    {{ form_row(form.code) }}
+                </div>
+                <div class="col-6">
+                    {{ form_row(form.name) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    {{ form_widget(form.optionValues) }}
+                    {{ form_errors(form.optionValues) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    {{ form_row(form.channelPricings) }}
+                </div>
+            </div>
+            {% if form.parent.vars.allow_delete %}
+                <div class="row">
+                    <div class="col-12 text-right">
+                        <button class="btn btn-danger" type="button" id="{{ form.vars.id }}">{{ "sylius.ui.delete"|trans }}</button>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <script>
+        document.getElementById('{{ form.vars.id }}').addEventListener("click", function (event){
+            event.preventDefault();
+            this.closest('.form-group').remove();
+        }, false);
+    </script>
+{% endblock sylius_product_variant_generation_widget %}
+
+{% block sylius_product_attributes_row %}
+    {% set row_attr = row_attr|merge({
+        'data-ea-collection-field': 'true',
+        'data-entry-is-complex': form.vars.ea_crud_form.ea_field and form.vars.ea_crud_form.ea_field.customOptions.get('entryIsComplex') ? 'true' : 'false',
+        'data-allow-add': allow_add ? 'true' : 'false',
+        'data-allow-delete': allow_delete ? 'true' : 'false',
+        'data-num-items': form.children|length,
+    }) %}
+
+    {{ block('form_row') }}
+    <script src="{{ asset("bundles/easyadmin/form-type-collection.js") }}"></script>
+{% endblock sylius_product_attributes_row %}
+
+{% block sylius_product_attributes_entry_row %}
+    <div class="editor-collection_row">
+        {{ block('form_row') }}
+    </div>
+{% endblock sylius_product_attributes_entry_row %}
+
+{% block sylius_product_attributes_widget %}
+    {# the "is iterable" check is needed because if an object implements __toString() and
+               returns an empty string, "is empty" returns true even if it's not a collection #}
+    {% set isEmptyCollection = value is null or (value is iterable and value is empty) %}
+    {% set is_array_field = 'EasyCorp\\Bundle\\EasyAdminBundle\\Field\\ArrayField' == form.vars.ea_crud_form.ea_field.fieldFqcn ?? false %}
+    <div class="row">
+        <div class="col-8">
+            <div class="ea-form-collection-items editor-collection">
+                {% if isEmptyCollection %}
+                    {{ block('empty_collection') }}
+                {% elseif is_array_field %}
+                    {{ block('form_widget') }}
+                {% else %}
+                    <div class="accordion border-0 shadow-none">
+                        {{ block('form_widget') }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        {% if isEmptyCollection or form.vars.prototype is defined %}
+            {% set attr = attr|merge({'data-empty-collection': block('empty_collection') }) %}
+        {% endif %}
+
+        {% if allow_add|default(false) %}
+            <div class="col-4">
+                <div class="field-editor-blocks">
+                    <ul class="gap-2 d-flex flex-wrap">
+                        {% for type, attribute in attributes %}
+                            {% if attribute.name %}
+                                <li class="list-inline-item">
+                                    <button type="button" class="btn btn-primary field-editor-add-button field-editor-choose-button"
+                                            {% if attribute in disabled_attributes %}disabled="disabled"{% endif %}
+                                            data-block-title="{{ attribute.name }}"
+                                            data-block-type="{{ attribute.code }}"
+                                            data-prototype='{{ form_row(prototypes[type])|e('html_attr') }}'
+                                            data-form-type-name-placeholder='{{ prototypes[type] is defined ? prototypes[type].vars.name : '' }}'
+                                    >
+                                        <span>{{ attribute.name }}</span>
+                                    </button>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock sylius_product_attributes_widget %}
+
+{% block sylius_product_attributes_entry_label %}
+{% endblock sylius_product_attributes_entry_label %}
+
+{% block sylius_product_attributes_entry_widget %}
+    {% set is_array_field = 'EasyCorp\\Bundle\\EasyAdminBundle\\Field\\ArrayField' == form_parent(form).vars.ea_crud_form.ea_field.fieldFqcn ?? false %}
+    {% set is_complex = form_parent(form).vars.ea_crud_form.ea_field.customOptions.get('entryIsComplex') ?? false %}
+    {% set allows_deleting_items = form_parent(form).vars.allow_delete|default(false) %}
+    {% set allows_drag_items = form_parent(form).vars.allow_drag|default(false) %}
+    {% set render_expanded = form_parent(form).vars.ea_crud_form.ea_field.customOptions.get('renderExpanded') ?? false %}
+    {% set error = false %}
+
+    {% if form.vars.errors.form.getErrors(true)|length %}
+        {% set render_expanded = true %}
+        {% set error = true %}
+    {% endif %}
+    {% set delete_item_button %}
+        <button type="button" class="btn btn-link btn-link-danger field-editor-remove-button"
+                title="{{ 'action.remove_item'|trans({}, 'EasyAdminBundle') }}">
+            <i class="far fa-trash-alt"></i>
+        </button>
+    {% endset %}
+
+    {% set drag_item_button %}
+        <button type="button" class="btn btn-link btn-link-secondary field-editor-drag-button" style="cursor:move;"
+                title="{{ 'action.drag_item'|trans({}, 'EasyAdminBundle') }}">
+            <i class="fas fa-arrows-alt-v"></i>
+        </button>
+    {% endset %}
+
+    <div class="field-collection-item {{ is_complex ? 'field-collection-item-complex' }} bg-white border rounded mb-1 {{ error ? "border-danger"}} " data-attribute-type="{{ form.vars.attribute.code }}">
+        <div class="accordion-item" style="border-radius: 0; box-shadow: none">
+            <h2 class="accordion-header d-flex p-0 rounded-none" style="--border-radius: 0; box-shadow: none">
+                <button class="accordion-button {{ render_expanded ? '' : 'collapsed' }}" type="button" data-bs-toggle="collapse" data-bs-target="#{{ id }}-contents">
+                    <i class="fas fw fa-chevron-right form-collection-item-collapse-marker"></i>
+                    <span class="accordion-title d-inline-flex">
+                        {{ form.vars.label }}
+                    </span>
+                </button>
+                <div class="accordion-actions d-flex">
+                    {% if allows_deleting_items %}
+                        {{ delete_item_button }}
+                    {% endif %}
+                    {% if allows_drag_items %}
+                        {{ drag_item_button }}
+                    {% endif %}
+                </div>
+            </h2>
+            <div id="{{ id }}-contents" class="accordion-collapse collapse {{ render_expanded ? 'show' }} border-top">
+                <div class="accordion-body">
+                    {{ form_widget(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('#{{ id }} select').forEach(function (elm) {
+            elm.dataset.eaWidget = 'ea-autocomplete';
+        })
+    </script>
+
+    <style>
+        #{{ id }} .a2lix_translationsLocales{
+            margin-bottom: 15px;
+        }
+    </style>
+{% endblock sylius_product_attributes_entry_widget %}
+
+
+{% block sylius_address_widget %}
+
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    {{ form_row(form.firstName) }}
+                </div>
+                <div class="col-6">
+                    {{ form_row(form.lastName) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    {{ form_row(form.company) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    {{ form_row(form.street) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    {{ form_row(form.postcode) }}
+                </div>
+                <div class="col-8">
+                    {{ form_row(form.city) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    {{ form_row(form.countryCode) }}
+                </div>
+                <div class="col-6">
+                    {{ form_row(form.provinceName) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    {{ form_row(form.phoneNumber) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock sylius_address_widget %}

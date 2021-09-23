@@ -1,0 +1,147 @@
+{# templates/admin/business_stats/index.html.twig #}
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title promotion.name ~ ' - ' ~ 'sylius.ui.manage_coupons'|trans  %}
+
+{% block content_title %}
+    {%- apply spaceless -%}
+        {{ promotion.name }}
+        <small class="d-block">{{ 'sylius.ui.manage_coupons'|trans }}</small>
+    {%- endapply -%}
+{% endblock %}
+
+{% block page_actions %}
+    <div class="global-actions">
+        {% set generateUrl = ea_url()
+            .setController(ea.crud.controllerFqcn)
+            .setAction('generateCoupons')
+            .setEntityId(promotion.id)
+        %}
+        <a href="{{ generateUrl }}" class="btn btn-secondary">{{ 'sylius.ui.generate_coupons'|trans }}</a>
+
+        {% set createUrl = ea_url()
+            .setController(ea.crud.controllerFqcn)
+            .setAction('createCoupon')
+            .setEntityId(promotion.id)
+        %}
+        <a href="{{ createUrl }}" class="btn btn-primary">{{ 'sylius.ui.create'|trans }}</a>
+    </div>
+    <div class="batch-actions" style="display: none">
+        {% set batchDeleteUrlAction = ea_url()
+            .setController(ea.crud.controllerFqcn)
+            .setAction('batchDeleteCoupons')
+            .setEntityId(promotion.id)
+        %}
+        {% set batchDeleteUrl = ea_url()
+            .setController(ea.crud.controllerFqcn)
+            .setAction('batchDeleteCoupons')
+            .setEntityId(promotion.id)
+        %}
+        <a class="action-batchDelete btn btn-secondary pr-0 text-danger"
+           href="{{ batchDeleteUrl }}"
+           data-action-name="batchDelete"
+           data-bs-toggle="modal"
+           data-bs-target="#modal-batch-action"
+           data-action-batch="true"
+           data-action-url="{{ batchDeleteUrlAction }}">{{ 'sylius.ui.delete'|trans }}</a>
+    </div>
+{% endblock %}
+
+{% block page_content %}
+
+    {% if promotion.coupons|length %}
+        <table class="table datagrid mb-5">
+            <thead>
+                <th width="10px">
+                    <div class="form-check">
+                        <span><input type="checkbox" class="form-check-input form-batch-checkbox-all"></span>
+                    </div>
+                </th>
+                <th><span>{{ "sylius.ui.code"|trans }}</span></th>
+                <th><span>{{ "sylius.ui.usage_limit"|trans }}</span></th>
+                <th><span>{{ "sylius.ui.per_customer_usage_limit"|trans }}</span></th>
+                <th><span>{{ "sylius.ui.used"|trans }}</span></th>
+                <th><span>{{ "sylius.ui.expires_at"|trans }}</span></th>
+                <th width="10px">
+                    <span class="sr-only">{{ 'action.entity_actions'|trans(ea.i18n.translationParameters, 'EasyAdminBundle') }}</span>
+                </th>
+            </thead>
+            <tbody>
+            {% for coupon in promotion.coupons %}
+                <tr>
+                    <td class="batch-actions-selector">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input form-batch-checkbox" value="{{ coupon.id }}">
+                        </div>
+                    </td>
+                    <td>{{ coupon.code }}</td>
+                    <td>{{ coupon.usageLimit }}</td>
+                    <td>{{ coupon.perCustomerUsageLimit }}</td>
+                    <td>{{ coupon.used }}</td>
+                    <td>{{ coupon.expiresAt|date('d/m/Y') }}</td>
+                    <td class="actions actions-as-dropdown">
+                        <div class="dropdown dropdown-actions">
+                            <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="21" width="21" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
+                                </svg>
+                            </a>
+
+                            <div class="dropdown-menu dropdown-menu-right">
+                                {% set editUrl = ea_url()
+                                    .setController(ea.crud.controllerFqcn)
+                                    .setAction('editCoupon')
+                                    .setEntityId(promotion.id)
+                                    .set("couponId", coupon.id)
+                                %}
+                                <a class="dropdown-item action-edit" href="{{ editUrl }}" data-action-name="edit">Éditer</a>
+                                {% set deleteUrl = ea_url()
+                                    .setController(ea.crud.controllerFqcn)
+                                    .setAction('deleteCoupon')
+                                    .setEntityId(promotion.id)
+                                    .set("couponId", coupon.id)
+                                %}
+                                {% set deleteUrlAction = ea_url()
+                                    .setController(ea.crud.controllerFqcn)
+                                    .setAction('deleteCoupon')
+                                    .setEntityId(promotion.id)
+                                    .set("couponId", coupon.id)
+                                %}
+                                <a class="dropdown-item action-delete text-danger" formaction="{{ deleteUrlAction }}" href="{{ deleteUrl }}" data-action-name="delete"  data-bs-toggle="modal" data-bs-target="#modal-delete">Supprimer</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        {{ include('@EasyAdmin/crud/includes/_delete_form.html.twig', with_context = false) }}
+    {% else %}
+        <table class="table datagrid datagrid-empty">
+        <tbody>
+        {% for i in 1..14 %}
+            <tr class="empty-row">
+                <td><span></span></td>
+                <td><span></span></td>
+                <td><span></span></td>
+                <td><span></span></td>
+                <td><span></span></td>
+                <td><span></span></td>
+            </tr>
+
+            {% if 3 == loop.index %}
+                <tr class="no-results">
+                    <td colspan="100">
+                        {{ 'datagrid.no_results'|trans(ea.i18n.translationParameters, 'EasyAdminBundle') }}
+                    </td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+    {{ include('@EasyAdmin/crud/includes/_batch_action_modal.html.twig', {}, with_context = false) }}
+
+{% endblock %}

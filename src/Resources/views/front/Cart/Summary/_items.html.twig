@@ -1,0 +1,36 @@
+<div class="ui segment">
+    {{ form_start(form, {'action': path('easy_shop_cart_save'), 'attr': {'class': 'loadable form', 'novalidate': 'novalidate', 'id': form.vars.id}}) }}
+    {{ form_errors(form) }}
+    <input type="hidden" name="_method" value="PATCH"/>
+    {{ form_row(form._token) }}
+    {{ form_end(form, {'render_rest': false}) }}
+
+    {{ sylius_template_event('sylius.shop.cart.summary.items', {'cart': cart, 'form': form}) }}
+
+    <table id="sylius-cart-items" {{ sylius_test_html_attribute('cart-items') }} class="ui very basic celled table">
+        <thead>
+        <tr>
+            <th>{{ 'sylius.ui.item'|trans }}</th>
+            <th class="text-end">{{ 'sylius.ui.unit_price'|trans }}</th>
+            <th class="text-end" style="width: 8rem">{{ 'sylius.ui.qty'|trans }}</th>
+            <th style="width: 4rem"></th>
+            <th class="text-end">{{ 'sylius.ui.total'|trans }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for key, item in cart.items %}
+            {% include '@EasyShop/front/Cart/Summary/_item.html.twig' with {'item': item, 'form': form.items[key], 'main_form': form.vars.id, 'loop_index': loop.index} %}
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="row">
+        {% if form.promotionCoupon is defined %}
+            <div class="col-6">
+            {{ sylius_template_event('sylius.shop.cart.coupon', {'cart': cart, 'form': form, 'main_form': form.vars.id}) }}
+            </div>
+        {% endif %}
+        <div class="col-{{ form.promotionCoupon is defined ? "6" : "12" }} text-end">
+            {% include '@EasyShop/front/Cart/Summary/_update.html.twig' with {'main_form': form.vars.id} %}
+        </div>
+    </div>
+</div>

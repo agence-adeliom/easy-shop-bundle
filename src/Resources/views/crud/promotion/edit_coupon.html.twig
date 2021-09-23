@@ -1,0 +1,15 @@
+{# templates/admin/business_stats/index.html.twig #}
+{% extends '@EasyShop/crud/promotion/new_coupon.html.twig' %}
+
+{% block page_title promotion.name ~ ' - ' ~ 'sylius.ui.edit_promotion_coupon'|trans  %}
+
+{% block content_title %}
+    {%- apply spaceless -%}
+        {{ promotion.name }}
+        <small class="d-block">{{ 'sylius.ui.edit_promotion_coupon'|trans }}</small>
+    {%- endapply -%}
+{% endblock %}
+
+{% block page_actions %}
+    <button onclick="document.forms['{{ form.vars.full_name }}'].submit()" class="btn btn-primary">{{ 'sylius.ui.save'|trans }}</button>
+{% endblock %}

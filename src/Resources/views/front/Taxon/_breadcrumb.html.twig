@@ -1,0 +1,34 @@
+{% set ancestors = taxon.ancestors|reverse %}
+
+<nav id="easy_seo-breadcrumbs" style="--bs-breadcrumb-divider: '{{ easy_seo_breadcrumb.separator }}';" aria-label="breadcrumb">
+    <ol itemscope itemtype="http://schema.org/BreadcrumbList" class="{{ easy_seo_breadcrumb.class }}">
+
+        <li itemprop="itemListElement" class="{{ easy_seo_breadcrumb.item_class }} {{ easy_seo_breadcrumb.current_class }}" aria-current="page" itemscope itemtype="http://schema.org/ListItem">
+            <meta itemprop="position" content="0" />
+            {% set type = "a" %}
+            <{{ type }} itemprop="item" href="{{ path('sylius_shop_homepage') }}" class="{{ easy_seo_breadcrumb.link_class }}">
+            <span itemprop="name">{{ 'sylius.ui.home'|trans }}</span>
+        </{{ type }}>
+        </li>
+
+        {% for ancestor in ancestors %}
+            {% if ancestor.enabled %}
+            <li itemprop="itemListElement" class="{{ easy_seo_breadcrumb.item_class }}"  itemscope itemtype="http://schema.org/ListItem">
+                <meta itemprop="position" content="{{ loop.index }}" />
+                {% set type = "a" %}
+                <{{ type }} itemprop="item" href="{{ path('easy_shop_product_index', {'slug': ancestor.tree, '_locale': ancestor.translation.locale}) }}" class="{{ easy_seo_breadcrumb.link_class }}">
+                <span itemprop="name">{{ ancestor.name }}</span>
+                </{{ type }}>
+                </li>
+            {% endif %}
+        {% endfor %}
+
+        <li itemprop="itemListElement" class="{{ easy_seo_breadcrumb.item_class }} {{ easy_seo_breadcrumb.current_class }}" aria-current="page" itemscope itemtype="http://schema.org/ListItem">
+            <meta itemprop="position" content="{{ ancestors|length }}" />
+            {% set type = "span" %}
+            <{{ type }} itemprop="item" class="{{ easy_seo_breadcrumb.link_class }}">
+                <span itemprop="name">{{ taxon.name }}</span>
+            </{{ type }}>
+        </li>
+    </ol>
+</nav>

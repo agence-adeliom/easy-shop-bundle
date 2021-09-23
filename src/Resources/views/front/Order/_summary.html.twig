@@ -1,0 +1,17 @@
+{% import "@EasyShop/front/Common/Macro/money.html.twig" as money %}
+<h1 class="ui header">
+    {{ 'sylius.ui.summary_of_your_order'|trans }} #{{ order.number }}
+</h1>
+
+<div class="d-flex justify-content-around mb-4 mt-3">
+    <div class="item border-bottom pb-2 px-4">
+        {{ order.checkoutCompletedAt|date }}
+    </div>
+    <div class="item border-bottom pb-2 px-4">
+        {{ money.convertAndFormat(order.total) }}
+    </div>
+    <div class="item border-bottom pb-2 px-4">
+        {{ order.totalQuantity }} {{ 'sylius.ui.items'|trans|lower }}
+    </div>
+</div>
+

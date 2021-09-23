@@ -1,0 +1,19 @@
+{% import "@EasyShop/front/Common/Macro/money.html.twig" as money %}
+
+<div class="card" {{ sylius_test_html_attribute('product') }}>
+    {% set slug = product.slug %}
+    {% if product.mainTaxon %}
+        {% set slug = product.mainTaxon.tree ~ '/' ~ slug %}
+    {% endif %}
+    <a href="{{ path('easy_shop_product_show', {'slug': slug, '_locale': product.translation.locale}) }}">
+        {% include '@EasyShop/front/Product/_mainImage.html.twig' with {'product': product} %}
+    </a>
+    <div class="card-body" {{ sylius_test_html_attribute('product-content') }}>
+        <a href="{{ path('easy_shop_product_show', {'slug': slug, '_locale': product.translation.locale}) }}" class="header sylius-product-name" {{ sylius_test_html_attribute('product-name', product.name) }}>
+            {{ product.name }}
+        </a>
+        {% if not product.enabledVariants.empty() %}
+            <div class="sylius-product-price" {{ sylius_test_html_attribute('product-price') }}>{{ money.calculatePrice(product|sylius_resolve_variant) }}</div>
+        {% endif %}
+    </div>
+</div>

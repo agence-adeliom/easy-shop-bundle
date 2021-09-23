@@ -1,0 +1,31 @@
+{
+  "name": "EasyShopBundle",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "development": "mix",
+    "watch": "mix watch",
+    "watch-poll": "mix watch -- --watch-options-poll=1000",
+    "hot": "mix watch --hot",
+    "production": "mix --production"
+  },
+  "devDependencies": {
+    "buffer": "^6.0.3",
+    "laravel-mix": "^6.0.25",
+    "laravel-mix-polyfill": "^3.0.1",
+    "process": "^0.11.10",
+    "resolve-url-loader": "^4.0.0",
+    "sass": "^1.35.1",
+    "sass-loader": "^12.1.0"
+  },
+  "dependencies": {
+    "jquery": "^3.6.0",
+    "lightbox2": "^2.11.3",
+    "npm": "^7.19.1",
+    "npx": "^10.2.2",
+    "rater-js": "^1.0.1",
+    "slick-carousel": "^1.8.1",
+    "sortablejs": "^1.14.0"
+  }
+}

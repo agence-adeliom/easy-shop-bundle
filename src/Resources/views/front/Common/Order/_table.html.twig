@@ -1,0 +1,11 @@
+<table class="table mb-5" id="sylius-order" {{ sylius_test_html_attribute('order-table') }}>
+    <thead>
+        {% include '@EasyShop/front/Common/Order/Table/_headers.html.twig' %}
+    </thead>
+    <tbody>
+        {% include '@EasyShop/front/Common/Order/Table/_items.html.twig' %}
+    </tbody>
+    <tfoot>
+        {% include '@EasyShop/front/Common/Order/Table/_totals.html.twig' %}
+    </tfoot>
+</table>

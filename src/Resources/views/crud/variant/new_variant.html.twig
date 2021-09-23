@@ -1,0 +1,135 @@
+{# templates/admin/business_stats/index.html.twig #}
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title product.name ~ ' - ' ~ 'sylius.ui.new_product_variant'|trans  %}
+
+{% block content_title %}
+    {%- apply spaceless -%}
+        {{ product.name }}
+        <small class="d-block">{{ 'sylius.ui.new_product_variant'|trans }}</small>
+    {%- endapply -%}
+{% endblock %}
+
+{% block page_actions %}
+    <button onclick="document.forms['{{ form.vars.full_name }}'].submit()" class="btn btn-primary">{{ 'sylius.ui.create'|trans }}</button>
+{% endblock %}
+
+{% block page_content %}
+    {% form_theme form '@EasyShop/SyliusFormTheme.html.twig' %}
+
+    {{ form_start(form) }}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            {{ form_row(form.translations) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <h5 class="card-title">{{ 'sylius.ui.details'|trans }}</h5>
+                        </div>
+                        <div class="col-6">
+                            {{ form_row(form.code) }}
+                            {{ form_row(form.enabled) }}
+                        </div>
+                        <div class="col-6">
+                            {{ form_row(form.shippingCategory) }}
+                            {{ form_row(form.shippingRequired) }}
+                        </div>
+
+                        <div class="col-6">
+                            {{ form_row(form.onHand) }}
+                            {{ form_row(form.tracked) }}
+                        </div>
+                        <div class="col-6">
+                            {{ form_row(form.taxCategory) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <h5 class="card-title">{{ 'sylius.ui.properties'|trans }}</h5>
+                        </div>
+                        <div class="col-6">
+                            {{ form_row(form.width) }}
+                        </div>
+                        <div class="col-6">
+                            {{ form_row(form.height) }}
+                        </div>
+                        <div class="col-6">
+                            {{ form_row(form.depth) }}
+                        </div>
+                        <div class="col-6">
+                            {{ form_row(form.weight) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if product.hasOptions() %}
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <h5 class="card-title">{{ 'sylius.ui.options'|trans }}</h5>
+                            </div>
+                            <div class="col-12">
+                                {{ form_widget(form.optionValues) }}
+                                {{ form_errors(form.optionValues) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="form-group col-12 py-0 px-2">
+                            <label class="fs-5 text-bold card-title required">{{ 'sylius.ui.pricing'|trans }}</label>
+                        </div>
+                        <div class="col-12">
+                            {{ form_widget(form.channelPricings) }}
+                            {{ form_errors(form.channelPricings) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{ form_row(form._token) }}
+    <style>
+        .ui .form-check{
+            padding-left: 0;
+        }
+    </style>
+    {{ form_end(form) }}
+{% endblock %}

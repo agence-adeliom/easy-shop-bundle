@@ -1,0 +1,7 @@
+<h1>
+    {{ 'sylius.ui.order_history'|trans }}
+</h1>
+<p class="fs-5 col-md-8">
+    {{ 'sylius.ui.browse_your_orders_from_the_past'|trans }}
+</p>
+{{ sylius_template_event('sylius.shop.account.order.index.header.content', {'orders': orders}) }}

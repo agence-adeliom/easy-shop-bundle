@@ -1,0 +1,33 @@
+{% extends '@EasyShop/front/layout.html.twig' %}
+
+{% block title %}{{ product.name }} | {{ parent() }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+
+{% block content %}
+
+{% include '@EasyShop/front/Product/Show/_breadcrumb.html.twig' %}
+
+<div class="row">
+    <div class="col-5">
+        {{ sylius_template_event('sylius.shop.product.show.left_sidebar', _context) }}
+    </div>
+    <div class="col-7">
+        {{ sylius_template_event('sylius.shop.product.show.right_sidebar', _context) }}
+    </div>
+</div>
+
+{{ sylius_template_event('sylius.shop.product.show.content', _context) }}
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script type="text/javascript">
+    lightbox.option({
+        'albumLabel': '{{ 'sylius.lightbox.image_album_label'|trans|escape('js') }}'
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% import '@EasyShop/SyliusUiBundle/Macro/messages.html.twig' as messages %}
+{% import '@EasyShop/SyliusUiBundle/Macro/pagination.html.twig' as pagination %}
+
+{{ sylius_template_event('sylius.shop.product.index.search', _context) }}
+
+{{ sylius_template_event('sylius.shop.product.index.before_list', {'products': resources.data}) }}
+
+{% if resources.data|length > 0 %}
+    <div class="row" id="products" {{ sylius_test_html_attribute('products') }}>
+        {% for product in resources.data %}
+            <div class="col-sm-6 col-md-4">
+            {% include '@EasyShop/front/Product/_box.html.twig' %}
+            </div>
+        {% endfor %}
+    </div>
+
+    {{ sylius_template_event('sylius.shop.product.index.before_pagination', {'products': resources.data}) }}
+
+    {{ pagination.simple(resources.data) }}
+{% else %}
+    {{ messages.info('sylius.ui.no_results_to_display') }}
+{% endif %}

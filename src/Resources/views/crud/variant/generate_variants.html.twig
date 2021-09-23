@@ -1,0 +1,20 @@
+{# templates/admin/business_stats/index.html.twig #}
+{% extends '@EasyShop/crud/variant/new_variant.html.twig' %}
+
+{% block page_title product.name ~ ' - ' ~ 'sylius.ui.generate_variants'|trans  %}
+
+{% block content_title %}
+    {%- apply spaceless -%}
+        {{ product.name }}
+        <small class="d-block">{{ 'sylius.ui.generate_variants'|trans }}</small>
+    {%- endapply -%}
+{% endblock %}
+
+{% block page_actions %}
+    <button onclick="document.forms['{{ form.vars.full_name }}'].submit()" class="btn btn-primary">{{ 'sylius.ui.generate'|trans }}</button>
+{% endblock %}
+
+{% block page_content %}
+    {% form_theme form '@EasyShop/SyliusFormTheme.html.twig' %}
+    {{ form(form) }}
+{% endblock %}

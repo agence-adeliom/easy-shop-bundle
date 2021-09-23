@@ -1,0 +1,17 @@
+<div class="card p-3 mb-3">
+    <div class="d-flex justify-content-between align-items-center">
+        <div class="user d-flex flex-row align-items-center">
+            <span>
+                <small class="fw-bold text-primary author">{{ review.author.firstName }}</small>
+                <small class="fw-bold d-block">{{ review.title }}</small>
+            </span>
+        </div>
+        <div>
+            <small class="date">{{ review.createdAt|format_date }}</small>
+            <div class="rating">
+                <div class="star rating" data-rating="{{ review.rating }}" data-max-rating="5" style="pointer-events: none;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="text mt-2">{{ review.comment }}</div>
+</div>

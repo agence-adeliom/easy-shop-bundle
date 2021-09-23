@@ -1,0 +1,65 @@
+{% import "@EasyShop/front/Common/Macro/money.html.twig" as money %}
+
+{% set itemsSubtotal = sylius_order_items_subtotal(order) %}
+{% set taxIncluded = sylius_order_tax_included(order) %}
+{% set taxExcluded = sylius_order_tax_excluded(order) %}
+
+{% set orderPromotionAdjustment = constant('Sylius\\Component\\Core\\Model\\AdjustmentInterface::ORDER_PROMOTION_ADJUSTMENT') %}
+{% set orderPromotions = sylius_aggregate_adjustments(order.adjustmentsRecursively(orderPromotionAdjustment)) %}
+
+<tr class="align-middle" >
+    <th colspan="4" class="text-end" id="subtotal" {{ sylius_test_html_attribute('subtotal') }}>
+        {{ 'sylius.ui.items_total'|trans }}: {{ money.convertAndFormat(itemsSubtotal) }}
+    </th>
+</tr>
+<tr class="align-middle {% if taxIncluded and not taxExcluded %}tax-disabled{% endif %}">
+    <td colspan="4" class="text-end" id="tax-total">
+        <div style="display: flex; justify-content: flex-end; align-items: center">
+            <div>{{ 'sylius.ui.taxes_total'|trans }}:&nbsp;</div>
+            <div data-test="tax-total" {{ sylius_test_html_attribute('tax-total') }}>
+            {% if not taxIncluded and not taxExcluded %}
+                <div id="sylius-cart-tax-none">{{ money.convertAndFormat(0) }}</div>
+            {% endif %}
+            {% if taxExcluded %}
+                <div id="sylius-cart-tax-excluded">{{ money.convertAndFormat(taxExcluded) }}</div>
+            {% endif %}
+            {% if taxIncluded %}
+                <div class="tax-disabled text-muted">
+                    <small>({{ 'sylius.ui.included_in_price'|trans }})</small>
+                    <span id="sylius-cart-tax-included">{{ money.convertAndFormat(taxIncluded) }}</span>
+                </div>
+            {% endif %}
+            </div>
+        </div>
+    </td>
+</tr>
+<tr class="align-middle" >
+    <td colspan="4" id="promotion-total" class="text-end" {{ sylius_test_html_attribute('promotion-total') }}>
+        {{ 'sylius.ui.discount'|trans }}: {{ money.convertAndFormat(order.orderPromotionTotal)  }}
+        {% if order.orderPromotionTotal != 0 %}
+            <i id="order-promotion-details" class="text-info" data-bs-toggle="tooltip" data-bs-html="true"
+                {{ sylius_test_html_attribute('order-promotion-details') }}
+               title="{% for label, amount in orderPromotions %}<div>{{ label }}: {{ money.convertAndFormat(amount) }}</div>{% endfor %}"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle-fill" viewBox="0 0 16 16">
+                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+                </svg>
+            </i>
+        {% endif %}
+    </td>
+</tr>
+<tr class="align-middle" >
+    {% include '@EasyShop/front/Common/Order/Table/_shipping.html.twig' with {'order': order} %}
+</tr>
+<tr class="align-middle" >
+    <td colspan="4" class="text-end" style="font-size: 1.5em;" id="total" {{ sylius_test_html_attribute('order-total') }}>
+        {{ 'sylius.ui.total'|trans }}: {{ money.convertAndFormat(order.total) }}
+    </td>
+</tr>
+{% if order.currencyCode is not same as(sylius.currencyCode) %}
+    <tr class="align-middle" >
+        <td colspan="4" class="text-end" id="base-total" {{ sylius_test_html_attribute('summary-order-total') }}>
+            {{ 'sylius.ui.total_in_base_currency'|trans }}: {{ money.format(order.total, order.currencyCode) }}
+        </td>
+    </tr>
+{% endif %}

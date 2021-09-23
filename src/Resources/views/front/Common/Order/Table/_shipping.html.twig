@@ -1,0 +1,28 @@
+{% import "@EasyShop/front/Common/Macro/money.html.twig" as money %}
+
+{% set orderShippingPromotionAdjustment = constant('Sylius\\Component\\Core\\Model\\AdjustmentInterface::ORDER_SHIPPING_PROMOTION_ADJUSTMENT') %}
+{% set shippingAdjustment = constant('Sylius\\Component\\Core\\Model\\AdjustmentInterface::SHIPPING_ADJUSTMENT') %}
+{% set orderShippingPromotions = sylius_aggregate_adjustments(order.getAdjustmentsRecursively(orderShippingPromotionAdjustment)) %}
+
+{% if not orderShippingPromotions is empty %}
+    <td colspan="4" class="text-end" id="promotion-shipping-discounts" {{ sylius_test_html_attribute('promotion-shipping-discounts') }}>
+        {{ 'sylius.ui.shipping_total'|trans }}:
+        <span class="old-price"><del>{{ money.convertAndFormat(order.getAdjustmentsTotal(shippingAdjustment)) }}</del></span>
+        <span>
+           <span id="shipping-total" {{ sylius_test_html_attribute('shipping-total') }}>{{ money.convertAndFormat(order.getAdjustmentsTotal(shippingAdjustment) + order.getAdjustmentsTotal(orderShippingPromotionAdjustment)) }}</span>
+            <i id="shipping-promotion-details" class="text-info" data-bs-toggle="tooltip" data-bs-html="true"
+               {{ sylius_test_html_attribute('shipping-promotion-details') }}
+               title="{% for label, amount in orderShippingPromotions %}<div>{{ label }}: {{ money.convertAndFormat(amount) }}</div>{% endfor %}"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle-fill" viewBox="0 0 16 16">
+                  <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+                </svg>
+            </i>
+        </span>
+    </td>
+{% elseif order.shipments is not empty %}
+    <td colspan="4" class="text-end" id="shipping-total">
+        {{ 'sylius.ui.shipping_total'|trans }}:
+        <span {{ sylius_test_html_attribute('shipping-total') }}>{{ money.convertAndFormat(order.shippingTotal) }}</span>
+    </td>
+{% endif %}

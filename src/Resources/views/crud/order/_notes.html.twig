@@ -1,0 +1,8 @@
+{% if order.notes is not null %}
+    <div class="card">
+        <h4 class="card-header">{{ 'sylius.ui.notes'|trans }}</h4>
+        <div class="card-body" id="sylius-order-notes">
+            {{ order.notes }}
+        </div>
+    </div>
+{% endif %}

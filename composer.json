@@ -1,0 +1,12 @@
+{
+    "name": "agence-adeliom/easy-shop-bundle",
+    "type": "symfony-bundle",
+    "require": {
+        "sylius/sylius": "1.10.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Adeliom\\EasyShopBundle\\": "src/"
+        }
+    }
+}

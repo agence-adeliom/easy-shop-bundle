@@ -1,0 +1,23 @@
+{{ sylius_template_event('sylius.shop.product.index.before_vertical_menu', {'taxon': taxon}) }}
+
+<div class="taxons " {{ sylius_test_html_attribute('vertical-menu') }}>
+    <ul class="mb-0 list-group">
+        <li class="list-group-item" >
+            <h4>{{ taxon.name }}</h4>
+        </li>
+        {% for child in taxon.enabledChildren %}
+            <li class="list-group-item" >
+                <a href="{{ path('easy_shop_product_index', {'slug': child.getTree(), '_locale': child.translation.locale}) }}" class="item" {{ sylius_test_html_attribute('vertical-menu-item') }}>{{ child.name }}</a>
+            </li>
+        {% endfor %}
+        {% if taxon.parent is not empty and not taxon.parent.isRoot() and taxon.parent.enabled %}
+            <li class="list-group-item" >
+                <a href="{{ path('easy_shop_product_index', {'slug': taxon.parent.getTree(), '_locale': taxon.parent.translation.locale}) }}" class="item" {{ sylius_test_html_attribute('vertical-menu-go-level-up') }}>
+                    <i class="up arrow icon"></i> {{ 'sylius.ui.go_level_up'|trans }}
+                </a>
+            </li>
+        {% endif %}
+    </ul>
+</div>
+
+{{ sylius_template_event('sylius.shop.product.index.after_vertical_menu', {'taxon': taxon}) }}

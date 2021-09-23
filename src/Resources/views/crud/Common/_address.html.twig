@@ -1,0 +1,18 @@
+{% import "@EasyShop/SyliusUiBundle/Macro/flags.html.twig" as flags %}
+
+<address class="mb-0">
+    <strong>{{ address.firstName }} {{ address.lastName }}</strong><br/>
+    {% if address.company %}
+        {{ address.company }}<br/>
+    {% endif %}
+    {{ address.street }}<br/>
+    {{ address.postcode }} {{ address.city }}<br/>
+    {% if address|sylius_province_name is not empty %}
+        {{ address|sylius_province_name }}<br/>
+    {% endif %}
+    {{ flags.fromCountryCode(address.countryCode) }}
+    {{ address.countryCode|sylius_country_name|upper }}
+    {% if address.phoneNumber %}
+        <span class="d-block mt-1"><i class="fa fa-phone"></i> {{ address.phoneNumber }}<br/></span>
+    {% endif %}
+</address>

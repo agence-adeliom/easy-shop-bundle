@@ -1,0 +1,23 @@
+{% if field is defined %}
+    {% set data = field.value %}
+{% endif %}
+
+{%
+    set viewOptions = {
+        authorized: { icon: 'fa-check', color: 'warning' },
+        cancelled: { icon: 'fa-ban', color: 'warning' },
+        cart: { icon: 'fa-adjust', color: 'secondary' },
+        completed: { icon: 'fa-adjust', color: 'success' },
+        failed: { icon: 'fa-ban', color: 'danger' },
+        new: { icon: 'fa-clock', color: 'info' },
+        processing: { icon: 'fa-check', color: 'warning' },
+        refunded: { icon: 'fa-reply-all', color: 'warning' },
+    }
+%}
+
+{% set value = 'sylius.ui.' ~ data %}
+
+<span class="badge badge-{{ viewOptions[data]['color'] }} ">
+    <i class="fa {{ viewOptions[data]['icon'] }}"></i>
+    {{ value|trans }}
+</span>

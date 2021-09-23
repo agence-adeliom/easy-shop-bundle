@@ -1,0 +1,20 @@
+{% extends '@EasyShop/front/layout.html.twig' %}
+
+{% block content %}
+    {% block breadcrumb %}
+    {% endblock %}
+
+    <div class="row">
+        <div class="col-4">
+            {{ sylius_template_event('sylius.shop.account.layout.menu') }}
+        </div>
+        <div class="col-8">
+            {{ sylius_template_event('sylius.shop.account.layout.before_subcontent') }}
+
+            {% block subcontent %}
+            {% endblock %}
+
+            {{ sylius_template_event('sylius.shop.account.layout.after_subcontent') }}
+        </div>
+    </div>
+{% endblock %}

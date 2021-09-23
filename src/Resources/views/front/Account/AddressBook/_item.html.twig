@@ -1,0 +1,15 @@
+{% import '@EasyShop/SyliusUiBundle/Macro/buttons.html.twig' as buttons %}
+
+<div class="col-12 col-sm-6">
+    <div class="card">
+        <div class="card-body" {{ sylius_test_html_attribute('address', "%s %s"|format(address.firstName, address.lastName)) }}>
+            {% include '@EasyShop/front/Common/_address.html.twig' with {'address': address} %}
+
+            <div class="d-flex gap-2">
+                <div {{ sylius_test_html_attribute('edit-button') }}>{{ buttons.edit(path('easy_shop_account_address_book_update', {'id': address.id})) }}</div>
+                {{ render(path('easy_shop_account_address_book_set_as_default', {'id': address.id})) }}
+                {{ buttons.delete(path('easy_shop_account_address_book_delete', {'id': address.id}), null, true, address.id) }}
+            </div>
+        </div>
+    </div>
+</div>

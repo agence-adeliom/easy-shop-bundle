@@ -1,0 +1,19 @@
+{%
+    set viewOptions = {
+        authorized: { icon: "check", color: "bg-warning" } ,
+        awaiting_payment: { icon: "clock", color: "bg-secondary text-white" } ,
+        cancelled: { icon: "ban", color: "bg-danger text-white" } ,
+        paid: { icon: "check", color: "bg-success text-white" } ,
+        partially_authorized: { icon: "check", color: "bg-warning" } ,
+        partially_paid: { icon: "adjust", color: "bg-warning" } ,
+        partially_refunded: { icon: "reply", color: "bg-warning" } ,
+        refunded: { icon: "reply all", color: "bg-warning" } ,
+    }
+%}
+
+{% set value = 'sylius.ui.' ~ state %}
+
+<div class="card-header {{ viewOptions[state]['color'] }}">
+    <i class="{{ viewOptions[state]['icon'] }} icon"></i>
+    {{ 'sylius.ui.state'|trans }}: <span id="order-payment-status" {{ sylius_test_html_attribute('order-payment-state') }}>{{ value|trans }}</span>
+</div>

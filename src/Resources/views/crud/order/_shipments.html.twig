@@ -1,0 +1,19 @@
+{% if order.hasShipments %}
+    <div class="card" id="shipping-state">
+        {% include '@EasyShop/crud/Common/Label/ShippingState/' ~ order.shippingState ~ '.html.twig' with { 'value': 'sylius.ui.' ~ order.shippingState, 'attached': true } %}
+        {% if order.hasShipments %}
+        <div class="card-body">
+            <h4>{{ 'sylius.ui.shipments'|trans }}</h4>
+            <div id="sylius-shipments">
+                <ul class="list-group">
+                    {% for shipment in order.shipments %}
+                        <li class="list-group-item">
+                            {% include '@EasyShop/crud/order/_shipment.html.twig' %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+{% endif %}

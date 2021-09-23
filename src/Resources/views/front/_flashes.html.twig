@@ -1,0 +1,17 @@
+{% if app.session is not null and app.session.started %}
+    {% for type in ['success', 'error', 'info', 'warning'] %}
+        {% for flash in app.session.flashbag.get(type) %}
+            <div class="alert alert-{{ type|default('info') }} message sylius-flash-message">
+                <div class="content">
+                    <p {{ sylius_test_html_attribute('flash-messages') }} class="mb-0">
+                        {% if flash is iterable %}
+                            {{ flash.message|trans(flash.parameters, 'flashes') }}
+                        {% else %}
+                            {{ flash|trans({}, 'flashes') }}
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        {% endfor %}
+    {% endfor %}
+{% endif %}

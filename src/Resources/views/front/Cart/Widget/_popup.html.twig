@@ -1,0 +1,29 @@
+{% import "@EasyShop/front/Common/Macro/money.html.twig" as money %}
+
+{% if cart.empty %}
+    <li>
+        <div class="dropdown-item">
+            {{ 'sylius.ui.your_cart_is_empty'|trans }}.
+        </div>
+    </li>
+{% else %}
+    <li>
+        <div class="dropdown-item pe-none text-end">
+            {% for item in cart.items %}
+                <div class="item">{{ item.quantity }} x <strong>{{ item.product }}</strong> {{ money.convertAndFormat(item.unitPrice) }}</div>
+            {% endfor %}
+            <div class="item"><strong>{{ 'sylius.ui.subtotal'|trans }}</strong>: {{ money.convertAndFormat(cart.itemsTotal) }}</div>
+        </div>
+    </li>
+    <li>
+        <a href="{{ path('easy_shop_cart_summary') }}" class="d-block px-2 text-decoration-none text-nowrap">
+            <span class="btn btn-link btn-sm d-block">{{ 'sylius.ui.view_and_edit_cart'|trans }}</span>
+        </a>
+    </li>
+    <li><hr class="dropdown-divider"></li>
+    <li>
+        <a href="{{ path('easy_shop_checkout_start') }}" class="d-block px-2 text-decoration-none">
+            <span class="btn btn-primary btn-sm d-block">{{ 'sylius.ui.checkout'|trans }}</span>
+        </a>
+    </li>
+{% endif %}

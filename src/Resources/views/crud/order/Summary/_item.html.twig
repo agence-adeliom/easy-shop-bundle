@@ -1,0 +1,79 @@
+{% import "@EasyShop/front/Common/Macro/money.html.twig" as money %}
+
+{% set orderPromotionAdjustment = constant('Sylius\\Component\\Core\\Model\\AdjustmentInterface::ORDER_PROMOTION_ADJUSTMENT') %}
+{% set unitPromotionAdjustment = constant('Sylius\\Component\\Core\\Model\\AdjustmentInterface::ORDER_UNIT_PROMOTION_ADJUSTMENT') %}
+{% set shippingAdjustment = constant('Sylius\\Component\\Core\\Model\\AdjustmentInterface::SHIPPING_ADJUSTMENT') %}
+{% set taxAdjustment = constant('Sylius\\Component\\Core\\Model\\AdjustmentInterface::TAX_ADJUSTMENT') %}
+
+{% set variant = item.variant %}
+{% set product = variant.product %}
+
+{% set aggregatedUnitPromotionAdjustments = item.getAdjustmentsTotalRecursively(unitPromotionAdjustment) + item.getAdjustmentsTotalRecursively(orderPromotionAdjustment) %}
+{% set subtotal = (item.unitPrice * item.quantity) + aggregatedUnitPromotionAdjustments %}
+
+{% set taxIncluded = sylius_admin_order_unit_tax_included(item) %}
+{% set taxExcluded = sylius_admin_order_unit_tax_excluded(item) %}
+
+<tr>
+    <td class="single line">
+        <div class="ui header">
+            {% if product.imagesByType('thumbnail') is not empty %}
+                {% set path = product.imagesByType('thumbnail').first.path|imagine_filter('easy_shop_product_thumbnail') %}
+            {% elseif product.images.first %}
+                {% set path = product.images.first.path|imagine_filter('easy_shop_product_thumbnail') %}
+            {% else %}
+                {% set path = '//placehold.it/50x50' %}
+            {% endif %}
+            <img src="{{ path }}" alt="" class="img-fluid sylius-grid-image" style="width: 4rem" />
+            <div class="content">
+                <div class="sylius-product-name fw-bold" title="{{ item.productName }}">{{ item.productName }}</div>
+                <span class="sub header sylius-product-variant-code" title="{{ variant.code }}">
+                    {{ variant.code }}
+                </span>
+            </div>
+        </div>
+        {% if product.hasOptions() %}
+            <div class="ui horizontal divided list sylius-product-options">
+                {% for optionValue in variant.optionValues %}
+                    <div class="badge badge-pill badge-secondary" data-sylius-option-name="{{ optionValue.name }}">
+                        {{ optionValue.value }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% elseif item.variantName is not null %}
+            <div class="ui horizontal divided list">
+                <div class="item sylius-product-variant-name">
+                    {{ item.variantName }}
+                </div>
+            </div>
+        {% endif %}
+    </td>
+    <td class="text-end unit-price">
+        {{ money.format(item.unitPrice, order.currencyCode) }}
+    </td>
+    <td class="text-end unit-discount">
+        {{ money.format(item.units.first.adjustmentsTotal(unitPromotionAdjustment), order.currencyCode) }}
+    </td>
+    <td class="text-end unit-order-discount">
+        <span style="font-style: italic;">~ {{ money.format(item.units.first.adjustmentsTotal(orderPromotionAdjustment), order.currencyCode) }}</span>
+    </td>
+    <td class="text-end discounted-unit-price">
+        {{ money.format(item.fullDiscountedUnitPrice, order.currencyCode) }}
+    </td>
+    <td class="text-end quantity">
+        {{ item.quantity }}
+    </td>
+    <td class="text-end subtotal">
+        {{ money.format(subtotal, order.currencyCode) }}
+    </td>
+    <td class="text-end tax">
+        <div class="tax-excluded">{{ money.format(taxExcluded, order.currencyCode) }}</div>
+        <div class="tax-disabled text-muted">
+            <div class="tax-included">{{ money.format(taxIncluded, order.currencyCode) }}</div>
+            <small>({{ 'sylius.ui.included_in_price'|trans }})</small>
+        </div>
+    </td>
+    <td class="text-end total">
+        {{ money.format(item.total, order.currencyCode) }}
+    </td>
+</tr>

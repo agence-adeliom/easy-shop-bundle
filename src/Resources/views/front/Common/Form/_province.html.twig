@@ -1,0 +1,7 @@
+{{- form_label(form, null, {'label_attr': {'class': 'form-label'}}) -}}
+
+{% if form.vars.choices is defined %}
+    {{ form_widget(form, sylius_test_form_attribute('province-code')|sylius_merge_recursive( {'attr': {'class': 'form-select'}})) }}
+{% else %}
+    {{ form_widget(form, sylius_test_form_attribute('province-name')|sylius_merge_recursive( {'attr': {'class': 'form-control'}})) }}
+{% endif %}

@@ -1,0 +1,36 @@
+{% extends '@EasyShop/front/Account/AddressBook/layout.html.twig' %}
+
+{% form_theme form '@EasyShop/front/Form/theme.html.twig' %}
+
+{% block title %}{{ 'sylius.ui.edit_my_address'|trans }} | {{ parent() }}{% endblock %}
+
+{% block subcontent %}
+    <div class="d-block">
+
+        <h1>
+            {{ 'sylius.ui.address_book'|trans }}
+        </h1>
+        <p class="fs-5 col-md-8">
+            {{ 'sylius.ui.edit_my_address'|trans }}
+        </p>
+
+        {{ sylius_template_event('sylius.shop.account.address_book.update.after_content_header', {'address': address}) }}
+
+        {{ form_start(form, {'action': path('easy_shop_account_address_book_update', {'id': address.id}), 'method': 'PUT', 'attr': {'class': 'loadable form', 'novalidate': 'novalidate'}}) }}
+
+        {% include '@EasyShop/front/Common/Form/_address.html.twig' with {'form': form} %}
+        <div class="d-flex gap-2 justify-content-end">
+            <a href="{{ path('easy_shop_account_address_book_index') }}" class="btn btn-secondary">
+                {{ 'sylius.ui.cancel'|trans }}
+            </a>
+            <button type="submit" class="btn btn-success" {{ sylius_test_html_attribute('save-changes') }}>
+                {{ 'sylius.ui.save_changes'|trans }}
+            </button>
+        </div>
+
+        {{ sylius_template_event('sylius.shop.account.address_book.update.form', {'address': address}) }}
+
+        {{ form_row(form._token) }}
+        {{ form_end(form, {'render_rest': false}) }}
+    </div>
+{% endblock %}

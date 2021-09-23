@@ -1,0 +1,10 @@
+{% import "@EasyShop/front/Common/Macro/money.html.twig" as money %}
+
+<div id="sylius-cart-button" class="btn-group">
+    <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        {{ sylius_template_event('sylius.shop.cart.widget.button', {'cart': cart}) }}
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end">
+        {{ sylius_template_event('sylius.shop.cart.widget.popup', {'cart': cart}) }}
+    </ul>
+</div>

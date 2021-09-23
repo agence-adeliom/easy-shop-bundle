@@ -1,0 +1,55 @@
+{# templates/admin/business_stats/index.html.twig #}
+{% extends '@EasyShop/crud/promotion/new_coupon.html.twig' %}
+
+{% block page_title promotion.name ~ ' - ' ~ 'sylius.ui.generate_coupons'|trans  %}
+
+{% block content_title %}
+    {%- apply spaceless -%}
+        {{ promotion.name }}
+        <small class="d-block">{{ 'sylius.ui.generate_coupons'|trans }}</small>
+    {%- endapply -%}
+{% endblock %}
+
+{% block page_actions %}
+    <button onclick="document.forms['{{ form.vars.full_name }}'].submit()" class="btn btn-primary">{{ 'sylius.ui.generate'|trans }}</button>
+{% endblock %}
+
+{% block page_content %}
+    {% form_theme form '@EasyAdmin/crud/form_theme.html.twig' %}
+    {{ form_start(form) }}
+    <div class="row">
+        <div class="col-4">
+            {{ form_row(form.prefix) }}
+        </div>
+        <div class="col-4">
+            {{ form_row(form.codeLength) }}
+        </div>
+        <div class="col-4">
+            {{ form_row(form.suffix) }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-6">
+            {{ form_row(form.amount) }}
+        </div>
+        <div class="col-6">
+            <div class="row">
+                <div class="col-6">
+                    {{ form_row(form.expiresAt) }}
+                </div>
+                <div class="col-6">
+                    {{ form_row(form.usageLimit) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{ form_row(form._token) }}
+    <style>
+        .ui .form-check{
+            padding-left: 0;
+        }
+    </style>
+    {{ form_end(form) }}
+{% endblock %}

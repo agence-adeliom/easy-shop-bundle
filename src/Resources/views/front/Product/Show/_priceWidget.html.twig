@@ -1,0 +1,10 @@
+<div class="row d-flex align-items-baseline justify-content-between">
+    <div class="col-6">
+        {% if not product.enabledVariants.empty() %}
+            {% include '@EasyShop/front/Product/Show/_price.html.twig' %}
+        {% endif %}
+    </div>
+    <div class="col-6 text-end">
+        <span class="fst-italic">{{ product.code }}</span>
+    </div>
+</div>

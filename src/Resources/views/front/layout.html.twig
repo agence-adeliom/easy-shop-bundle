@@ -1,0 +1,64 @@
+{% set layout = app.request.attributes.get('_easy_page_layout') -%}
+{% extends layout.resource %}
+
+{% block title %}{{ sylius.channel.name }}{% endblock %}
+{% block header_title %}Welcome to Easy Shop !{% endblock %}
+
+{% block easy_page_head_metas %}
+    {% block metatags %}
+    {% endblock %}
+    {{ sylius_template_event('sylius.shop.layout.head') }}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {% for asset_css in layout.assets_css %}
+        <link rel="stylesheet" href="{{ asset(asset_css) }}">
+    {% endfor %}
+    {% for asset_webpack in layout.assets_webpack %}
+        {{ encore_entry_link_tags('asset_webpack') }}
+    {% endfor %}
+    {{ sylius_template_event('sylius.shop.layout.stylesheets') }}
+{% endblock %}
+
+{% block easy_page_page_header %}
+    <header class="d-flex align-items-center pb-3 mb-5 border-bottom">
+        <a href="/" class="d-flex align-items-center text-dark text-decoration-none">
+            <span class="fs-4">{{ block("header_title") }}</span>
+        </a>
+        <div class="flex-grow-1">
+            {{ sylius_template_event('sylius.shop.layout.header') }}
+        </div>
+    </header>
+{% endblock %}
+
+{% block easy_page_page_content %}
+    {{ sylius_template_event('sylius.shop.layout.before_body') }}
+
+    {% include '@EasyShop/front/_flashes.html.twig' %}
+
+    {{ sylius_template_event('sylius.shop.layout.before_content') }}
+    {% block content %}
+    {% endblock %}
+    {{ sylius_template_event('sylius.shop.layout.after_content') }}
+
+    {{ sylius_template_event('sylius.shop.layout.after_body') }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% for asset_js in layout.assets_js %}
+        <script type="text/javascript" src="{{ asset(asset_js) }}"></script>
+    {% endfor %}
+    {% for asset_webpack in layout.assets_webpack %}
+        {{ encore_entry_script_tags('asset_webpack') }}
+    {% endfor %}
+    {{ sylius_template_event('sylius.shop.layout.javascripts') }}
+
+    <script>
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
+{% endblock %}

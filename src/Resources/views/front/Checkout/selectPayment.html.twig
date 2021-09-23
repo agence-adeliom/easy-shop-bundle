@@ -1,0 +1,39 @@
+{% extends '@EasyShop/front/Checkout/layout.html.twig' %}
+
+{% form_theme form '@EasyShop/front/Form/theme.html.twig' %}
+
+{% block title %}{{ 'sylius.ui.payment'|trans }} | {{ parent() }}{% endblock %}
+
+{% block content %}
+    {{ sylius_template_event(['sylius.shop.checkout.select_payment.steps', 'sylius.shop.checkout.steps'], _context|merge({'active': 'select_payment', 'orderTotal': order.total})) }}
+
+    <div class="row">
+        <div class="col-12 col-md-8">
+            {{ sylius_template_event('sylius.shop.checkout.select_payment.before_form', {'order': order}) }}
+
+            {{ form_start(form, {'action': path('easy_shop_checkout_select_payment'), 'attr': {'class': 'loadable form', 'novalidate': 'novalidate'}}) }}
+
+            {{ form_errors(form) }}
+            <input type="hidden" name="_method" value="PUT" />
+
+            {% include '@EasyShop/front/Checkout/SelectPayment/_form.html.twig' %}
+            <div class="ui hidden divider"></div>
+
+            {{ sylius_template_event('sylius.shop.checkout.select_payment.before_navigation', {'order': order}) }}
+            {% include '@EasyShop/front/Checkout/SelectPayment/_navigation.html.twig' %}
+
+            {{ form_row(form._token) }}
+            {{ form_end(form, {'render_rest': false}) }}
+
+
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    {{ sylius_template_event(['sylius.shop.checkout.select_payment.sidebar', 'sylius.shop.checkout.sidebar'], _context) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

@@ -1,0 +1,18 @@
+# This file is part of the Sylius package.
+# (c) Paweł Jędrzejewski
+
+easy_shop_ajax_user:
+    resource: "@EasyShopBundle/Resources/config/routing/ajax/user.yml"
+    prefix: /users
+
+easy_shop_ajax_cart:
+    resource: "@EasyShopBundle/Resources/config/routing/ajax/cart.yml"
+    prefix: /cart
+
+easy_shop_ajax_render_province_form:
+    path: /render-province-form
+    methods: [GET]
+    defaults:
+        _controller: sylius.controller.province:choiceOrTextFieldFormAction
+        _sylius:
+            template: "@EasyShop/front/Common/Form/_province.html.twig"

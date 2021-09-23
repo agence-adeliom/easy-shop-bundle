@@ -1,0 +1,32 @@
+{% import "@EasyShop/front/Common/Macro/money.html.twig" as money %}
+
+{% set product_variant = item.variant %}
+
+<tr {{ sylius_test_html_attribute('cart-product-row', item.productName) }} class="align-middle">
+    <td class="single line" {{ sylius_test_html_attribute('cart-item', loop_index|default(null) ) }}>
+        {% include '@EasyShop/front/Product/_info.html.twig' with {'variant': product_variant} %}
+    </td>
+    <td class="text-end">
+        {% if item.unitPrice != item.discountedUnitPrice %}
+            <span class="sylius-regular-unit-price" {{ sylius_test_html_attribute('cart-product-regular-unit-price') }}>
+                <span class="old-price">{{ money.convertAndFormat(item.unitPrice) }}</span>
+            </span>
+        {% endif %}
+        <span class="sylius-unit-price" {{ sylius_test_html_attribute('cart-product-unit-price', item.productName) }}>{{ money.convertAndFormat(item.discountedUnitPrice) }}</span>
+    </td>
+    <td class="text-center">
+        <span class="sylius-quantity ui form">
+            {{ form_widget(form.quantity, sylius_test_form_attribute('cart-item-quantity-input', item.productName)|sylius_merge_recursive({'attr': {'form': main_form, 'class': "form-control"}})) }}
+        </span>
+    </td>
+    <td class="text-center">
+        <form action="{{ path('easy_shop_cart_item_remove', {'id': item.id}) }}" method="post">
+            <input type="hidden" name="_method" value="DELETE" />
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token(item.id) }}" />
+            <button type="submit" class="btn btn-danger" {{ sylius_test_html_attribute('cart-remove-button', item.productName) }} >&times;</button>
+        </form>
+    </td>
+    <td class="text-end">
+        <span class="sylius-total" {{ sylius_test_html_attribute('cart-product-subtotal') }}>{{ money.convertAndFormat(item.subtotal) }}</span>
+    </td>
+</tr>

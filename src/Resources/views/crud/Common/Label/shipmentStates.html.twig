@@ -1,0 +1,7 @@
+{% if field is defined %}
+    {% set data = field.value %}
+{% endif %}
+
+{% set value = 'sylius.ui.' ~ data %}
+
+{{ include('@EasyShop/crud/Common/Label/ShippingState/' ~ data ~ '.html.twig') }}

@@ -1,0 +1,15 @@
+{% include '@EasyShop/front/Common/Order/_addresses.html.twig' %}
+{% include '@EasyShop/front/Common/Order/_table.html.twig' %}
+
+<div class="row mb-3">
+    <div class="col-12 col-sm-6" id="sylius-payments">
+        <div class="card">
+            {% include '@EasyShop/front/Common/Order/_payments.html.twig' %}
+        </div>
+    </div>
+    <div class="col-12 col-sm-6" id="sylius-shipments">
+        <div class="card">
+            {% include '@EasyShop/front/Common/Order/_shipments.html.twig' %}
+        </div>
+    </div>
+</div>

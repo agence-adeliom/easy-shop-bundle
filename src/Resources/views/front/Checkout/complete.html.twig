@@ -1,0 +1,34 @@
+{% extends '@EasyShop/front/Checkout/layout.html.twig' %}
+
+{% form_theme form '@EasyShop/front/Form/theme.html.twig' %}
+
+{% block title %}{{ 'sylius.ui.complete'|trans }} | {{ parent() }}{% endblock %}
+
+{% block content %}
+    {{ sylius_template_event(['sylius.shop.checkout.complete.steps', 'sylius.shop.checkout.steps'], _context|merge({'active': 'complete', 'orderTotal': order.total})) }}
+
+    <div class="d-block">
+        {% include '@EasyShop/front/Checkout/Complete/_header.html.twig' %}
+
+        {{ sylius_template_event('sylius.shop.checkout.complete.after_content_header', {'order': order}) }}
+
+        {% include '@EasyShop/front/_flashes.html.twig' %}
+
+        {{ form_start(form, {'action': path('easy_shop_checkout_complete'), 'attr': {'class': 'loadable form', 'novalidate': 'novalidate'}}) }}
+            {{ form_errors(form) }}
+            <input type="hidden" name="_method" value="PUT" />
+
+            {{ sylius_template_event('sylius.shop.checkout.complete.summary', _context) }}
+
+            {% include '@EasyShop/front/Checkout/Complete/_form.html.twig' %}
+
+            {{ sylius_template_event('sylius.shop.checkout.complete.before_navigation', {'order': order}) }}
+
+            <div class="text-center">
+                {% include '@EasyShop/front/Checkout/Complete/_navigation.html.twig' %}
+            </div>
+
+            {{ form_row(form._token) }}
+        {{ form_end(form, {'render_rest': false}) }}
+    </div>
+{% endblock %}

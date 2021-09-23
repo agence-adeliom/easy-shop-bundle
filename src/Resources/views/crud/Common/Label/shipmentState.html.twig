@@ -1,0 +1,19 @@
+{% if field is defined %}
+    {% set data = field.value %}
+{% endif %}
+
+{%
+    set viewOptions = {
+    cancelled: { icon: 'fa-ban', color: 'danger' },
+    cart: { icon: 'fa-adjust', color: 'secondary' },
+    ready: { icon: 'fa-clock', color: 'info' },
+    shipped: { icon: 'fa-plane', color: 'success' },
+}
+%}
+
+{% set value = 'sylius.ui.' ~ data %}
+
+<span class="badge badge-{{ viewOptions[data]['color'] }}">
+    <i class="fa {{ viewOptions[data]['icon'] }}"></i>
+    {{ value|trans }}
+</span>

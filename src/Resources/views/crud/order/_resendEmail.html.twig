@@ -1,0 +1,11 @@
+<div class="d-block">
+    {% set resendConfirmationUrl = ea_url()
+        .setController(ea.crud.controllerFqcn)
+        .setAction('resendOrderConfirmationEmail')
+        .setEntityId(order.id)
+        .set("_csrf_token", csrf_token(order.id))
+    %}
+    <a href="{{ resendConfirmationUrl }}" class="btn btn-outline-secondary d-block w-100" {{ sylius_test_html_attribute('resend-order-confirmation-email') }}>
+        <i class="fa fa-send"></i> {{ 'sylius.ui.resend_the_order_confirmation_email'|trans }}
+    </a>
+</div>

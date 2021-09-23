@@ -1,0 +1,71 @@
+{% import '@EasyShop/SyliusUiBundle/Macro/labels.html.twig' as label %}
+
+{% set cart = constant('Sylius\\Component\\Shipping\\Model\\Shipment::STATE_CART') %}
+{% set shipped = constant('Sylius\\Component\\Shipping\\Model\\Shipment::STATE_SHIPPED') %}
+
+<div class="item mb-2">
+    <div class="content mb-2">
+        {% include '@EasyShop/crud/Common/Label/shipmentState.html.twig' with {'data': shipment.state} %}
+    </div>
+    <h5>
+        {{ shipment.method }}
+    </h5>
+    <div class="description">
+        <i class="fa fa-globe"></i> {{ shipment.method.zone }}
+    </div>
+
+    {% if shipment.shippedAt is not empty %}
+        <div class="mt-1">
+            {{ 'sylius.ui.shipped_at'|trans }}: <span class="shipped-at-date">{{ shipment.shippedAt|date('d/m/Y H:i:s') }}</span>
+        </div>
+    {% endif %}
+
+    {% if sm_can(shipment, 'ship', 'sylius_shipment') %}
+        <div class="d-block mt-3">
+            {% set shipmentTrackingUrl = ea_url()
+                .setController(ea.crud.controllerFqcn)
+                .setAction('shipmentTracking')
+                .setEntityId(order.id)
+                .set("shipment_id", shipment.id)
+            %}
+            <form action="{{ shipmentTrackingUrl }}" novalidate="novalidate" method="post">
+                <input type="hidden" name="_method" value="PUT">
+                <div class="input-group mb-3 d-flex">
+                    <input type="text" class="form-control" name="tracking" placeholder="{{ 'sylius.ui.tracking_code'|trans ~ '...' }}">
+                    <button class="btn btn-primary" style="height: unset" type="submit"><i class="fa fa-plane"></i> {{ 'sylius.ui.ship'|trans }}</button>
+                </div>
+            </form>
+        </div>
+    {% endif %}
+    {% if shipment.tracking is not empty %}
+        <div class="mt-1">
+            <p>
+                <i class="fa fa-plane"></i> {{ 'sylius.ui.tracking_code'|trans|upper }} :
+                <code>{{ shipment.tracking }}</code>
+            </p>
+        </div>
+    {% endif %}
+    {% if shipment.state != cart %}
+        {% set shipmentUrl = ea_url()
+            .setController(ea.crud.controllerFqcn)
+            .setAction('showShipment')
+            .setEntityId(order.id)
+            .set("shipmentId", shipment.id)
+        %}
+        <a class="btn btn-outline-secondary d-block w-100" style="color: gray; margin-top: 10px;" href="{{ shipmentUrl }}" {{ sylius_test_html_attribute('shipment-show-button') }}>
+            <i class="fa fa-search"></i> {{ 'sylius.ui.show'|trans }}
+        </a>
+    {% endif %}
+    {% if shipment.state == shipped %}
+        {% set resendConfirmationUrl = ea_url()
+            .setController(ea.crud.controllerFqcn)
+            .setAction('resendShipmentConfirmationEmail')
+            .setEntityId(order.id)
+            .set("_csrf_token", csrf_token(shipment.id))
+            .set("shipment_id", shipment.id)
+        %}
+        <a href="{{ resendConfirmationUrl }}" class="btn btn-outline-secondary d-flex align-items-center gap-1 justify-content-center w-100" style="margin: 7px 0 0;" {{ sylius_test_html_attribute('resend-shipment-confirmation-email') }}>
+            <i class="fa fa-send"></i> <span class="text-wrap">{{ 'sylius.ui.resend_the_shipment_confirmation_email'|trans }}</span>
+        </a>
+    {% endif %}
+</div>

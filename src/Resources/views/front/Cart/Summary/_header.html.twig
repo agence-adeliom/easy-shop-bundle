@@ -1,0 +1,16 @@
+{% import '@EasyShop/SyliusUiBundle/Macro/headers.html.twig' as headers %}
+
+<div class="d-flex justify-content-between align-items-end mb-5">
+    <div class="flex-grow-1">
+        {{ headers.default(header|trans, 'cart', 'sylius.ui.edit_your_items_apply_coupon_or_proceed_to_the_checkout'|trans) }}
+    </div>
+    <div>
+        <form method="post" action="{{ path('easy_shop_cart_clear') }}" >
+            <input type="hidden" name="_method" value="DELETE" />
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token(cart.id) }}" />
+            <button type="submit" id="sylius-cart-clear" {{ sylius_test_html_attribute('cart-clear-button') }} class="btn btn-outline-danger">
+                {{ 'sylius.ui.clear_cart'|trans }}
+            </button>
+        </form>
+    </div>
+</div>

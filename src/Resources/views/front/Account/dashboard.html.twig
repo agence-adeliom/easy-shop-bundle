@@ -1,0 +1,76 @@
+{% extends '@EasyShop/front/Account/layout.html.twig' %}
+
+{% block title %}{{ 'sylius.ui.my_account'|trans }} | {{ parent() }}{% endblock %}
+
+{% block breadcrumb %}
+<nav id="easy_seo-breadcrumbs" style="--bs-breadcrumb-divider: '{{ easy_seo_breadcrumb.separator }}';" aria-label="breadcrumb">
+    <ol itemscope itemtype="http://schema.org/BreadcrumbList" class="{{ easy_seo_breadcrumb.class }}">
+        <li itemprop="itemListElement" class="{{ easy_seo_breadcrumb.item_class }}" aria-current="page" itemscope itemtype="http://schema.org/ListItem">
+            <a itemprop="item" href="{{ path('sylius_shop_homepage') }}" class="{{ easy_seo_breadcrumb.link_class }}">
+                <span itemprop="name">{{ 'sylius.ui.home'|trans }}</span>
+            </a>
+        </li>
+
+        <li itemprop="itemListElement" class="{{ easy_seo_breadcrumb.item_class }} {{ easy_seo_breadcrumb.current_class }}" aria-current="page" itemscope itemtype="http://schema.org/ListItem">
+            <span itemprop="item" href="{{ path('sylius_shop_homepage') }}" class="{{ easy_seo_breadcrumb.link_class }}">
+                <span itemprop="name">{{ 'sylius.ui.my_account'|trans }}</span>
+            </span>
+        </li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block subcontent %}
+    <h1>
+        {{ 'sylius.ui.my_account'|trans }}
+    </h1>
+    <p class="fs-5 col-md-8">
+        {{ 'sylius.ui.manage_your_personal_information_and_preferences'|trans }}
+    </p>
+
+    {{ sylius_template_event('sylius.shop.account.dashboard.after_content_header', {'customer': customer}) }}
+
+    <div id="customer-information" {{ sylius_test_html_attribute('customer-information') }}>
+        <div class="item mb-1">
+            {{ customer.fullName }}
+        </div>
+        <div class="item mb-3">
+            <strong>
+                {{ customer.email }}
+            </strong>
+        </div>
+        <div class="item">
+            {% if customer.user.verified %}
+                <span class="text-success d-inline-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                      <path d="M13.485 1.431a1.473 1.473 0 0 1 2.104 2.062l-7.84 9.801a1.473 1.473 0 0 1-2.12.04L.431 8.138a1.473 1.473 0 0 1 2.084-2.083l4.111 4.112 6.82-8.69a.486.486 0 0 1 .04-.045z"/>
+                    </svg>
+                    &nbsp;
+                    {{ 'sylius.ui.verified'|trans }}
+                </span>
+            {% else %}
+                <span class="text-danger d-inline-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                      <path d="M1.293 1.293a1 1 0 0 1 1.414 0L8 6.586l5.293-5.293a1 1 0 1 1 1.414 1.414L9.414 8l5.293 5.293a1 1 0 0 1-1.414 1.414L8 9.414l-5.293 5.293a1 1 0 0 1-1.414-1.414L6.586 8 1.293 2.707a1 1 0 0 1 0-1.414z"/>
+                    </svg>
+                    &nbsp;
+                    {{ 'sylius.ui.not_verified'|trans }}
+                </span>
+            {% endif %}
+        </div>
+    </div>
+
+    {{ sylius_template_event('sylius.shop.account.dashboard.after_information', {'customer': customer}) }}
+
+    <div class="d-flex mt-3">
+        <a href="{{ path('easy_shop_account_profile_update') }}" class="btn btn-link">{{ 'sylius.ui.edit'|trans }}</a>
+        <a href="{{ path('easy_shop_account_change_password') }}" class="btn btn-link">{{ 'sylius.ui.change_password'|trans }}</a>
+        {% if not customer.user.verified %}
+            <form class="item" id="verification-form" {{ sylius_test_html_attribute('verification-form') }} action="{{ path('easy_shop_user_request_verification_token') }}" method="post">
+                <button type="submit" class="btn btn-link" {{ sylius_test_html_attribute('verification-button') }}>
+                    {{ 'sylius.ui.verify'|trans }}
+                </button>
+            </form>
+        {% endif %}
+    </div>
+{% endblock %}

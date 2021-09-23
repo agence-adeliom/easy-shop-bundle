@@ -1,0 +1,311 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title 'sylius.ui.sales_summary'|trans  %}
+
+{% block page_content %}
+{% import "@EasyShop/front/Common/Macro/money.html.twig" as money %}
+
+{% set labels, values = sales_summary.intervals, sales_summary.sales %}
+{% set interval = app.request().query.get('interval', 'month') %}
+{% set type = app.request().query.get('type', 'year') %}
+{% set startDate = app.request().query.get('startDate', 'first day of january this year') %}
+{% set endDate = app.request().query.get('endDate', ('tomorrow')) %}
+
+{% set jumps = {
+    '2weeks': '15 day',
+    'month': '1 month',
+    'year': '1 year',
+} %}
+
+<div class="row">
+    <div class="col-12 mb-4 col-xxl-8">
+        <div class="card stats">
+            <div class="card-header d-flex justify-content-between align-items-center bg-secondary">
+                <span>
+                    <span class="fs-4">{{ 'sylius.ui.sales_summary'|trans }}</span>
+                    <br>
+                    <small>{{ 'sylius.ui.from'|trans }} {{ startDate|date('d/m/Y') }} {{ 'sylius.ui.to'|trans }} {{ endDate|date('d/m/Y') }}</small>
+                </span>
+                <div class="btn-group">
+                    <a
+                            class="btn btn-{{ type == "2weeks" ? 'primary' : "secondary" }}"
+                            href="{{ ea_url()
+                                .setController(ea.crud.controllerFqcn)
+                                .setAction('statistics')
+                                .set("interval", 'day')
+                                .set("type", '2weeks')
+                                .set("startDate", endDate|date_modify("-" ~ jumps['2weeks'])|date('Y-m-d'))
+                                .set("endDate", endDate|date('Y-m-d'))
+                                .set("channelCode", channel.channel_code)}}"
+                    >
+                        {{ 'sylius.ui.statistics.2weeks'|trans }}
+                    </a>
+                    <a
+                            class="btn btn-{{ type == "month" ? 'primary' : "secondary" }}"
+                            href="{{ ea_url()
+                                .setController(ea.crud.controllerFqcn)
+                                .setAction('statistics')
+                                .set("interval", 'day')
+                                .set("type", 'month')
+                                .set("startDate", endDate|date_modify("-" ~ jumps['month'])|date('Y-m-d'))
+                                .set("endDate", endDate|date('Y-m-d'))
+                                .set("channelCode", channel.channel_code)}}"
+                    >
+                        {{ 'sylius.ui.statistics.month'|trans }}
+                    </a>
+                    <a
+                            class="btn btn-{{ type == "year" ? 'primary' : "secondary" }}"
+                            href="{{ ea_url()
+                                .setController(ea.crud.controllerFqcn)
+                                .setAction('statistics')
+                                .set("interval", 'month')
+                                .set("type", 'year')
+                                .set("startDate", endDate|date_modify("-" ~ jumps['year'])|date('Y-m-d'))
+                                .set("endDate", endDate|date('Y-m-d'))
+                                .set("channelCode", channel.channel_code)}}"
+                    >
+                        {{ 'sylius.ui.statistics.year'|trans }}
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row row-cols-3 row-cols-md-4 g-4">
+                    <div class="col stats-column">
+                        <div class="card statistic">
+                            <div class="card-body text-center">
+                                <div id="total-sales" data-stats-summary="total_sales" class="fs-2 value" style="padding-bottom: 10px;">
+                                    {{ statistics.total_sales }}
+                                </div>
+                                <div class="label">
+                                    {{ 'sylius.ui.sales'|trans }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col stats-column">
+                        <div class="card statistic">
+                            <div class="card-body text-center">
+                                <div id="new-orders" data-stats-summary="number_of_new_orders" class="fs-2 value" style="padding-bottom: 10px;">
+                                    {{ statistics.number_of_new_orders }}
+                                </div>
+                                <div class="label">
+                                    {{ 'sylius.ui.paid_orders'|trans }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col stats-column">
+                        <div class="card statistic">
+                            <div class="card-body text-center">
+                                <div id="new-customers" data-stats-summary="number_of_new_customers" class="fs-2 value" style="padding-bottom: 10px;">
+                                    {{ statistics.number_of_new_customers }}
+                                </div>
+                                <div class="label">
+                                    {{ 'sylius.ui.customers'|trans }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col stats-column">
+                        <div class="card statistic">
+                            <div class="card-body text-center">
+                                <div id="average-order-value" data-stats-summary="average_order_value" class="fs-2 value" style="padding-bottom: 10px;">
+                                    {{ statistics.average_order_value }}
+                                </div>
+                                <div class="label">
+                                    {{ 'sylius.ui.average_order_value'|trans }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            {% if labels and values %}
+                <div class="stats-graph position-relative mb-3 mt-3">
+                    <a id="navigation-prev"
+                            class="navigation navigation-prev position-absolute top-50" style="left: 1rem; margin-top: -1em"
+                           href="{{ ea_url()
+                               .setController(ea.crud.controllerFqcn)
+                               .setAction('statistics')
+                               .set("interval", interval)
+                               .set("type", type)
+                               .set("navigation", 'prev')
+                               .set("startDate", startDate|date_modify("-" ~ jumps[type])|date('Y-m-d'))
+                               .set("endDate", startDate|date('Y-m-d'))
+                               .set("channelCode", channel.channel_code)}}"
+                    >
+                        <i class="fa fa-angle-left fa-2x"></i>
+                    </a>
+                    <div class="px-4">
+                        <canvas
+                                id="stats-graph"
+                                data-labels="{{ labels|json_encode() }}"
+                                data-values="{{ values|json_encode() }}"
+                                data-currency="{{ channel.base_currency_code|sylius_currency_symbol }}">
+                        </canvas>
+                    </div>
+                    <a id="navigation-next"
+                            class="navigation navigation-next position-absolute top-50" style="right: 1rem; margin-top: -1em"
+                           href="{{ ea_url()
+                               .setController(ea.crud.controllerFqcn)
+                               .setAction('statistics')
+                               .set("interval", interval)
+                               .set("type", type)
+                               .set("navigation", 'next')
+                               .set("startDate", endDate|date('Y-m-d'))
+                               .set("endDate", endDate|date_modify("+" ~ jumps[type])|date('Y-m-d'))
+                               .set("channelCode", channel.channel_code)}}"
+                    >
+                        <i class="fa fa-angle-right fa-2x"></i>
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-12 col-xxl-4">
+        <div class="row">
+            <div class="col-12 col-sm-6 col-xxl-12 mb-4">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <span class="fs-4">{{ 'sylius.ui.new_customers'|trans }}</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <ul class="list-group-flush p-0 mb-1">
+                            {% for customer in latest.customer %}
+                                <li class="list-group-item d-flex justify-content-between align-items-end">
+                                    <div>
+                                        <strong>{{ customer.fullName }}</strong><br>
+                                        <div class="text-muted">{{ customer.email }}</div>
+                                    </div>
+                                    <div>
+                                        <a href="{{ ea_url()
+                                            .setController(ea.crud.controllerFqcn)
+                                            .setAction('showCustomer')
+                                            .set("customerId", customer.id) }}" class="btn btn-outline-secondary">{{ 'sylius.ui.show'|trans }}</a>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-xxl-12 mb-4">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <span class="fs-4">{{ 'sylius.ui.new_orders'|trans }}</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-borderless mb-0 border-bottom-0">
+                            <thead>
+                            <th class="border-bottom">{{ 'sylius.ui.order'|trans }}</th>
+                            <th class="border-bottom text-end">{{ 'sylius.ui.items'|trans }}</th>
+                            <th class="border-bottom text-end">{{ 'sylius.ui.total'|trans }}</th>
+                            <th class="border-bottom"></th>
+                            </thead>
+                            <tbody>
+                            {% for order in latest.order %}
+                                <tr class="align-middle">
+                                    <td class="{{ loop.last ? 'border-bottom-0' : 'border-bottom' }}">
+                                        <strong>{{ order.customer.fullName }}</strong><br>
+                                        <div class="text-muted">{{ order.customer.email }}</div>
+                                    </td>
+                                    <td class="{{ loop.last ? 'border-bottom-0' : 'border-bottom' }} text-end">
+                                        {{ order.totalQuantity }}
+                                    </td>
+                                    <td class="{{ loop.last ? 'border-bottom-0' : 'border-bottom' }} text-end">
+                                        {{ money.format(order.total, order.currencyCode) }}
+                                    </td>
+                                    <td class="{{ loop.last ? 'border-bottom-0' : 'border-bottom' }}">
+                                        <a href="{{ ea_url()
+                                            .setController(ea.crud.controllerFqcn)
+                                            .setEntityId(order.id)
+                                            .setAction("detail")}}" class="btn btn-outline-secondary">{{ 'sylius.ui.show'|trans }}</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3/dist/chart.min.js"></script>
+<script>
+
+    function convertHex(hexCode,opacity){
+        var hex = hexCode.replace('#','');
+
+        if (hex.length === 3) {
+            hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+        }
+
+        var r = parseInt(hex.substring(0,2), 16),
+            g = parseInt(hex.substring(2,4), 16),
+            b = parseInt(hex.substring(4,6), 16);
+
+        return 'rgba('+r+','+g+','+b+','+opacity+')';
+    }
+
+    var chartCanvas = document.getElementById('stats-graph');
+    var chartCanvasContext = chartCanvas.getContext('2d');
+    var labels = JSON.parse(chartCanvas.getAttribute('data-labels') || '[]');
+    var values = JSON.parse(chartCanvas.getAttribute('data-values') || '[]');
+    var currency = chartCanvas.getAttribute('data-currency') || '';
+
+    var style = getComputedStyle(document.body)
+    var primaryColor = style.getPropertyValue('--bs-primary');
+
+    var statsGraph = new Chart(chartCanvasContext, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [{
+                data: values,
+                backgroundColor: convertHex(primaryColor, 0.5),
+                borderColor: primaryColor,
+                borderWidth: 1,
+            }],
+        },
+        options: {
+            scales: {
+                y: {
+                    gridLines: {
+                        color: 'rgba(0, 0, 0, 0.05)',
+                    },
+                    ticks: {
+                        beginAtZero: true,
+                        callback: function (value) {
+                            return value + ' ' + currency;
+                        },
+                    },
+                },
+                x: {
+                    gridLines: {
+                        display: false,
+                    },
+                },
+            },
+            layout: {
+                padding: {
+                    left: 20,
+                    right: 20,
+                },
+            },
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: false,
+                }
+            }
+        },
+    });
+
+</script>
+{% endblock %}
+

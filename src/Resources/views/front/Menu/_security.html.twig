@@ -1,0 +1,10 @@
+<div class="btn-group">
+    {% if is_granted('ROLE_USER') and app.user.customer is defined %}
+        <div class="btn btn-outline-dark pe-none" {{ sylius_test_html_attribute('full-name') }}>{{ 'sylius.ui.hello'|trans }} {{ app.user.customer.fullName }}!</div>
+        <a href="{{ path('easy_shop_account_dashboard') }}" class="btn btn-success">{{ 'sylius.ui.my_account'|trans }}</a>
+        <a href="{{ path('easy_shop_logout') }}" class="btn btn-danger sylius-logout-button" {{ sylius_test_html_attribute('logout-button') }}>{{ 'sylius.ui.logout'|trans }}</a>
+    {% else %}
+        <a href="{{ path('easy_shop_login') }}" class="btn btn-primary">{{ 'sylius.ui.login'|trans }}</a>
+        <a href="{{ path('easy_shop_register') }}" class="btn btn-primary">{{ 'sylius.ui.register'|trans }}</a>
+    {% endif %}
+</div>

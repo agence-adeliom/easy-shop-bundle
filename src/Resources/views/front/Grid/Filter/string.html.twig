@@ -1,0 +1,8 @@
+<div class="sylius-filters__group">
+    {% if form.type is defined %}
+        {{ form_row(form.type, {'label': filter.label}) }}
+    {% endif %}
+
+    {% set attr = form.value.vars.attr|merge({'class': form.value.vars.attr.class|default ~ ' form-control', 'placeholder': form.value.vars.label}) %}
+    {{ form_row(form.value, {attr: attr, 'label': form.type is defined ? form.value.vars.label : filter.label}) }}
+</div>
