@@ -34,7 +34,6 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Valid;
-use function Clue\StreamFilter\fun;
 
 final class PromotionActionType extends AbstractType
 {
@@ -68,7 +67,7 @@ final class PromotionActionType extends AbstractType
             ])
         ;
         foreach ($this->actions as $form => $label){
-            $options = [
+            $actionOptions = [
                 "label" => false,
                 //"mapped" => false,
                 'constraints' => [
@@ -76,11 +75,11 @@ final class PromotionActionType extends AbstractType
                 ]
             ];
             if($form == 'unit_fixed_discount'){
-                $builder->add($form, ChannelBasedUnitFixedDiscountConfigurationType::class, $options);
+                $builder->add($form, ChannelBasedUnitFixedDiscountConfigurationType::class, $actionOptions);
             }elseif($form == 'unit_percentage_discount'){
-                $builder->add($form, ChannelBasedUnitPercentageDiscountConfigurationType::class, $options);
+                $builder->add($form, ChannelBasedUnitPercentageDiscountConfigurationType::class, $actionOptions);
             }else{
-                $builder->add($form, $this->formTypeRegistry->get($form, "default"), $options);
+                $builder->add($form, $this->formTypeRegistry->get($form, "default"), $actionOptions);
             }
         }
 
@@ -127,18 +126,18 @@ final class PromotionActionType extends AbstractType
             ]);
             $form->add('type', HiddenType::class);
 
-            $options = [
+            $actionOptions = [
                 "label" => false,
                 'constraints' => [
                     new Valid()
                 ]
             ];
             if($data["type"] == 'unit_fixed_discount'){
-                $form->add("configuration", ChannelBasedUnitFixedDiscountConfigurationType::class, $options);
+                $form->add("configuration", ChannelBasedUnitFixedDiscountConfigurationType::class, $actionOptions);
             }elseif($data["type"] == 'unit_percentage_discount'){
-                $form->add("configuration", ChannelBasedUnitPercentageDiscountConfigurationType::class, $options);
+                $form->add("configuration", ChannelBasedUnitPercentageDiscountConfigurationType::class, $actionOptions);
             }else{
-                $form->add("configuration", $this->formTypeRegistry->get($data["type"], "default"), $options);
+                $form->add("configuration", $this->formTypeRegistry->get($data["type"], "default"), $actionOptions);
             }
         });
     }

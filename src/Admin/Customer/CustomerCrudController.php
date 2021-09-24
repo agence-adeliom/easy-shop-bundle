@@ -109,7 +109,7 @@ abstract class CustomerCrudController extends SyliusCrudController
                 'sylius.gender.male' => CustomerInterface::MALE_GENDER,
                 'sylius.gender.female' => CustomerInterface::FEMALE_GENDER,
             ])
-            ->setFormTypeOption('empty_data', CustomerInterface::UNKNOWN_GENDER);
+            ->setFormTypeOption('empty_data', CustomerInterface::UNKNOWN_GENDER)
         ;
         yield DateField::new("birthday", 'sylius.form.customer.birthday')->hideOnIndex()
             ->setFormType(BirthdayType::class)

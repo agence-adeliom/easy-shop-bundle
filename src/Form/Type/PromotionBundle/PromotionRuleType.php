@@ -66,20 +66,20 @@ final class PromotionRuleType extends AbstractType
             ])
         ;
         foreach ($this->rules as $form => $label){
-            $options = [
+            $ruleOptions = [
                 "label" => false,
                 'constraints' => [
                     new Valid()
                 ]
             ];
             if($form == "contains_product"){
-                $builder->add($form, \Adeliom\EasyShopBundle\Form\Type\PromotionBundle\ContainsProductConfigurationType::class, $options);
+                $builder->add($form, \Adeliom\EasyShopBundle\Form\Type\PromotionBundle\ContainsProductConfigurationType::class, $ruleOptions);
             }elseif($form == "has_taxon"){
-                $builder->add($form, \Adeliom\EasyShopBundle\Form\Type\PromotionBundle\HasTaxonConfigurationType::class, $options);
+                $builder->add($form, \Adeliom\EasyShopBundle\Form\Type\PromotionBundle\HasTaxonConfigurationType::class, $ruleOptions);
             }elseif($form == "total_of_items_from_taxon"){
-                $builder->add($form, \Adeliom\EasyShopBundle\Form\Type\PromotionBundle\ChannelBasedTotalOfItemsFromTaxonConfigurationType::class, $options);
+                $builder->add($form, \Adeliom\EasyShopBundle\Form\Type\PromotionBundle\ChannelBasedTotalOfItemsFromTaxonConfigurationType::class, $ruleOptions);
             }else{
-                $builder->add($form, $this->formTypeRegistry->get($form, "default"), $options);
+                $builder->add($form, $this->formTypeRegistry->get($form, "default"), $ruleOptions);
             }
         }
 
@@ -126,20 +126,20 @@ final class PromotionRuleType extends AbstractType
             ]);
             $form->add('type', HiddenType::class);
 
-            $options = [
+            $ruleOptions = [
                 "label" => false,
                 'constraints' => [
                     new Valid()
                 ]
             ];
             if($data["type"] == "contains_product"){
-                $form->add('configuration', \Adeliom\EasyShopBundle\Form\Type\PromotionBundle\ContainsProductConfigurationType::class, $options);
+                $form->add('configuration', \Adeliom\EasyShopBundle\Form\Type\PromotionBundle\ContainsProductConfigurationType::class, $ruleOptions);
             }elseif($form == "has_taxon"){
-                $form->add('configuration', \Adeliom\EasyShopBundle\Form\Type\PromotionBundle\HasTaxonConfigurationType::class, $options);
+                $form->add('configuration', \Adeliom\EasyShopBundle\Form\Type\PromotionBundle\HasTaxonConfigurationType::class, $ruleOptions);
             }elseif($form == "total_of_items_from_taxon"){
-                $form->add('configuration', \Adeliom\EasyShopBundle\Form\Type\PromotionBundle\ChannelBasedTotalOfItemsFromTaxonConfigurationType::class, $options);
+                $form->add('configuration', \Adeliom\EasyShopBundle\Form\Type\PromotionBundle\ChannelBasedTotalOfItemsFromTaxonConfigurationType::class, $ruleOptions);
             }else{
-                $form->add('configuration', $this->formTypeRegistry->get($data["type"], "default"), $options);
+                $form->add('configuration', $this->formTypeRegistry->get($data["type"], "default"), $ruleOptions);
             }
         });
     }
