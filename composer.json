@@ -1,12 +1,40 @@
 {
     "name": "agence-adeliom/easy-shop-bundle",
     "type": "symfony-bundle",
+    "description": "Symfony Shop bundle for EasyAdmin based on Sylius",
+    "keywords": ["symfony", "shop", "e-commerce", "sylius", "easyadmin"],
+    "homepage": "https://github.com/agence-adeliom/easy-shop-bundle",
+    "support": {
+        "issues": "https://github.com/agence-adeliom/easy-shop-bundle/issues",
+        "source": "https://github.com/agence-adeliom/easy-shop-bundle"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Arnaud RITTI",
+            "homepage": "https://github.com/arnaud-ritti"
+        },
+        {
+            "name": "Jerome ENGELN",
+            "homepage": "https://github.com/JeromeEngelnAdeliom"
+        }
+    ],
     "require": {
-        "sylius/sylius": "1.10.1"
+        "php": "^7.4|^8.0",
+        "ext-json": "*",
+        "symfony/config": "^4.4 || ^5.2",
+        "symfony/dependency-injection": "^4.4 || ^5.2",
+        "symfony/deprecation-contracts": "^2.2",
+        "symfony/event-dispatcher": "^4.4 || ^5.2",
+        "symfony/framework-bundle": "^4.4 || ^5.2",
+        "symfony/http-kernel": "^4.4 || ^5.2",
+        "symfony/options-resolver": "^4.4 || ^5.2",
+        "symfony/property-access": "^4.4 || ^5.2",
+        "easycorp/easyadmin-bundle": "^3.4",
+        "adeliom/easy-page-bundle": "^1.0",
+        "sylius/sylius": "1.10.2"
     },
     "autoload": {
-        "psr-4": {
-            "Adeliom\\EasyShopBundle\\": "src/"
-        }
+        "psr-4": { "Adeliom\\EasyShopBundle\\": "src/" }
     }
 }
