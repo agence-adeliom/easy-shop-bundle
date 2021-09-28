@@ -3,21 +3,6 @@ services:
         autowire: true
         autoconfigure: true
 
-    Adeliom\EasyShopBundle\Command\SetupCommand:
-        arguments:
-            - "@doctrine.orm.entity_manager"
-            - "@security.password_hasher"
-            - "@easy_admin_user.validator"
-            - "@easy_admin_user.user_repository"
-            - "@sylius.setup.currency"
-            - "@sylius.setup.locale"
-            - "@sylius.setup.channel"
-            - "@sylius.repository.shop_user"
-            - "@sylius.manager.shop_user"
-            - "@sylius.factory.shop_user"
-        tags:
-            - { name: 'console.command', command: 'easyshop:install:setup' }
-
     Adeliom\EasyShopBundle\Validators\UniqueReviewerEmailValidator:
         decorates: 'sylius.validator.unique_reviewer_email'
         arguments:
