@@ -31,7 +31,7 @@
         "symfony/options-resolver": "^4.4 || ^5.2",
         "symfony/property-access": "^4.4 || ^5.2",
         "easycorp/easyadmin-bundle": "^3.4",
-        "adeliom/easy-page-bundle": "^1.0",
+        "agence-adeliom/easy-page-bundle": "^1.0",
         "sylius/sylius": "1.10.2"
     },
     "autoload": {
