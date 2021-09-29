@@ -3,22 +3,24 @@
 namespace Adeliom\EasyShopBundle\DependencyInjection;
 
 use Adeliom\EasyBlockBundle\Block\BlockInterface;
-use Adeliom\EasyBlockBundle\DependencyInjection\Configuration;
 use Adeliom\EasyShopBundle\Locale\LocaleSwitcherInterface;
 use Sylius\Bundle\CoreBundle\Checkout\CheckoutRedirectListener;
 use Sylius\Bundle\CoreBundle\Checkout\CheckoutResolver;
 use Sylius\Bundle\CoreBundle\Checkout\CheckoutStateUrlGenerator;
+use Sylius\Bundle\OrderBundle\DependencyInjection\SyliusOrderExtension;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\Extension;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\FileLoader;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpFoundation\RequestMatcher;
 
-class EasyShopExtension extends Extension
+class EasyShopExtension extends Extension implements PrependExtensionInterface
 {
     public function load(array $configs, ContainerBuilder $container): void
     {
@@ -98,6 +100,54 @@ class EasyShopExtension extends Extension
         ;
 
         return $checkoutRedirectListener;
+    }
+
+    public function prepend(ContainerBuilder $container)
+    {
+
+        $container->setParameter("sylius.state_machine.class", "Sylius\Component\Resource\StateMachine\StateMachine");
+
+        foreach ($container->getExtensions() as $name => $extension) {
+            switch ($name) {
+                case 'sylius_addressing':
+                case 'sylius_attribute':
+                case 'sylius_channel':
+                case 'sylius_core':
+                case 'sylius_currency':
+                case 'sylius_customer':
+                case 'sylius_locale':
+                case 'sylius_order':
+                case 'sylius_payment':
+                case 'sylius_payum':
+                case 'sylius_product':
+                case 'sylius_promotion':
+                case 'sylius_review':
+                case 'sylius_shipping':
+                case 'sylius_taxation':
+                case 'sylius_taxonomy':
+                case 'sylius_user':
+                    $configs = $container->getExtensionConfig($name);
+
+                    foreach($configs as $c){
+                        if(!empty($c["resources"])){
+                            foreach($c["resources"] as $r => $datas){
+
+                                if(!empty($c["resources"][$r]["classes"]["model"])){
+                                    $container->setParameter("sylius.model.".$r.".class", $c["resources"][$r]["classes"]["model"]);
+                                }
+
+                                if($name == "sylius_review" && !empty($c["resources"][$r]["review"]["classes"]["model"])){
+                                    $container->setParameter("sylius.model.product_review.class", $c["resources"][$r]["review"]["classes"]["model"]);
+                                }
+
+                            }
+                        }
+                    }
+                    break;
+            }
+        }
+
+
     }
 
 
