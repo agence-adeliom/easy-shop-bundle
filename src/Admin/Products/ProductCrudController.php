@@ -70,7 +70,6 @@ abstract class ProductCrudController extends SyliusCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->addFormTheme('@FOSCKEditor/Form/ckeditor_widget.html.twig')
             ->addFormTheme('@EasyEditor/form/editor_widget.html.twig')
             ->addFormTheme('@EasyFields/form/association_widget.html.twig')
             ->addFormTheme('@EasyFields/form/sortable_widget.html.twig')

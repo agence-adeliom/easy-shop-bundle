@@ -24,8 +24,7 @@ services:
             - "@sylius.repository.locale"
         public: true
 
-    sylius.form.type.shipping_method_rule:
-        class: Adeliom\EasyShopBundle\Form\Type\ShippingBundle\ShippingMethodRuleType
+    Adeliom\EasyShopBundle\Form\Type\ShippingBundle\ShippingMethodRuleType:
         arguments:
             - "%sylius.model.shipping_method_rule.class%"
             - "%sylius.form.type.shipping_method_rule.validation_groups%"
@@ -33,8 +32,7 @@ services:
             - "%sylius.shipping_method_rules%"
         tags: [ form.type ]
 
-    sylius.form.type.shipping_calculators:
-        class: Adeliom\EasyShopBundle\Form\Type\ShippingBundle\ShippingMethodCalculatorType
+    Adeliom\EasyShopBundle\Form\Type\ShippingBundle\ShippingMethodCalculatorType:
         arguments:
             - "%sylius.shipping_calculators%"
         tags: [ form.type ]
@@ -45,12 +43,11 @@ services:
             - "@sylius.repository.channel"
         tags: [ form.type ]
 
-    sylius.form.type.sylius_product_associations:
-        class: Adeliom\EasyShopBundle\Form\Type\ProductBundle\ProductAssociationsType
+    Adeliom\EasyShopBundle\Form\Type\ProductBundle\ProductAssociationsType:
         arguments:
-          - "@sylius.repository.product_association_type"
-          - "@sylius.repository.product"
-          - "@sylius.form.type.easy.data_transformer.products_to_product_associations"
+            - "@sylius.repository.product_association_type"
+            - "@sylius.repository.product"
+            - "@sylius.form.type.easy.data_transformer.products_to_product_associations"
         tags: [ form.type ]
 
     sylius.form.type.easy.data_transformer.products_to_product_associations:
@@ -93,8 +90,7 @@ services:
         tags: [ form.type ]
 
 
-    sylius.form.type.easy.promotion_rule:
-        class: Adeliom\EasyShopBundle\Form\Type\PromotionBundle\PromotionRuleType
+    Adeliom\EasyShopBundle\Form\Type\PromotionBundle\PromotionRuleType:
         arguments:
             - "%sylius.promotion_rules%"
             - "@sylius.form_registry.promotion_rule_checker"
@@ -117,8 +113,7 @@ services:
             - "@sylius.repository.taxon"
         tags: [ form.type ]
 
-    sylius.form.type.easy.promotion_action:
-        class: Adeliom\EasyShopBundle\Form\Type\PromotionBundle\PromotionActionType
+    Adeliom\EasyShopBundle\Form\Type\PromotionBundle\PromotionActionType:
         arguments:
             - "%sylius.promotion_actions%"
             - "@sylius.form_registry.promotion_action"
