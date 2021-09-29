@@ -50,7 +50,7 @@ sylius_grid:
         filter:
             shop_string: "@EasyShop/front/Grid/Filter/string.html.twig"
 
-easy_shop:
+sylius_shop:
     checkout_resolver:
         pattern: /checkout/.+
         route_map:
