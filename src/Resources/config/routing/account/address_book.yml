@@ -1,7 +1,7 @@
 # This file is a part of the Sylius package.
 # (c) Paweł Jędrzejewski
 
-easy_shop_account_address_book_index:
+sylius_shop_account_address_book_index:
     path: /
     methods: [GET]
     defaults:
@@ -15,7 +15,7 @@ easy_shop_account_address_book_index:
                 arguments:
                     - "expr:service('sylius.context.customer').getCustomer()"
 
-easy_shop_account_address_book_create:
+sylius_shop_account_address_book_create:
     path: /add
     methods: [GET, POST]
     defaults:
@@ -28,11 +28,11 @@ easy_shop_account_address_book_create:
                 arguments:
                     - "expr:service('sylius.context.customer').getCustomer()"
             redirect:
-                route: easy_shop_account_address_book_index
+                route: sylius_shop_account_address_book_index
                 parameters: {}
             flash: sylius.customer.add_address
 
-easy_shop_account_address_book_update:
+sylius_shop_account_address_book_update:
     path: /{id}/edit
     methods: [GET, PUT]
     defaults:
@@ -46,10 +46,10 @@ easy_shop_account_address_book_update:
                     - $id
                     - "expr:service('sylius.context.customer').getCustomer()"
             redirect:
-                route: easy_shop_account_address_book_index
+                route: sylius_shop_account_address_book_index
                 parameters: {}
 
-easy_shop_account_address_book_delete:
+sylius_shop_account_address_book_delete:
     path: /{id}
     methods: [DELETE]
     defaults:
@@ -61,9 +61,9 @@ easy_shop_account_address_book_delete:
                 arguments:
                     - $id
                     - "expr:service('sylius.context.customer').getCustomer()"
-            redirect: easy_shop_account_address_book_index
+            redirect: sylius_shop_account_address_book_index
 
-easy_shop_account_address_book_set_as_default:
+sylius_shop_account_address_book_set_as_default:
     path: /{id}/set-as-default
     methods: [GET, PATCH]
     defaults:
@@ -80,6 +80,6 @@ easy_shop_account_address_book_set_as_default:
                 arguments:
                     - "expr:service('sylius.context.customer').getCustomer()"
             redirect:
-                route: easy_shop_account_address_book_index
+                route: sylius_shop_account_address_book_index
                 parameters: {}
             flash: sylius.customer.set_address_as_default

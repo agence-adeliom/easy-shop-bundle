@@ -2,6 +2,6 @@
     <div class="item">
         {% include '@EasyShop/front/Product/_starRating.html.twig' %}
     </div>
-    <a href="{{ path('easy_shop_product_review_index', {'slug': product.slug, '_locale': product.translation.locale}) }}" class="text-link">{{ product.acceptedReviews|length }} {{ 'sylius.ui.reviews'|trans }}</a>
-    <a href="{{ path('easy_shop_product_review_create', {'slug': product.slug, '_locale': product.translation.locale}) }}" class="text-link">{{ 'sylius.ui.add_your_review'|trans }}</a>
+    <a href="{{ path('sylius_shop_product_review_index', {'slug': product.slug, '_locale': product.translation.locale}) }}" class="text-link">{{ product.acceptedReviews|length }} {{ 'sylius.ui.reviews'|trans }}</a>
+    <a href="{{ path('sylius_shop_product_review_create', {'slug': product.slug, '_locale': product.translation.locale}) }}" class="text-link">{{ 'sylius.ui.add_your_review'|trans }}</a>
 </div>

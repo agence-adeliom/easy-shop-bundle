@@ -1,5 +1,5 @@
-easy_shop_product_index:
+sylius_shop_product_index:
   resource: "routing/seo/shop_product_index.yml"
 
-easy_shop_product_show:
+sylius_shop_product_show:
   resource: "routing/seo/shop_product_show.yml"

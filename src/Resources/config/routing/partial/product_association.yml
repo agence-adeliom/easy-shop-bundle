@@ -1,7 +1,7 @@
 # This file is part of the Sylius package.
 # (c) Paweł Jędrzejewski
 
-easy_shop_partial_product_association_show:
+sylius_shop_partial_product_association_show:
     path: /{id}
     methods: [GET]
     defaults:

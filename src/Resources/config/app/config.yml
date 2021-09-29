@@ -55,33 +55,33 @@ sylius_shop:
         pattern: /checkout/.+
         route_map:
             empty_order:
-                route: easy_shop_cart_summary
+                route: sylius_shop_cart_summary
             cart:
-                route: easy_shop_checkout_address
+                route: sylius_shop_checkout_address
             addressed:
-                route: easy_shop_checkout_select_shipping
+                route: sylius_shop_checkout_select_shipping
             shipping_selected:
-                route: easy_shop_checkout_select_payment
+                route: sylius_shop_checkout_select_payment
             shipping_skipped:
-                route: easy_shop_checkout_select_payment
+                route: sylius_shop_checkout_select_payment
             payment_selected:
-                route: easy_shop_checkout_complete
+                route: sylius_shop_checkout_complete
             payment_skipped:
-                route: easy_shop_checkout_complete
+                route: sylius_shop_checkout_complete
 
 liip_imagine:
     filter_sets:
-        easy_shop_product_original: ~
-        easy_shop_product_tiny_thumbnail:
+        sylius_shop_product_original: ~
+        sylius_shop_product_tiny_thumbnail:
             filters:
                 thumbnail: { size: [64, 64], mode: outbound }
-        easy_shop_product_small_thumbnail:
+        sylius_shop_product_small_thumbnail:
             filters:
                 thumbnail: { size: [150, 112], mode: outbound }
-        easy_shop_product_thumbnail:
+        sylius_shop_product_thumbnail:
             filters:
                 thumbnail: { size: [260, 260], mode: outbound }
-        easy_shop_product_large_thumbnail:
+        sylius_shop_product_large_thumbnail:
             filters:
                 thumbnail: { size: [550, 412], mode: outbound }
 
@@ -922,9 +922,9 @@ sylius_ui:
                 summary:
                     template: "@EasyShop/front/Checkout/_summary.html.twig"
                     priority: 20
-                support:
-                    template: "@EasyShop/front/Checkout/_support.html.twig"
-                    priority: 10
+#                support:
+#                    template: "@EasyShop/front/Checkout/_support.html.twig"
+#                    priority: 10
 
         sylius.shop.checkout.address.sidebar:
             blocks:

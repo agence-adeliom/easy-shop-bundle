@@ -1,5 +1,5 @@
 <div class="search-bar mb-3">
-    <form method="get" action="{{ path('easy_shop_product_index', {'slug': app.request.attributes.get('slug')}) }}" class="loadable form">
+    <form method="get" action="{{ path('sylius_shop_product_index', {'slug': app.request.attributes.get('slug')}) }}" class="loadable form">
         <div class="input-group d-flex">
             <div class="form-outline flex-grow-1" id="searchbarTextField">
                 {% for filter in products.definition.enabledFilters %}
@@ -7,7 +7,7 @@
                 {% endfor %}
             </div>
             <button type="submit" class="btn btn-primary" {{ sylius_test_html_attribute('search') }}>{{ 'sylius.ui.search'|trans }}</button>
-            <a href="{{ path('easy_shop_product_index', {'slug': app.request.attributes.get('slug')}) }}" class="btn btn-danger" {{ sylius_test_html_attribute('clear') }}>
+            <a href="{{ path('sylius_shop_product_index', {'slug': app.request.attributes.get('slug')}) }}" class="btn btn-danger" {{ sylius_test_html_attribute('clear') }}>
                 {{ 'sylius.ui.clear'|trans }}
             </a>
         </div>

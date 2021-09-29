@@ -21,7 +21,7 @@
 
             {{ sylius_template_event('sylius.shop.product_review.create.before_form', {'product_review': product_review}) }}
 
-            {{ form_start(form, {'action': path('easy_shop_product_review_create', {'slug': product.slug, '_locale': product.translation.locale}), 'attr': {'class': 'loadable reply form', 'novalidate': 'novalidate'}}) }}
+            {{ form_start(form, {'action': path('sylius_shop_product_review_create', {'slug': product.slug, '_locale': product.translation.locale}), 'attr': {'class': 'loadable reply form', 'novalidate': 'novalidate'}}) }}
                 {% include '@EasyShop/front/ProductReview/_form.html.twig' %}
 
                 {{ sylius_template_event('sylius.shop.product_review.create.form', {'product_review': product_review, 'form': form}) }}

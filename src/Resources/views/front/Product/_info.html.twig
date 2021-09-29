@@ -7,13 +7,13 @@
 <div class="d-flex gap-3 align-items-center mb-2">
     <div class="product-image" style="width: 4rem">
         {% if variant.hasImages %}
-            {% include '@EasyShop/front/Product/_mainImage.html.twig' with {'product': variant, 'filter': 'easy_shop_product_tiny_thumbnail'} %}
+            {% include '@EasyShop/front/Product/_mainImage.html.twig' with {'product': variant, 'filter': 'sylius_shop_product_tiny_thumbnail'} %}
         {% else %}
-            {% include '@EasyShop/front/Product/_mainImage.html.twig' with {'product': product, 'filter': 'easy_shop_product_tiny_thumbnail'} %}
+            {% include '@EasyShop/front/Product/_mainImage.html.twig' with {'product': product, 'filter': 'sylius_shop_product_tiny_thumbnail'} %}
         {% endif %}
     </div>
     <div class="content">
-        <a href="{{ path('easy_shop_product_show', {'slug': slug}) }}" class="link-primary text-decoration-none">
+        <a href="{{ path('sylius_shop_product_show', {'slug': slug}) }}" class="link-primary text-decoration-none">
             <div class="sylius-product-name fw-bolder" {{ sylius_test_html_attribute('product-name', item.productName) }}>{{ item.productName }}</div>
             <span class="sylius-product-variant-code small text-dark" {{ sylius_test_html_attribute('product-variant-code') }}>
                 {{ variant.code }}

@@ -13,7 +13,7 @@
         <div class="col-12">
             {{ sylius_template_event('sylius.shop.register.before_form') }}
 
-            {{ form_start(form, {'action': path('easy_shop_register'), 'attr': {'class': 'loadable form', 'novalidate': 'novalidate'}}) }}
+            {{ form_start(form, {'action': path('sylius_shop_register'), 'attr': {'class': 'loadable form', 'novalidate': 'novalidate'}}) }}
                 {% include '@EasyShop/front/Register/_form.html.twig' %}
 
                 {{ sylius_template_event('sylius.shop.register.form', {'form': form}) }}

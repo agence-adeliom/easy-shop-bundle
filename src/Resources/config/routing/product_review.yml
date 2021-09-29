@@ -1,7 +1,7 @@
 # This file is a part of the Sylius package.
 # (c) Paweł Jędrzejewski
 
-easy_shop_product_review_index:
+sylius_shop_product_review_index:
     path: /
     methods: [GET]
     defaults:
@@ -15,7 +15,7 @@ easy_shop_product_review_index:
                     - "expr:service('sylius.context.locale').getLocaleCode()"
                     - "expr:service('sylius.context.channel').getChannel()"
 
-easy_shop_product_review_create:
+sylius_shop_product_review_create:
     path: /new
     methods: [GET, POST]
     defaults:
@@ -31,7 +31,7 @@ easy_shop_product_review_create:
                     - "expr:notFoundOnNull(service('sylius.repository.product').findOneByChannelAndSlug(service('sylius.context.channel').getChannel(), service('sylius.context.locale').getLocaleCode(), $slug))"
                     - "expr:service('sylius.context.customer').getCustomer()"
             redirect:
-                route: easy_shop_product_review_index
+                route: sylius_shop_product_review_index
                 parameters:
                     slug: $slug
             flash: sylius.review.wait_for_the_acceptation

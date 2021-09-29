@@ -1,7 +1,7 @@
 # This file is part of the Sylius package.
 # (c) Paweł Jędrzejewski
 
-easy_shop_partial_taxon_show_by_slug:
+sylius_shop_partial_taxon_show_by_slug:
     path: /by-slug/{slug}
     methods: [GET]
     defaults:
@@ -16,7 +16,7 @@ easy_shop_partial_taxon_show_by_slug:
     requirements:
         slug: .+
 
-easy_shop_partial_taxon_index_by_code:
+sylius_shop_partial_taxon_index_by_code:
     path: /by-code/{code}
     methods: [GET]
     defaults:
@@ -29,7 +29,7 @@ easy_shop_partial_taxon_index_by_code:
                     - $code
                     - "expr:service('sylius.context.locale').getLocaleCode()"
 
-easy_shop_partial_channel_menu_taxon_index:
+sylius_shop_partial_channel_menu_taxon_index:
     path: /by-channel-menu-taxon/
     methods: [GET]
     defaults:

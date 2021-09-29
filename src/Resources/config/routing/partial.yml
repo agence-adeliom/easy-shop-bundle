@@ -1,22 +1,22 @@
 # This file is part of the Sylius package.
 # (c) Paweł Jędrzejewski
 
-easy_shop_partial_taxon:
+sylius_shop_partial_taxon:
     resource: "@EasyShopBundle/Resources/config/routing/partial/taxon.yml"
     prefix: /taxons
 
-easy_shop_partial_cart:
+sylius_shop_partial_cart:
     resource: "@EasyShopBundle/Resources/config/routing/partial/cart.yml"
     prefix: /cart
 
-easy_shop_partial_product:
+sylius_shop_partial_product:
     resource: "@EasyShopBundle/Resources/config/routing/partial/product.yml"
     prefix: /products
 
-easy_shop_partial_product_review:
+sylius_shop_partial_product_review:
     resource: "@EasyShopBundle/Resources/config/routing/partial/product_review.yml"
     prefix: /products/{productId}/reviews
 
-easy_shop_partial_product_association:
+sylius_shop_partial_product_association:
     resource: "@EasyShopBundle/Resources/config/routing/partial/product_association.yml"
     prefix: /products/{productId}/associations

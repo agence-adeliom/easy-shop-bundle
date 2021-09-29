@@ -11,7 +11,7 @@
             </div>
         </div>
     {% else %}
-        <a href="{{ path('easy_shop_product_index', {'slug': taxon.slug, '_locale': taxon.translation.locale}) }}" class="item" {{ sylius_test_html_attribute('menu-item') }}>{{ taxon.name }}</a>
+        <a href="{{ path('sylius_shop_product_index', {'slug': taxon.slug, '_locale': taxon.translation.locale}) }}" class="item" {{ sylius_test_html_attribute('menu-item') }}>{{ taxon.name }}</a>
     {% endif %}
 {% endmacro %}
 

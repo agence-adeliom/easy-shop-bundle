@@ -14,7 +14,7 @@
 
         {% include '@EasyShop/front/_flashes.html.twig' %}
 
-        {{ form_start(form, {'action': path('easy_shop_checkout_complete'), 'attr': {'class': 'loadable form', 'novalidate': 'novalidate'}}) }}
+        {{ form_start(form, {'action': path('sylius_shop_checkout_complete'), 'attr': {'class': 'loadable form', 'novalidate': 'novalidate'}}) }}
             {{ form_errors(form) }}
             <input type="hidden" name="_method" value="PUT" />
 

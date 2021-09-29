@@ -1,4 +1,4 @@
-easy_shop_product_show:
+sylius_shop_product_show:
   path: /{slug}
   methods: [GET]
   defaults:
@@ -13,4 +13,4 @@ easy_shop_product_show:
           - $slug
   requirements:
     slug: .+
-  condition: "request.attributes.has('_easy_shop_product')"
+  condition: "request.attributes.has('_sylius_shop_product')"

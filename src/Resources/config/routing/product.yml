@@ -1,7 +1,7 @@
 # This file is part of the Sylius package.
 # (c) Paweł Jędrzejewski
 
-easy_shop_product_show:
+sylius_shop_product_show:
     path: /products/{slug}
     methods: [GET]
     defaults:
@@ -15,13 +15,13 @@ easy_shop_product_show:
                     - "expr:service('sylius.context.locale').getLocaleCode()"
                     - $slug
 
-easy_shop_product_index:
+sylius_shop_product_index:
     path: /taxons/{slug}
     methods: [GET]
     defaults:
         _controller: sylius.controller.product:indexAction
         _sylius:
             template: "@EasyShop/front/Product/index.html.twig"
-            grid: easy_shop_product
+            grid: sylius_shop_product
     requirements:
         slug: .+

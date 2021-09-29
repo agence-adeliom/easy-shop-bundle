@@ -5,7 +5,7 @@
         <div class="menu">
             {% for code in currencies %}
                 {% if code is not same as(active) %}
-                <a href="{{ path('easy_shop_switch_currency', {'code': code}) }}" class="item sylius-available-currency" {{ sylius_test_html_attribute('available-currency') }}>
+                <a href="{{ path('sylius_shop_switch_currency', {'code': code}) }}" class="item sylius-available-currency" {{ sylius_test_html_attribute('available-currency') }}>
                     {{ code }}
                 </a>
                 {% endif %}

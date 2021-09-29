@@ -98,10 +98,10 @@ class SeoListener implements EventSubscriberInterface
         if(count($slugsArray) == count($elements)){
             $current = end($elements);
             if ($current instanceof ProductInterface){
-                $event->getRequest()->attributes->set('_easy_shop_product', $current);
+                $event->getRequest()->attributes->set('_sylius_shop_product', $current);
             }elseif ($current instanceof TaxonInterface){
                 $event->getRequest()->attributes->set('slug', $current->getSlug());
-                $event->getRequest()->attributes->set('_easy_shop_taxon', $current);
+                $event->getRequest()->attributes->set('_sylius_shop_taxon', $current);
             }
         }
 

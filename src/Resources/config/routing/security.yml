@@ -1,26 +1,26 @@
 # This file is a part of the Sylius package.
 # (c) Paweł Jędrzejewski
 
-easy_shop_login:
+sylius_shop_login:
     path: /login
     methods: [GET]
     defaults:
         _controller: sylius.controller.security:loginAction
         _sylius:
             template: "@EasyShop/front/login.html.twig"
-            logged_in_route: easy_shop_account_dashboard
+            logged_in_route: sylius_shop_account_dashboard
 
-easy_shop_login_check:
+sylius_shop_login_check:
     path: /login-check
     methods: [POST]
     defaults:
         _controller: sylius.controller.security:checkAction
 
-easy_shop_logout:
+sylius_shop_logout:
     path: /logout
     methods: [GET]
 
-easy_shop_register:
+sylius_shop_register:
     path: /register
     methods: [GET, POST]
     defaults:
@@ -30,10 +30,10 @@ easy_shop_register:
             form: Sylius\Bundle\CoreBundle\Form\Type\Customer\CustomerRegistrationType
             event: register
             redirect:
-                route: easy_shop_account_dashboard
+                route: sylius_shop_account_dashboard
             flash: sylius.customer.register
 
-easy_shop_register_after_checkout:
+sylius_shop_register_after_checkout:
     path: /register-after-checkout/{tokenValue}
     methods: [GET]
     defaults:
@@ -47,23 +47,23 @@ easy_shop_register_after_checkout:
             template: "@EasyShop/front/register.html.twig"
             event: register
             redirect:
-                route: easy_shop_account_dashboard
+                route: sylius_shop_account_dashboard
             flash: sylius.customer.register
 
-easy_shop_request_password_reset_token:
+sylius_shop_request_password_reset_token:
     path: /forgotten-password
     methods: [GET, POST]
     defaults:
         _controller: sylius.controller.shop_user:requestPasswordResetTokenAction
         _sylius:
             template: "@EasyShop/front/Account/requestPasswordReset.html.twig"
-            redirect: easy_shop_login
+            redirect: sylius_shop_login
 
-easy_shop_password_reset:
+sylius_shop_password_reset:
     path: /forgotten-password/{token}
     methods: [GET, POST]
     defaults:
         _controller: sylius.controller.shop_user:resetPasswordAction
         _sylius:
-            template: "@EasyShop/front/Account/resetPassword.html.twig"
-            redirect: easy_shop_login
+            template: "@EasyShop/front/front/Account/resetPassword.html.twig"
+            redirect: sylius_shop_login

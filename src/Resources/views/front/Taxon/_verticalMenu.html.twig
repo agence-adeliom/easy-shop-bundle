@@ -7,12 +7,12 @@
         </li>
         {% for child in taxon.enabledChildren %}
             <li class="list-group-item" >
-                <a href="{{ path('easy_shop_product_index', {'slug': child.getTree(), '_locale': child.translation.locale}) }}" class="item" {{ sylius_test_html_attribute('vertical-menu-item') }}>{{ child.name }}</a>
+                <a href="{{ path('sylius_shop_product_index', {'slug': child.getTree(), '_locale': child.translation.locale}) }}" class="item" {{ sylius_test_html_attribute('vertical-menu-item') }}>{{ child.name }}</a>
             </li>
         {% endfor %}
         {% if taxon.parent is not empty and not taxon.parent.isRoot() and taxon.parent.enabled %}
             <li class="list-group-item" >
-                <a href="{{ path('easy_shop_product_index', {'slug': taxon.parent.getTree(), '_locale': taxon.parent.translation.locale}) }}" class="item" {{ sylius_test_html_attribute('vertical-menu-go-level-up') }}>
+                <a href="{{ path('sylius_shop_product_index', {'slug': taxon.parent.getTree(), '_locale': taxon.parent.translation.locale}) }}" class="item" {{ sylius_test_html_attribute('vertical-menu-go-level-up') }}>
                     <i class="up arrow icon"></i> {{ 'sylius.ui.go_level_up'|trans }}
                 </a>
             </li>

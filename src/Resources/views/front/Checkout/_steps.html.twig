@@ -22,7 +22,7 @@
 
 <ol class="breadcrumb {{ steps_count }} steps flex-nowrap" style="--bs-breadcrumb-divider: '';">
     <li class="breadcrumb-item">
-        <a class="{{ steps['address'] }} step btn btn-primary text-start h-100 text-decoration-none" href="{{ path('easy_shop_checkout_address') }}" {{ sylius_test_html_attribute('step-address') }}>
+        <a class="{{ steps['address'] }} step btn btn-primary text-start h-100 text-decoration-none" href="{{ path('sylius_shop_checkout_address') }}" {{ sylius_test_html_attribute('step-address') }}>
             <div class="content">
                 <div class="title strong">{{ 'sylius.ui.address'|trans }}</div>
                 <div class="description small">{{ 'sylius.ui.fill_in_your_billing_and_shipping_addresses'|trans }}</div>
@@ -31,7 +31,7 @@
     </li>
     {% if order_requires_shipping %}
     <li class="breadcrumb-item">
-        <a class="{{ steps['select_shipping'] }} step btn btn-primary text-start h-100 text-decoration-none" href="{{ path('easy_shop_checkout_select_shipping') }}" {{ sylius_test_html_attribute('step-shipping') }}>
+        <a class="{{ steps['select_shipping'] }} step btn btn-primary text-start h-100 text-decoration-none" href="{{ path('sylius_shop_checkout_select_shipping') }}" {{ sylius_test_html_attribute('step-shipping') }}>
             <div class="content">
                 <div class="title strong">{{ 'sylius.ui.shipping'|trans }}</div>
                 <div class="description small">{{ 'sylius.ui.choose_how_your_goods_will_be_delivered'|trans }}</div>
@@ -41,7 +41,7 @@
     {% endif %}
     {% if order_requires_payment %}
     <li class="breadcrumb-item">
-        <a class="{{ steps['select_payment'] }} step btn btn-primary text-start h-100 text-decoration-none" href="{{ path('easy_shop_checkout_select_payment') }}" {{ sylius_test_html_attribute('step-payment') }}>
+        <a class="{{ steps['select_payment'] }} step btn btn-primary text-start h-100 text-decoration-none" href="{{ path('sylius_shop_checkout_select_payment') }}" {{ sylius_test_html_attribute('step-payment') }}>
             <div class="content">
                 <div class="title strong">{{ 'sylius.ui.payment'|trans }}</div>
                 <div class="description small">{{ 'sylius.ui.choose_how_you_will_pay'|trans }}</div>
@@ -50,7 +50,7 @@
     </li>
     {% endif %}
     <li class="breadcrumb-item">
-        <div class="{{ steps['complete'] }} step btn btn-primary text-start h-100 text-decoration-none" href="{{ path('easy_shop_checkout_complete') }}">
+        <div class="{{ steps['complete'] }} step btn btn-primary text-start h-100 text-decoration-none" href="{{ path('sylius_shop_checkout_complete') }}">
             <div class="content">
                 <div class="title strong">{{ 'sylius.ui.complete'|trans }}</div>
                 <div class="description small">{{ 'sylius.ui.review_and_confirm_your_order'|trans }}</div>

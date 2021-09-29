@@ -18,7 +18,7 @@
                 <li itemprop="itemListElement" class="{{ easy_seo_breadcrumb.item_class }}"  itemscope itemtype="http://schema.org/ListItem">
                     <meta itemprop="position" content="{{ loop.index }}" />
                     {% set type = "a" %}
-                    <{{ type }} itemprop="item" href="{{ path('easy_shop_product_index', {'slug': ancestor.tree, '_locale': ancestor.translation.locale}) }}" class="{{ easy_seo_breadcrumb.link_class }}">
+                    <{{ type }} itemprop="item" href="{{ path('sylius_shop_product_index', {'slug': ancestor.tree, '_locale': ancestor.translation.locale}) }}" class="{{ easy_seo_breadcrumb.link_class }}">
                     <span itemprop="name">{{ ancestor.name }}</span>
                     </{{ type }}>
                     </li>
@@ -28,7 +28,7 @@
             <li itemprop="itemListElement" class="{{ easy_seo_breadcrumb.item_class }}"  itemscope itemtype="http://schema.org/ListItem">
                 <meta itemprop="position" content="{{ ancestors|length }}" />
                 {% set type = "a" %}
-                <{{ type }} itemprop="item" href="{{ path('easy_shop_product_index', {'slug': taxon.tree, '_locale': taxon.translation.locale}) }}" class="{{ easy_seo_breadcrumb.link_class }}">
+                <{{ type }} itemprop="item" href="{{ path('sylius_shop_product_index', {'slug': taxon.tree, '_locale': taxon.translation.locale}) }}" class="{{ easy_seo_breadcrumb.link_class }}">
                 <span itemprop="name">{{ taxon.name }}</span>
                 </{{ type }}>
                 </li>

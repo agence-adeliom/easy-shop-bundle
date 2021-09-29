@@ -117,7 +117,7 @@ abstract class ProductCrudController extends SyliusCrudController
             if($taxon = $product->getMainTaxon()){
                 $slug = $taxon->getTree()."/".$slug;
             }
-            return $this->get(RouterInterface::class)->generate('easy_shop_product_show', [
+            return $this->get(RouterInterface::class)->generate('sylius_shop_product_show', [
                 'slug' => $slug
             ]);
         })->setHtmlAttributes(["target" => "_blank"]);
@@ -127,7 +127,7 @@ abstract class ProductCrudController extends SyliusCrudController
             if($taxon = $product->getMainTaxon()){
                 $slug = $taxon->getTree()."/".$slug;
             }
-            return $this->get(RouterInterface::class)->generate('easy_shop_product_show', [
+            return $this->get(RouterInterface::class)->generate('sylius_shop_product_show', [
                 'slug' => $slug
             ]);
         })->setHtmlAttributes(["target" => "_blank"])->setCssClass("btn btn-info");

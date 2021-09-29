@@ -50,13 +50,13 @@ abstract class TaxonCrudController extends SyliusCrudController
     {
 
         $viewTaxon = Action::new('viewTaxon', 'Voir la page', 'fa fa-eye')->linkToUrl(function (TaxonInterface $taxon) {
-            return $this->get(RouterInterface::class)->generate('easy_shop_product_index', [
+            return $this->get(RouterInterface::class)->generate('sylius_shop_product_index', [
                 'slug' => $taxon->getTree()
             ]);
         })->setHtmlAttributes(["target" => "_blank"]);
 
         $viewTaxonButton = Action::new('viewTaxon', 'Voir la page', 'fa fa-eye')->linkToUrl(function (TaxonInterface $taxon) {
-            return $this->get(RouterInterface::class)->generate('easy_shop_product_index', [
+            return $this->get(RouterInterface::class)->generate('sylius_shop_product_index', [
                 'slug' => $taxon->getTree()
             ]);
         })->setHtmlAttributes(["target" => "_blank"])->setCssClass("btn btn-info");

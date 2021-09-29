@@ -17,7 +17,7 @@
 
 {% include '@EasyShop/front/Common/Form/_countryCode.html.twig' with {'form': form.countryCode} %}
 
-<div class="province-container mb-3" data-url="{{ path('easy_shop_ajax_render_province_form') }}">
+<div class="province-container mb-3" data-url="{{ path('sylius_shop_ajax_render_province_form') }}">
     {% if form.provinceCode is defined %}
         {{ form_row(form.provinceCode, sylius_test_form_attribute('province-code')|sylius_merge_recursive( {'label_attr': {'class': 'form-label'}})) }}
     {% elseif form.provinceName is defined %}

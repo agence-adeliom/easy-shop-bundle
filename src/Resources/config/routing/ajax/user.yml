@@ -1,7 +1,7 @@
 # This file is part of the Sylius package.
 # (c) Paweł Jędrzejewski
 
-easy_shop_ajax_user_check_action:
+sylius_shop_ajax_user_check_action:
     path: /check
     methods: [GET]
     defaults:

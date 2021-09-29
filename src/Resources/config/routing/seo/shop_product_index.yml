@@ -1,4 +1,4 @@
-easy_shop_product_index:
+sylius_shop_product_index:
   path: /{slug}
   methods: [GET]
   defaults:
@@ -13,5 +13,5 @@ easy_shop_product_index:
           - "expr:service('sylius.context.locale').getLocaleCode()"
   requirements:
     slug: .+
-  condition: "request.attributes.has('_easy_shop_taxon')"
+  condition: "request.attributes.has('_sylius_shop_taxon')"
 

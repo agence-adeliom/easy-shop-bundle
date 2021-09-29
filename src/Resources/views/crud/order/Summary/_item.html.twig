@@ -18,9 +18,9 @@
     <td class="single line">
         <div class="ui header">
             {% if product.imagesByType('thumbnail') is not empty %}
-                {% set path = product.imagesByType('thumbnail').first.path|imagine_filter('easy_shop_product_thumbnail') %}
+                {% set path = product.imagesByType('thumbnail').first.path|imagine_filter('sylius_shop_product_thumbnail') %}
             {% elseif product.images.first %}
-                {% set path = product.images.first.path|imagine_filter('easy_shop_product_thumbnail') %}
+                {% set path = product.images.first.path|imagine_filter('sylius_shop_product_thumbnail') %}
             {% else %}
                 {% set path = '//placehold.it/50x50' %}
             {% endif %}

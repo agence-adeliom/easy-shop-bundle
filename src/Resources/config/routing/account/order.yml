@@ -1,7 +1,7 @@
 # This file is a part of the Sylius package.
 # (c) Paweł Jędrzejewski
 
-easy_shop_account_order_index:
+sylius_shop_account_order_index:
     path: /
     methods: [GET]
     defaults:

@@ -1,23 +1,23 @@
 # This file is a part of the Sylius package.
 # (c) Paweł Jędrzejewski
 
-easy_shop_account_order:
+sylius_shop_account_order:
     resource: "@EasyShopBundle/Resources/config/routing/account/order.yml"
     prefix: /orders
 
-easy_shop_account_address_book:
+sylius_shop_account_address_book:
     resource: "@EasyShopBundle/Resources/config/routing/account/address_book.yml"
     prefix: /address-book
 
-easy_shop_account_root:
+sylius_shop_account_root:
     path: /
     methods: [GET]
     defaults:
         _controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController:redirectAction
-        route: easy_shop_account_dashboard
+        route: sylius_shop_account_dashboard
         permanent: true
 
-easy_shop_account_dashboard:
+sylius_shop_account_dashboard:
     path: /dashboard
     methods: [GET]
     defaults:
@@ -29,7 +29,7 @@ easy_shop_account_dashboard:
                 arguments:
                     - "expr:service('sylius.context.customer').getCustomer()"
 
-easy_shop_account_profile_update:
+sylius_shop_account_profile_update:
     path: /profile/edit
     methods: [GET, PUT]
     defaults:
@@ -42,14 +42,14 @@ easy_shop_account_profile_update:
                 arguments:
                     - "expr:service('sylius.context.customer').getCustomer()"
             redirect:
-                route: easy_shop_account_profile_update
+                route: sylius_shop_account_profile_update
                 parameters: {}
 
-easy_shop_account_change_password:
+sylius_shop_account_change_password:
     path: /change-password
     methods: [GET, POST]
     defaults:
         _controller: sylius.controller.shop_user:changePasswordAction
         _sylius:
             template: "@EasyShop/front/Account/changePassword.html.twig"
-            redirect: easy_shop_account_dashboard
+            redirect: sylius_shop_account_dashboard

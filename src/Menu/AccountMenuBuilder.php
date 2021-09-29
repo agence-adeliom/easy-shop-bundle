@@ -40,27 +40,27 @@ final class AccountMenuBuilder
         $menu->setLabel('sylius.ui.my_account');
 
         $menu
-            ->addChild('dashboard', ['route' => 'easy_shop_account_dashboard'])
+            ->addChild('dashboard', ['route' => 'sylius_shop_account_dashboard'])
             ->setLabel('sylius.ui.dashboard')
             ->setLabelAttribute('icon', 'home')
         ;
         $menu
-            ->addChild('personal_information', ['route' => 'easy_shop_account_profile_update'])
+            ->addChild('personal_information', ['route' => 'sylius_shop_account_profile_update'])
             ->setLabel('sylius.ui.personal_information')
             ->setLabelAttribute('icon', 'user')
         ;
         $menu
-            ->addChild('change_password', ['route' => 'easy_shop_account_change_password'])
+            ->addChild('change_password', ['route' => 'sylius_shop_account_change_password'])
             ->setLabel('sylius.ui.change_password')
             ->setLabelAttribute('icon', 'lock')
         ;
         $menu
-            ->addChild('address_book', ['route' => 'easy_shop_account_address_book_index'])
+            ->addChild('address_book', ['route' => 'sylius_shop_account_address_book_index'])
             ->setLabel('sylius.ui.address_book')
             ->setLabelAttribute('icon', 'book')
         ;
         $menu
-            ->addChild('order_history', ['route' => 'easy_shop_account_order_index'])
+            ->addChild('order_history', ['route' => 'sylius_shop_account_order_index'])
             ->setLabel('sylius.ui.order_history')
             ->setLabelAttribute('icon', 'cart')
         ;
