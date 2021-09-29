@@ -44,7 +44,7 @@ easy_shop_register_after_checkout:
                 method: ['expr:service("sylius.factory.customer_after_checkout")', 'createAfterCheckout']
                 arguments:
                     - 'expr:service("sylius.repository.order").findOneByTokenValue($tokenValue)'
-            template: "@EasyShop/register.html.twig"
+            template: "@EasyShop/front/register.html.twig"
             event: register
             redirect:
                 route: easy_shop_account_dashboard
@@ -65,5 +65,5 @@ easy_shop_password_reset:
     defaults:
         _controller: sylius.controller.shop_user:resetPasswordAction
         _sylius:
-            template: "@EasyShop/front/front/Account/resetPassword.html.twig"
+            template: "@EasyShop/front/Account/resetPassword.html.twig"
             redirect: easy_shop_login
