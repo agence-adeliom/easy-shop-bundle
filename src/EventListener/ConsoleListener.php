@@ -16,7 +16,7 @@ class ConsoleListener
             case 'sylius:install:database':
             case 'sylius:install:sample-data':
             case 'sylius:theme:list':
-            case 'ylius:theme:assets:install':
+            case 'sylius:theme:assets:install':
                 $event->disableCommand();
                 break;
         }
