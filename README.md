@@ -1,5 +1,6 @@
 
 ![Adeliom](https://adeliom.com/public/uploads/2017/09/Adeliom_logo.png)
+[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=agence-adeliom_easy-shop-bundle)](https://sonarcloud.io/dashboard?id=agence-adeliom_easy-shop-bundle)
 
 # Easy Shop Bundle
 
@@ -17,7 +18,7 @@ bin/console sylius:install:check-requirements
 
 ## Documentation
 
-### Setup `security.yaml`
+### Configure `security.yaml`
 
 #### Encoders
 
@@ -131,7 +132,7 @@ security:
         - { path: ^/, role: PUBLIC_ACCESS }
 ```
 
-#### Setup Sylius
+### Setup Sylius
 
 ```bash
 bin/console sylius:install:setup

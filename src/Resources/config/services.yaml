@@ -22,7 +22,7 @@ services:
     Adeliom\EasyShopBundle\EventListener\ConsoleListener:
         tags:
             - { name: kernel.event_listener, event: console.command, priority: 1024 }
-        -
+
     Adeliom\EasyShopBundle\Locale\SyliusLocalProvider:
         arguments:
             - "@sylius.repository.locale"
