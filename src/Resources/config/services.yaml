@@ -18,7 +18,7 @@ services:
             - "@translator.default"
         tags:
             - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
-            
+
     Adeliom\EasyShopBundle\EventListener\ConsoleListener:
         tags:
             - { name: kernel.event_listener, event: console.command, priority: 1024 }
