@@ -381,8 +381,7 @@ abstract class ProductCrudController extends SyliusCrudController
         if (!($variant instanceof ProductVariantInterface)){
             throw new NotFoundHttpException();
         }
-        $this->get("event_dispatcher")->dispatch(new GenericEvent($variant) , sprintf("sylius.%s.initialize_update", static::getResource()));
-
+        $this->get("event_dispatcher")->dispatch(new GenericEvent($variant) , sprintf("sylius.%s.initialize_update", "product_variant"));
         $form = $this->createForm(ProductVariantType::class, $variant);
         $form->handleRequest($context->getRequest());
         if ($form->isSubmitted() && $form->isValid()) {

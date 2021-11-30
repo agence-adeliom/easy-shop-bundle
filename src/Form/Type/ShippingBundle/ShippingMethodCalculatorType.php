@@ -77,11 +77,30 @@ final class ShippingMethodCalculatorType extends AbstractType
             }
         });
 
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+            $data = $event->getData();
+            $form = $event->getForm();
+            $keys = array_diff(array_keys($data), ["type", $data["type"]]);
+
+            foreach ($keys as $key){
+                unset($data[$key]);
+                $form->remove($key);
+            }
+            $event->setData($data);
+        });
+
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
             $data = $event->getData();
             $form = $event->getForm();
-            $parent = $form->getParent();
 
+            $keys = array_diff(array_keys($data), ["type", $data["type"]]);
+
+            foreach ($keys as $key){
+                unset($data[$key]);
+                $form->remove($key);
+            }
+
+            $parent = $form->getParent();
             $event->setData($data["type"]);
             $shipping = $parent->getData();
             $shipping->setConfiguration($data[$data["type"]]);
