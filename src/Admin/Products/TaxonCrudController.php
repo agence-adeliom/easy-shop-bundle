@@ -95,6 +95,7 @@ abstract class TaxonCrudController extends SyliusCrudController
         ];
 
         yield TextField::new('code','sylius.ui.code');
+        yield TextField::new('name','sylius.ui.name')->onlyOnIndex();
         yield AssociationField::new('parent', 'sylius.form.taxon.parent')->autocomplete()->listSelector()->listDisplayColumns([1, 2]);
         yield BooleanField::new('enabled', 'sylius.form.taxon.enabled')->renderAsSwitch(in_array($pageName, [Crud::PAGE_NEW, Crud::PAGE_EDIT]));
         yield FormField::addPanel('sylius.form.taxon.name')->collapsible();
