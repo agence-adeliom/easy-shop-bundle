@@ -16,7 +16,7 @@ trait EasyShopDashboardTrait {
         yield MenuItem::section('sylius.ui.products');
         yield MenuItem::linkToCrud('sylius.ui.taxons', 'fas fa-folder', $this->getSyliusEntity("taxon"));
         yield MenuItem::linkToCrud('sylius.ui.items', 'fas fa-cube', $this->getSyliusEntity("product"));
-        yield MenuItem::linkToCrud('sylius.ui.inventory', 'fas fa-history', $this->getSyliusEntity("product"))->setAction("manageStock");
+        yield MenuItem::linkToCrud('sylius.ui.inventory', 'fas fa-history', $this->getSyliusEntity("product_variant"));
         yield MenuItem::linkToCrud('sylius.ui.attributes', 'fas fa-cubes', $this->getSyliusEntity("product_attribute"));
         yield MenuItem::linkToCrud('sylius.ui.options', 'fas fa-sliders-h', $this->getSyliusEntity("product_option"));
         yield MenuItem::linkToCrud('sylius.ui.association_types', 'fas fa-tasks', $this->getSyliusEntity("product_association_type"));
