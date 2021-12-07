@@ -16,7 +16,7 @@
         <link rel="stylesheet" href="{{ asset(asset_css) }}">
     {% endfor %}
     {% for asset_webpack in layout.assets_webpack %}
-        {{ encore_entry_link_tags('asset_webpack') }}
+        {{ encore_entry_link_tags(asset_webpack) }}
     {% endfor %}
     {{ sylius_template_event('sylius.shop.layout.stylesheets') }}
 {% endblock %}
@@ -51,7 +51,7 @@
         <script type="text/javascript" src="{{ asset(asset_js) }}"></script>
     {% endfor %}
     {% for asset_webpack in layout.assets_webpack %}
-        {{ encore_entry_script_tags('asset_webpack') }}
+        {{ encore_entry_script_tags(asset_webpack) }}
     {% endfor %}
     {{ sylius_template_event('sylius.shop.layout.javascripts') }}
 
