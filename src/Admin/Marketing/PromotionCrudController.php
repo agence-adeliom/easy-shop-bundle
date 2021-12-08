@@ -37,7 +37,7 @@ abstract class PromotionCrudController extends SyliusCrudController
         return "promotion";
     }
 
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [
             'sylius.factory.promotion_coupon' => '?'.PromotionCouponFactoryInterface::class,

@@ -155,3 +155,14 @@ services:
             - "@sylius.form.type.data_transformer.products_to_codes"
             - "%sylius.model.product.class%"
         tags: [ form.type ]
+
+
+    Sylius\Component\Attribute\Factory\AttributeFactoryInterface:
+        alias: "sylius.factory.product_attribute"
+
+    Sylius\Bundle\ResourceBundle\Form\Registry\FormTypeRegistryInterface:
+        alias: "sylius.form_registry.attribute_type"
+
+    sylius.custom_factory.product_attribute:
+        class: Sylius\Component\Attribute\Factory\AttributeFactory
+        arguments: [ '@sylius.custom_factory.product_attribute.inner', '@sylius.registry.attribute_type' ]

@@ -112,7 +112,7 @@ abstract class ReviewCrudController extends SyliusCrudController
         return $this->redirect($this->get(AdminUrlGenerator::class)->setAction(Action::INDEX)->unset(EA::ENTITY_ID)->generateUrl());
     }
 
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [
             Factory::class => '?'.FactoryInterface::class

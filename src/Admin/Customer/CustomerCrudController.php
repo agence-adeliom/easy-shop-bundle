@@ -213,7 +213,7 @@ abstract class CustomerCrudController extends SyliusCrudController
         );
     }
 
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [
             'sylius.customer_statistics_provider' => '?'.CustomerStatisticsProviderInterface::class,

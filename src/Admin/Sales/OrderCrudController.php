@@ -447,7 +447,7 @@ abstract class OrderCrudController extends SyliusCrudController
         ];
     }
 
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [
             'sylius.repository.order' => '?'.OrderRepositoryInterface::class,

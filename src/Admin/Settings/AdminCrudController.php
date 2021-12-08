@@ -52,7 +52,7 @@ abstract class AdminCrudController extends SyliusCrudController
         yield BooleanField::new("enabled", 'sylius.form.user.enabled')->renderAsSwitch($pageName != Crud::PAGE_INDEX)->setColumns('col-12 col-sm-6');
     }
 
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [
             'sylius.factory.admin_user' => '?'.FactoryInterface::class,

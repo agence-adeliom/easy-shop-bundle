@@ -53,7 +53,7 @@ abstract class ProductCrudController extends SyliusCrudController
         return "product";
     }
 
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [
             'sylius.factory.product' => '?'.ProductFactoryInterface::class,

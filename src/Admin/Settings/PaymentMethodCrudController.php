@@ -31,7 +31,7 @@ abstract class PaymentMethodCrudController extends SyliusCrudController
         return "payment_method";
     }
 
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [
             'sylius.custom_factory.payment_method' => '?' . PaymentMethodFactoryInterface::class,

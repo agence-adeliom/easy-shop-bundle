@@ -44,7 +44,7 @@ abstract class ShippingMethodCrudController extends SyliusCrudController
         return "shipping_method";
     }
 
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [
             'sylius.form_registry.shipping_calculator' => '?' . FormTypeRegistryInterface::class,

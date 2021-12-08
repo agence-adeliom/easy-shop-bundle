@@ -213,7 +213,7 @@ abstract class ShipmentCrudController extends SyliusCrudController
         );
     }
 
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [
             OrderRepository::class => '?'.OrderRepositoryInterface::class,

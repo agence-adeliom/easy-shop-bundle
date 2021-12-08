@@ -5,7 +5,6 @@ namespace Adeliom\EasyShopBundle\Admin\Products;
 use Adeliom\EasyFieldsBundle\Admin\Field\FormTypeField;
 use Adeliom\EasyFieldsBundle\Admin\Field\TranslationField;
 use Adeliom\EasyShopBundle\Admin\SyliusCrudController;
-use App\Entity\Shop\Product\ProductAttribute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -31,11 +30,11 @@ abstract class ProductAttributeCrudController extends SyliusCrudController
         return "product_attribute";
     }
 
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [
             'sylius.form_registry.attribute_type' => '?'.FormTypeRegistryInterface::class,
-            'sylius.factory.product_attribute' => '?'.AttributeFactoryInterface::class,
+            'sylius.custom_factory.product_attribute' => '?'.AttributeFactoryInterface::class,
             ParameterBagInterface::class => '?'.ParameterBagInterface::class,
         ]);
     }
@@ -70,7 +69,7 @@ abstract class ProductAttributeCrudController extends SyliusCrudController
     {
         global $attributeType;
         /** @var ProductAttributeInterface $entity */
-        $entity = $this->get('sylius.factory.product_attribute')->createTyped($attributeType);
+        $entity = $this->get('sylius.custom_factory.product_attribute')->createTyped($attributeType);
         return $entity;
     }
 
@@ -123,7 +122,7 @@ abstract class ProductAttributeCrudController extends SyliusCrudController
 
         if (in_array($pageName, [Crud::PAGE_NEW, Crud::PAGE_EDIT])) {
             if (($attribute instanceof AttributeInterface) && $this->get('sylius.form_registry.attribute_type')->has($attribute->getType(), 'configuration')) {
-                yield FormTypeField::new('configuration', 'sylius.form.attribute_type.configuration', $this->get('sylius.form_registry.attribute_type')->get($attribute->getType(), 'configuration'))
+                yield FormTypeField::new('configuration', 'sylius.form_registry.attribute_type', $this->get('sylius.form_registry.attribute_type')->get($attribute->getType(), 'configuration'))
                     ->setFormTypeOption("auto_initialize", false);
             }
         }
