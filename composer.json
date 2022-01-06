@@ -1,7 +1,7 @@
 {
     "name": "agence-adeliom/easy-shop-bundle",
     "type": "symfony-bundle",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "Symfony Shop bundle for EasyAdmin based on Sylius",
     "keywords": ["symfony", "shop", "e-commerce", "sylius", "easyadmin"],
     "homepage": "https://github.com/agence-adeliom/easy-shop-bundle",
