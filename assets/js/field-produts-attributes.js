@@ -2,17 +2,17 @@ import Sortable from 'sortablejs';
 
 
 const eaProductAttributesHandler = function (event) {
-    if(event.type === "DOMContentLoaded") {
-        document.querySelectorAll('button.field-editor-add-button').forEach((addButton) => {
-            const collection = addButton.closest('[data-ea-collection-field]');
+    document.querySelectorAll('button.field-product_attr-add-button:not(.processed)').forEach((addButton) => {
+        const collection = addButton.closest('[data-ea-collection-field]');
+        if (!collection || addButton.classList.contains('processed')) {
+            return;
+        }
+        EaProductAttributesCollectionProperty.handleAddButton(addButton, collection);
+        EaProductAttributesCollectionProperty.updateCollectionItemCssClasses(collection);
+        EaProductAttributesCollectionProperty.updateCollectionSortable(collection);
+    });
 
-            EaProductAttributesCollectionProperty.handleAddButton(addButton, collection);
-            EaProductAttributesCollectionProperty.updateCollectionItemCssClasses(collection);
-            EaProductAttributesCollectionProperty.updateCollectionSortable(collection);
-        });
-    }
-
-    document.querySelectorAll('button.field-editor-remove-button').forEach((deleteButton) => {
+    document.querySelectorAll('button.field-product_attr-remove-button').forEach((deleteButton) => {
         deleteButton.addEventListener('click', () => {
             const collection = deleteButton.closest('[data-ea-collection-field]');
             let item = deleteButton.closest('.field-collection-item');
@@ -87,6 +87,7 @@ const EaProductAttributesCollectionProperty = {
             })
 
         });
+        addButton.classList.add('processed');
     },
 
     updateCollectionSortable: (collection) => {
@@ -101,7 +102,7 @@ const EaProductAttributesCollectionProperty = {
             }
 
             collection.sortable = Sortable.create(collection.querySelector(".ea-form-collection-items .accordion > .form-widget-compound > div"),{
-                handle: '.field-editor-drag-button',
+                handle: '.field-product_attr-drag-button',
                 direction: 'vertical',
                 onEnd: function (evt) {
                     EaProductAttributesCollectionProperty.updateCollectionItemCssClasses(collection);
