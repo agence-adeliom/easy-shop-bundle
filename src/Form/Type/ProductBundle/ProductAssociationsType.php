@@ -69,7 +69,8 @@ final class ProductAssociationsType extends AbstractType
                 'choice_value' => 'code',
                 'multiple' => true,
                 'attr' => [
-                    'data-ea-widget' => "ea-autocomplete"
+                    'data-ea-widget' => "ea-autocomplete",
+                    "data-ea-autocomplete-endpoint-url" => $options['data-ea-autocomplete-endpoint-url']
                 ]
             ]);
         }
@@ -81,7 +82,8 @@ final class ProductAssociationsType extends AbstractType
         $resolver->setDefaults([
             "compound" => true,
             "by_reference" => false,
-            "allow_extra_fields" => true
+            "allow_extra_fields" => true,
+            "data-ea-autocomplete-endpoint-url" => '',
         ]);
     }
 

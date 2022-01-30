@@ -15,10 +15,14 @@ use Adeliom\EasyShopBundle\Form\Type\ProductBundle\ProductTaxonType;
 use App\Entity\Shop\Product\Product;
 use App\Entity\Shop\Taxonomy\Taxon;
 use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Factory\EntityFactory;
+use EasyCorp\Bundle\EasyAdminBundle\Factory\FilterFactory;
+use EasyCorp\Bundle\EasyAdminBundle\Factory\PaginatorFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
@@ -42,6 +46,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\RouterInterface;
@@ -63,6 +68,7 @@ abstract class ProductCrudController extends SyliusCrudController
             'sylius.manager.product_variant' => '?'.EntityManagerInterface::class,
             ParameterBagInterface::class => '?'.ParameterBagInterface::class,
             RouterInterface::class => '?'.RouterInterface::class,
+            PaginatorFactory::class => '?'.PaginatorFactory::class
         ]);
     }
 
@@ -283,8 +289,18 @@ abstract class ProductCrudController extends SyliusCrudController
 
     public function associationFields(string $pageName, AdminContext $context): iterable
     {
-        yield FormField::addPanel("Associations")->collapsible()->renderCollapsed();
+        $autocompleteEndpointUrl = $this->get(AdminUrlGenerator::class)
+            ->unsetAll()
+            ->set('page', 1) // The autocomplete should always start on the first page
+            ->setController(self::class)
+            ->setAction('autocomplete')
+            ->set(\Adeliom\EasyFieldsBundle\Admin\Field\AssociationField::PARAM_AUTOCOMPLETE_CONTEXT, [
+                'propertyName' => 'entityAsString'
+            ])
+            ->generateUrl();
+        yield FormField::addPanel("Associations");
         yield ProductAssociationsField::new("associations", false)
+            ->setAutocompleteEndointUrl($autocompleteEndpointUrl)
             ->hideOnIndex();
     }
 
@@ -458,5 +474,16 @@ abstract class ProductCrudController extends SyliusCrudController
         return $this->render('@EasyShop/crud/variant/stocks.html.twig', [
             'tracked' => $tracked,
         ]);
+    }
+
+    public function autocomplete(AdminContext $context): JsonResponse
+    {
+        $fields = FieldCollection::new($this->configureFields(Crud::PAGE_INDEX));
+        $this->container->get(EntityFactory::class)->processFields($context->getEntity(), $fields);
+        $filters = $this->container->get(FilterFactory::class)->create($context->getCrud()->getFiltersConfig(), $context->getEntity()->getFields(), $context->getEntity());
+        $queryBuilder = parent::createIndexQueryBuilder($context->getSearch(), $context->getEntity(), $fields, $filters);
+        $queryBuilder->getQuery()->getResult();
+        $paginator = $this->container->get(PaginatorFactory::class)->create($queryBuilder);
+        return JsonResponse::fromJsonString($paginator->getResultsAsJson());
     }
 }
