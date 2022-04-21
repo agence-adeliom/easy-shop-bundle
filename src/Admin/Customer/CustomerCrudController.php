@@ -207,6 +207,7 @@ abstract class CustomerCrudController extends SyliusCrudController
         return $this->redirect(
             $this->get(AdminUrlGenerator::class)
                 ->setController($orderCrud)
+                ->setEntityId(null)
                 ->setAction(Action::INDEX)
                 ->set('filters', ['customer' => ['value' => $context->getEntity()->getPrimaryKeyValue(), 'comparison' => '=']])
                 ->generateUrl()
