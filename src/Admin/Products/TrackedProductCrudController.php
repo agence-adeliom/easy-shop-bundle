@@ -43,6 +43,7 @@ abstract class TrackedProductCrudController extends AbstractCrudController
     public function configureFilters(Filters $filters): Filters
     {
         $filters->add(TextFilter::new("code", "sylius.ui.code"));
+        $filters->add(TextFilter::new("name", "sylius.ui.name"));
         $filters->add(NumericFilter::new("onHand", "sylius.ui.available_on_hand"));
         $filters->add(NumericFilter::new("onHold", "sylius.ui.on_hold"));
         return $filters;

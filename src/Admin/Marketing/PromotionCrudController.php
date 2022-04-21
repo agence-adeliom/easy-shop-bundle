@@ -89,8 +89,8 @@ abstract class PromotionCrudController extends SyliusCrudController
         yield TextField::new('name','sylius.form.promotion.name')->setRequired(true)->setColumns(6);
         yield TextareaField::new('description','sylius.form.promotion.description')->setColumns(12)->hideOnIndex();
         yield IntegerField::new('usageLimit','sylius.form.promotion.usage_limit')->setColumns(6);
-        yield IntegerField::new('priority','sylius.form.promotion.priority')->setColumns(6);
-        yield BooleanField::new('exclusive','sylius.form.promotion.exclusive')->setColumns(6)->hideOnIndex();
+        yield IntegerField::new('priority','sylius.form.promotion.priority')->setColumns(6)->setHelp('sylius.form.promotion.priority-help');
+        yield BooleanField::new('exclusive','sylius.form.promotion.exclusive')->setColumns(6)->hideOnIndex()->setHelp('sylius.form.promotion.exclusive-help');
         yield BooleanField::new('couponBased','sylius.form.promotion.coupon_based')->setColumns(6)->renderAsSwitch(in_array($pageName, [Crud::PAGE_EDIT, Crud::PAGE_NEW]));
 
         yield FormTypeField::new('channels', 'sylius.form.promotion.channels', ChannelChoiceType::class)->hideOnIndex()

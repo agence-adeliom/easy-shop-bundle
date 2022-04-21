@@ -18,6 +18,10 @@ sylius:
     new_api_users: Nouveau compte API
     edit_api_users: Modifier un compte API
     api_users_details: Détail du compte API
+  form:
+    promotion:
+      priority-help: 'Si exclusive, une promotion avec une top priorité sera appliquée'
+      exclusive-help: Ne peut s'appliquer avec d'autres promotions
 
   channel:
     delete_error: 'Le canal ne peut pas être supprimé, il faut au moins un canal activé.'
