@@ -134,6 +134,8 @@ abstract class ShippingMethodCrudController extends SyliusCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        yield FormField::addPanel('sylius.ui.shipping_method');
+
         $fieldsConfig = [
             'name' => [
                 'field_type' => TextType::class,
