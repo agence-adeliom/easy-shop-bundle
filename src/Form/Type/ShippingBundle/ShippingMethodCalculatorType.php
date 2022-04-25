@@ -51,10 +51,13 @@ final class ShippingMethodCalculatorType extends AbstractType
                 'attr' => [
                     'data-form-collection' => 'update',
                 ],
-                "map" => [
-                    "flat_rate" => ["flat_rate"],
-                    "per_unit_rate" => ["per_unit_rate"],
-                ]
+                "map" => call_user_func(function () {
+                    $map = [];
+                    foreach ($this->calculators as $key => $calculator) {
+                        $map[$key] = [$key];
+                    }
+                    return $map;
+                })
             ])
             ->add("flat_rate", ChannelBasedFlatRateConfigurationType::class, ["label" => false])
             ->add("per_unit_rate", ChannelBasedPerUnitRateConfigurationType::class, ["label" => false])
