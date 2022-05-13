@@ -63,12 +63,10 @@ final class HasTaxonConfigurationType extends AbstractType
                     return $entity ? $entity->getCode() : '';
                 },
                 'constraints' => [
-                    new NotBlank(['groups' => ['sylius']]),
-                    new Type(['type' => 'string', 'groups' => ['sylius']]),
+                    new NotBlank(['groups' => ['sylius']])
                 ],
             ])
         ;
-
         $builder->get('taxons')->addModelTransformer($this->taxonsToCodesTransformer);
     }
 

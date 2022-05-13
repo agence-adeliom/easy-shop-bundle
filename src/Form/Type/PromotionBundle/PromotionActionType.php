@@ -121,6 +121,7 @@ final class PromotionActionType extends AbstractType
             $form->add('type_view', ChoiceType::class, [
                 'label' => 'sylius.form.promotion_action.type',
                 'choices' => array_flip($this->actions),
+                'data' => $data["type"],
                 'disabled' => true,
                 'mapped' => false
             ]);

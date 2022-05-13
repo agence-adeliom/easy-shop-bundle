@@ -121,6 +121,7 @@ final class PromotionRuleType extends AbstractType
             $form->add('type_view', ChoiceType::class, [
                 'label' => 'sylius.form.promotion_action.type',
                 'choices' => array_flip($this->rules),
+                'data' => $data["type"],
                 'disabled' => true,
                 'mapped' => false
             ]);
@@ -134,9 +135,9 @@ final class PromotionRuleType extends AbstractType
             ];
             if($data["type"] == "contains_product"){
                 $form->add('configuration', \Adeliom\EasyShopBundle\Form\Type\PromotionBundle\ContainsProductConfigurationType::class, $ruleOptions);
-            }elseif($form == "has_taxon"){
+            }elseif($data["type"] == "has_taxon"){
                 $form->add('configuration', \Adeliom\EasyShopBundle\Form\Type\PromotionBundle\HasTaxonConfigurationType::class, $ruleOptions);
-            }elseif($form == "total_of_items_from_taxon"){
+            }elseif($data["type"] == "total_of_items_from_taxon"){
                 $form->add('configuration', \Adeliom\EasyShopBundle\Form\Type\PromotionBundle\ChannelBasedTotalOfItemsFromTaxonConfigurationType::class, $ruleOptions);
             }else{
                 $form->add('configuration', $this->formTypeRegistry->get($data["type"], "default"), $ruleOptions);
