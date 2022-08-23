@@ -13,6 +13,7 @@ imports:
     - { resource: "@SyliusShippingBundle/Resources/config/app/config.yml" }
     - { resource: "@SyliusTaxationBundle/Resources/config/app/config.yml" }
     - { resource: "@SyliusTaxonomyBundle/Resources/config/app/config.yml" }
+    - { resource: "@SyliusApiBundle/Resources/config/app/config.yaml" }
     - { resource: "@SyliusUserBundle/Resources/config/app/config.yml" }
 
     - { resource: "@SyliusCoreBundle/Resources/config/app/parameters.yml" }
