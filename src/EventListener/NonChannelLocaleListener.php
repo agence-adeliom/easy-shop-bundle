@@ -24,34 +24,21 @@ use Webmozart\Assert\Assert;
 
 final class NonChannelLocaleListener
 {
-    /** @var RouterInterface */
-    private $router;
-
-    /** @var LocaleProviderInterface */
-    private $channelBasedLocaleProvider;
-
-    /** @var FirewallMap */
-    private $firewallMap;
-
     /** @var string[] */
-    private $firewallNames;
+    private array $firewallNames = [];
 
     /**
      * @param string[] $firewallNames
      */
     public function __construct(
-        RouterInterface $router,
-        LocaleProviderInterface $channelBasedLocaleProvider,
-        FirewallMap $firewallMap,
+        private readonly RouterInterface $router,
+        private readonly LocaleProviderInterface $channelBasedLocaleProvider,
+        private readonly FirewallMap $firewallMap,
         array $firewallNames
     ) {
         Assert::notEmpty($firewallNames);
         Assert::allString($firewallNames);
-
-        $this->channelBasedLocaleProvider = $channelBasedLocaleProvider;
-        $this->firewallMap = $firewallMap;
         $this->firewallNames = $firewallNames;
-        $this->router = $router;
     }
 
     /**

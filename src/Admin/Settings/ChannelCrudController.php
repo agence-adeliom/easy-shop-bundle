@@ -54,7 +54,7 @@ abstract class ChannelCrudController extends SyliusCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        yield TextField::new('code', 'sylius.ui.code')->setColumns(6)->setFormTypeOption('disabled', (in_array($pageName, [Crud::PAGE_EDIT]) ? 'disabled' : ''));
+        yield TextField::new('code', 'sylius.ui.code')->setColumns(6)->setFormTypeOption('disabled', ($pageName == Crud::PAGE_EDIT ? 'disabled' : ''));
         yield TextField::new('name', 'sylius.form.channel.name')->setColumns(6);
         yield TextareaField::new('description', 'sylius.form.channel.description')->setColumns(12)
             ->hideOnIndex();
@@ -125,7 +125,5 @@ abstract class ChannelCrudController extends SyliusCrudController
 
         yield FormTypeField::new('shopBillingData', 'sylius.form.channel.shop_billing_data', ShopBillingDataType::class)
             ->hideOnIndex();
-
     }
-
 }

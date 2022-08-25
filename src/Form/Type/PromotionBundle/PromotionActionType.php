@@ -23,12 +23,10 @@ use Sylius\Bundle\PromotionBundle\Form\Type\PromotionRuleChoiceType;
 use Sylius\Bundle\ResourceBundle\Form\Registry\FormTypeRegistryInterface;
 use Sylius\Component\Channel\Repository\ChannelRepositoryInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -37,25 +35,14 @@ use Symfony\Component\Validator\Constraints\Valid;
 
 final class PromotionActionType extends AbstractType
 {
-    /** @var FormTypeRegistryInterface */
-    private $formTypeRegistry;
-
-    /** @var array */
-    private $actions;
-
-    private $entityClass;
-
-    public function __construct(array $actions, FormTypeRegistryInterface $formTypeRegistry, string $entityClass)
+    public function __construct(private readonly array $actions, private readonly FormTypeRegistryInterface $formTypeRegistry, private readonly string $entityClass)
     {
-        $this->formTypeRegistry = $formTypeRegistry;
-        $this->actions = $actions;
-        $this->entityClass = $entityClass;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $map = [];
-        foreach ($this->actions as $k => $v){
+        foreach (array_keys($this->actions) as $k) {
             $map[$k] = [$k];
         }
 
@@ -66,7 +53,7 @@ final class PromotionActionType extends AbstractType
                 'map' => $map,
             ])
         ;
-        foreach ($this->actions as $form => $label){
+        foreach (array_keys($this->actions) as $form) {
             $actionOptions = [
                 "label" => false,
                 //"mapped" => false,
@@ -74,32 +61,34 @@ final class PromotionActionType extends AbstractType
                     new Valid()
                 ]
             ];
-            if($form == 'unit_fixed_discount'){
+            if ($form == 'unit_fixed_discount') {
                 $builder->add($form, ChannelBasedUnitFixedDiscountConfigurationType::class, $actionOptions);
-            }elseif($form == 'unit_percentage_discount'){
+            } elseif ($form == 'unit_percentage_discount') {
                 $builder->add($form, ChannelBasedUnitPercentageDiscountConfigurationType::class, $actionOptions);
-            }else{
+            } else {
                 $builder->add($form, $this->formTypeRegistry->get($form, "default"), $actionOptions);
             }
         }
 
         $builder->addModelTransformer(new CallbackTransformer(
-            function ($value){
-                if ($value){
+            static function ($value) {
+                if ($value) {
                     return [
                         'type' => $value->getType(),
                         $value->getType() => $value->getConfiguration()
                     ];
                 }
+
                 return $value;
             },
-            function ($value){
-                if ($value){
+            function ($value) {
+                if ($value) {
                     $obj = new $this->entityClass();
                     $obj->setType($value['type']);
                     $obj->setConfiguration($value['configuration']);
                     return $obj;
                 }
+
                 return $value;
             }
         ));
@@ -108,13 +97,13 @@ final class PromotionActionType extends AbstractType
             $data = $event->getData();
             $form = $event->getForm();
 
-            foreach (array_keys($this->actions) as $rule){
+            foreach (array_keys($this->actions) as $rule) {
                 $form->remove($rule);
             }
 
             $data = [
                 "type" => $data["type"],
-                "configuration" => isset($data[$data["type"]]) ? $data[$data["type"]] : (isset($data["configuration"]) ? $data["configuration"] : []),
+                "configuration" => $data[$data["type"]] ?? $data["configuration"] ?? [],
             ];
             $event->setData($data);
 
@@ -133,11 +122,11 @@ final class PromotionActionType extends AbstractType
                     new Valid()
                 ]
             ];
-            if($data["type"] == 'unit_fixed_discount'){
+            if ($data["type"] == 'unit_fixed_discount') {
                 $form->add("configuration", ChannelBasedUnitFixedDiscountConfigurationType::class, $actionOptions);
-            }elseif($data["type"] == 'unit_percentage_discount'){
+            } elseif ($data["type"] == 'unit_percentage_discount') {
                 $form->add("configuration", ChannelBasedUnitPercentageDiscountConfigurationType::class, $actionOptions);
-            }else{
+            } else {
                 $form->add("configuration", $this->formTypeRegistry->get($data["type"], "default"), $actionOptions);
             }
         });

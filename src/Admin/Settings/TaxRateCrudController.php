@@ -42,7 +42,7 @@ abstract class TaxRateCrudController extends SyliusCrudController
         yield FormField::addPanel("sylius.ui.general_info")->collapsible()->renderCollapsed(false);
 
         yield TextField::new('code', 'sylius.ui.code')
-            ->setFormTypeOption('disabled', (in_array($pageName, [Crud::PAGE_EDIT]) ? 'disabled' : ''))
+            ->setFormTypeOption('disabled', ($pageName == Crud::PAGE_EDIT ? 'disabled' : ''))
             ->setColumns(6);
 
         yield TextField::new('name', 'sylius.form.tax_rate.name')
@@ -68,7 +68,6 @@ abstract class TaxRateCrudController extends SyliusCrudController
         yield PercentField::new('amount', 'sylius.form.tax_rate.amount')
             ->setFormTypeOption("scale", 3);
 
-        yield BooleanField::new('includedInPrice',"sylius.form.tax_rate.included_in_price")->hideOnIndex();
+        yield BooleanField::new('includedInPrice', "sylius.form.tax_rate.included_in_price")->hideOnIndex();
     }
-
 }

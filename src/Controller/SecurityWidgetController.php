@@ -13,22 +13,17 @@ declare(strict_types=1);
 
 namespace Adeliom\EasyShopBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Templating\EngineInterface;
 use Twig\Environment;
 
 final class SecurityWidgetController
 {
-    /** @var EngineInterface|Environment */
-    private $templatingEngine;
-
     /**
      * @param EngineInterface|Environment $templatingEngine
      */
-    public function __construct(object $templatingEngine)
+    public function __construct(private readonly object $templatingEngine)
     {
-        $this->templatingEngine = $templatingEngine;
     }
 
     public function renderAction(): Response

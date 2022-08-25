@@ -43,6 +43,10 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 abstract class ShipmentCrudController extends SyliusCrudController
 {
+    public function __construct(private \Doctrine\Persistence\ManagerRegistry $managerRegistry)
+    {
+    }
+
     public static function getResource(): string
     {
         return "shipment";
@@ -77,8 +81,8 @@ abstract class ShipmentCrudController extends SyliusCrudController
     public function configureFilters(Filters $filters): Filters
     {
         $filters
-            ->add(DateTimeFilter::new('createdAt','sylius.ui.date'))
-            ->add(ChoiceFilter::new('state','sylius.ui.state')->setChoices([
+            ->add(DateTimeFilter::new('createdAt', 'sylius.ui.date'))
+            ->add(ChoiceFilter::new('state', 'sylius.ui.state')->setChoices([
                 'sylius.ui.' . ShipmentInterface::STATE_CART => ShipmentInterface::STATE_CART,
                 'sylius.ui.' . ShipmentInterface::STATE_CANCELLED => ShipmentInterface::STATE_CANCELLED,
                 'sylius.ui.' . ShipmentInterface::STATE_SHIPPED => ShipmentInterface::STATE_SHIPPED,
@@ -108,13 +112,13 @@ abstract class ShipmentCrudController extends SyliusCrudController
         yield DateTimeField::new('createdAt', 'sylius.ui.created_at');
         yield DateTimeField::new('shippedAt', 'sylius.ui.shipped_at');
         yield TextField::new('order.channel', 'sylius.ui.channel');
-        yield TextField::new('order.number', 'sylius.ui.code')->formatValue(function ($value, $entity){
-            if($value){
+        yield TextField::new('order.number', 'sylius.ui.code')->formatValue(static function ($value, $entity) {
+            if ($value) {
                 return "#" . $value;
             }
         });
-        yield TextField::new('order.customer', 'sylius.ui.customer')->formatValue(function ($value, $entity){
-            if($value){
+        yield TextField::new('order.customer', 'sylius.ui.customer')->formatValue(static function ($value, $entity) {
+            if ($value) {
                 return '<strong>' . $entity->getOrder()->getCustomer()->getFullName() . "</strong><br>" . $entity->getOrder()->getCustomer()->getEmail();
             }
         });
@@ -136,29 +140,26 @@ abstract class ShipmentCrudController extends SyliusCrudController
         /** @var OrderInterface|null $order */
         $order = $shipment->getOrder();
 
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->managerRegistry->getManager();
         $sm = $this->get(Factory::class)->get($shipment, "sylius_shipment");
-        if($request->get('tracking')){
-            if($sm->apply(ShipmentTransitions::TRANSITION_SHIP)) {
-                $shipment->setTracking($request->get('tracking'));
-                $em->persist($shipment);
-                $em->flush();
-
-                $this->get(Sender::class)->send(
-                    Emails::SHIPMENT_CONFIRMATION,
-                    [$order->getCustomer()->getEmail()],
-                    [
-                        'shipment' => $shipment,
-                        'order' => $order,
-                        'channel' => $order->getChannel(),
-                        'localeCode' => $order->getLocaleCode(),
-                    ]
-                );
-                $this->addFlash(
-                    'success',
-                    'sylius.shipment.shipped'
-                );
-            }
+        if ($request->get('tracking') && $sm->apply(ShipmentTransitions::TRANSITION_SHIP)) {
+            $shipment->setTracking($request->get('tracking'));
+            $em->persist($shipment);
+            $em->flush();
+            $this->get(Sender::class)->send(
+                Emails::SHIPMENT_CONFIRMATION,
+                [$order->getCustomer()->getEmail()],
+                [
+                    'shipment' => $shipment,
+                    'order' => $order,
+                    'channel' => $order->getChannel(),
+                    'localeCode' => $order->getLocaleCode(),
+                ]
+            );
+            $this->addFlash(
+                'success',
+                'sylius.shipment.shipped'
+            );
         }
 
         return new RedirectResponse($request->headers->get('referer'));
@@ -216,14 +217,13 @@ abstract class ShipmentCrudController extends SyliusCrudController
     public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [
-            OrderRepository::class => '?'.OrderRepositoryInterface::class,
-            'sylius.repository.shipment' => '?'.ShipmentRepositoryInterface::class,
-            'sylius.repository.payment' => '?'.PaymentRepositoryInterface::class,
-            Factory::class => '?'.FactoryInterface::class,
-            Sender::class => '?'.SenderInterface::class,
-            CsrfTokenManager::class => '?'.CsrfTokenManagerInterface::class,
-            ParameterBagInterface::class => '?'.ParameterBagInterface::class,
+            OrderRepository::class => '?' . OrderRepositoryInterface::class,
+            'sylius.repository.shipment' => '?' . ShipmentRepositoryInterface::class,
+            'sylius.repository.payment' => '?' . PaymentRepositoryInterface::class,
+            Factory::class => '?' . FactoryInterface::class,
+            Sender::class => '?' . SenderInterface::class,
+            CsrfTokenManager::class => '?' . CsrfTokenManagerInterface::class,
+            ParameterBagInterface::class => '?' . ParameterBagInterface::class,
         ]);
     }
-
 }

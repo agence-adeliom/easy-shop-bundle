@@ -2,7 +2,6 @@
 
 namespace Adeliom\EasyShopBundle\Form\Listener;
 
-
 use Adeliom\EasyShopBundle\Entity\ProductAttributesCollectionEntry;
 use Adeliom\EasyShopBundle\Entity\ProductAttributesCollectionEntryValues;
 use Adeliom\EasyShopBundle\Form\Type\ProductBundle\ProductAttributesCollectionEntryType;
@@ -17,32 +16,19 @@ use Symfony\Component\Form\FormInterface;
 
 class ProductAttributesResizeFormListener extends \Symfony\Component\Form\Extension\Core\EventListener\ResizeFormListener
 {
-    protected $type;
-    protected $options;
-    protected $allowAdd;
-    protected $allowDelete;
-
     private $deleteEmpty;
-
-    /** @var RepositoryInterface */
-    private $productAttributesTypeRepository;
 
     /**
      * @param bool          $allowAdd    Whether children could be added to the group
      * @param bool          $allowDelete Whether children could be removed from the group
      * @param bool|callable $deleteEmpty
      */
-    public function __construct(string $type, array $options = [], bool $allowAdd = false, bool $allowDelete = false, $deleteEmpty = false, RepositoryInterface $productAttributesTypeRepository)
+    public function __construct(protected string $type, private readonly RepositoryInterface $productAttributesTypeRepository, protected array $options = [], protected bool $allowAdd = false, protected bool $allowDelete = false, $deleteEmpty = false)
     {
-        $this->type = $type;
-        $this->allowAdd = $allowAdd;
-        $this->allowDelete = $allowDelete;
-        $this->options = $options;
         $this->deleteEmpty = $deleteEmpty;
-        $this->productAttributesTypeRepository = $productAttributesTypeRepository;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             FormEvents::PRE_SET_DATA => 'preSetData',
@@ -72,32 +58,34 @@ class ProductAttributesResizeFormListener extends \Symfony\Component\Form\Extens
         }
 
 
-        $newArray = array();
+        $newArray = [];
 
         if (!($data instanceof PersistentCollection)) {
             return new ArrayCollection();
         }
 
         /** @var \Sylius\Component\Product\Model\ProductAttributeValue $entry */
-        foreach ($data as $position => $entry){
-            if(!isset($newArray[$entry->getAttribute()->getCode()])){
+        foreach ($data as $position => $entry) {
+            if (!isset($newArray[$entry->getAttribute()->getCode()])) {
                 $newArray[$entry->getAttribute()->getCode()] = [
                     'attribute' => $entry->getAttribute()->getCode(),
                     'position' => $position,
                 ];
             }
-            if ($entry->getAttribute()->isTranslatable()){
-                $newArray[$entry->getAttribute()->getCode()]["value__".$entry->getLocaleCode()] = $entry->getValue();
-            }else{
+
+            if ($entry->getAttribute()->isTranslatable()) {
+                $newArray[$entry->getAttribute()->getCode()]["value__" . $entry->getLocaleCode()] = $entry->getValue();
+            } else {
                 $newArray[$entry->getAttribute()->getCode()]["value"] = $entry->getValue();
             }
         }
+
         $data = array_values($newArray);
         // Then add all rows again in the correct order
         foreach ($data as $name => $value) {
             $attribute = $this->productAttributesTypeRepository->findOneBy(["code" => $value["attribute"]]);
             $form->add($name, ProductAttributesCollectionEntryType::class, array_replace($this->options, [
-                'property_path' => '['.$name.']',
+                'property_path' => '[' . $name . ']',
                 'attribute' => $attribute,
                 'label' => $attribute->getName(),
                 //'data' => $value
@@ -129,7 +117,7 @@ class ProductAttributesResizeFormListener extends \Symfony\Component\Form\Extens
                 if (!$form->has($name)) {
                     $attribute = $this->productAttributesTypeRepository->findOneBy(["code" => $value["attribute"]]);
                     $form->add($name, ProductAttributesCollectionEntryType::class, array_replace($this->options, [
-                        'property_path' => '['.$name.']',
+                        'property_path' => '[' . $name . ']',
                         'attribute' => $attribute,
                         'label' => $attribute->getName(),
                         //'data' => $value

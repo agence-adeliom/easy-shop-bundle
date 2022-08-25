@@ -59,17 +59,17 @@ abstract class PaymentCrudController extends SyliusCrudController
     public function configureFilters(Filters $filters): Filters
     {
         $filters
-            ->add(DateTimeFilter::new('createdAt','sylius.ui.date'))
-            ->add(ChoiceFilter::new('state','sylius.ui.state')->setChoices([
-                'sylius.ui.'.PaymentInterface::STATE_COMPLETED => PaymentInterface::STATE_COMPLETED,
-                'sylius.ui.'.PaymentInterface::STATE_CANCELLED => PaymentInterface::STATE_CANCELLED,
-                'sylius.ui.'.PaymentInterface::STATE_AUTHORIZED => PaymentInterface::STATE_AUTHORIZED,
-                'sylius.ui.'.PaymentInterface::STATE_CART => PaymentInterface::STATE_CART,
-                'sylius.ui.'.PaymentInterface::STATE_UNKNOWN => PaymentInterface::STATE_UNKNOWN,
-                'sylius.ui.'.PaymentInterface::STATE_REFUNDED => PaymentInterface::STATE_REFUNDED,
-                'sylius.ui.'.PaymentInterface::STATE_PROCESSING => PaymentInterface::STATE_PROCESSING,
-                'sylius.ui.'.PaymentInterface::STATE_FAILED => PaymentInterface::STATE_FAILED,
-                'sylius.ui.'.PaymentInterface::STATE_NEW => PaymentInterface::STATE_NEW,
+            ->add(DateTimeFilter::new('createdAt', 'sylius.ui.date'))
+            ->add(ChoiceFilter::new('state', 'sylius.ui.state')->setChoices([
+                'sylius.ui.' . PaymentInterface::STATE_COMPLETED => PaymentInterface::STATE_COMPLETED,
+                'sylius.ui.' . PaymentInterface::STATE_CANCELLED => PaymentInterface::STATE_CANCELLED,
+                'sylius.ui.' . PaymentInterface::STATE_AUTHORIZED => PaymentInterface::STATE_AUTHORIZED,
+                'sylius.ui.' . PaymentInterface::STATE_CART => PaymentInterface::STATE_CART,
+                'sylius.ui.' . PaymentInterface::STATE_UNKNOWN => PaymentInterface::STATE_UNKNOWN,
+                'sylius.ui.' . PaymentInterface::STATE_REFUNDED => PaymentInterface::STATE_REFUNDED,
+                'sylius.ui.' . PaymentInterface::STATE_PROCESSING => PaymentInterface::STATE_PROCESSING,
+                'sylius.ui.' . PaymentInterface::STATE_FAILED => PaymentInterface::STATE_FAILED,
+                'sylius.ui.' . PaymentInterface::STATE_NEW => PaymentInterface::STATE_NEW,
             ]))
         ;
 
@@ -98,32 +98,32 @@ abstract class PaymentCrudController extends SyliusCrudController
     {
         yield DateTimeField::new('createdAt', 'sylius.ui.created_at');
         yield TextField::new('order.channel', 'sylius.ui.channel');
-        yield TextField::new('order.number', 'sylius.ui.code')->formatValue(function ($value, $entity){
-            if($value){
+        yield TextField::new('order.number', 'sylius.ui.code')->formatValue(static function ($value, $entity) {
+            if ($value) {
                 return "#" . $value;
             }
         });
-        yield TextField::new('order.customer', 'sylius.ui.customer')->formatValue(function ($value, $entity){
-            if($value){
+        yield TextField::new('order.customer', 'sylius.ui.customer')->formatValue(static function ($value, $entity) {
+            if ($value) {
                 return '<strong>' . $entity->getOrder()->getCustomer()->getFullName() . "</strong><br>" . $entity->getOrder()->getCustomer()->getEmail();
             }
         });
-        yield NumberField::new('amount', 'sylius.ui.amount')->formatValue(function ($value, $entity){
+        yield NumberField::new('amount', 'sylius.ui.amount')->formatValue(static function ($value, $entity) {
             $formatter = new \NumberFormatter($entity->getOrder()->getLocaleCode(), \NumberFormatter::CURRENCY);
             return $formatter->formatCurrency($entity->getAmount() / 100, $entity->getCurrencyCode());
         })->setCssClass('text-md-right');
 
         yield ChoiceField::new('state', 'sylius.ui.state')
             ->setChoices([
-                'sylius.ui.'.PaymentInterface::STATE_COMPLETED => PaymentInterface::STATE_COMPLETED,
-                'sylius.ui.'.PaymentInterface::STATE_CANCELLED => PaymentInterface::STATE_CANCELLED,
-                'sylius.ui.'.PaymentInterface::STATE_AUTHORIZED => PaymentInterface::STATE_AUTHORIZED,
-                'sylius.ui.'.PaymentInterface::STATE_CART => PaymentInterface::STATE_CART,
-                'sylius.ui.'.PaymentInterface::STATE_UNKNOWN => PaymentInterface::STATE_UNKNOWN,
-                'sylius.ui.'.PaymentInterface::STATE_REFUNDED => PaymentInterface::STATE_REFUNDED,
-                'sylius.ui.'.PaymentInterface::STATE_PROCESSING => PaymentInterface::STATE_PROCESSING,
-                'sylius.ui.'.PaymentInterface::STATE_FAILED => PaymentInterface::STATE_FAILED,
-                'sylius.ui.'.PaymentInterface::STATE_NEW => PaymentInterface::STATE_NEW,
+                'sylius.ui.' . PaymentInterface::STATE_COMPLETED => PaymentInterface::STATE_COMPLETED,
+                'sylius.ui.' . PaymentInterface::STATE_CANCELLED => PaymentInterface::STATE_CANCELLED,
+                'sylius.ui.' . PaymentInterface::STATE_AUTHORIZED => PaymentInterface::STATE_AUTHORIZED,
+                'sylius.ui.' . PaymentInterface::STATE_CART => PaymentInterface::STATE_CART,
+                'sylius.ui.' . PaymentInterface::STATE_UNKNOWN => PaymentInterface::STATE_UNKNOWN,
+                'sylius.ui.' . PaymentInterface::STATE_REFUNDED => PaymentInterface::STATE_REFUNDED,
+                'sylius.ui.' . PaymentInterface::STATE_PROCESSING => PaymentInterface::STATE_PROCESSING,
+                'sylius.ui.' . PaymentInterface::STATE_FAILED => PaymentInterface::STATE_FAILED,
+                'sylius.ui.' . PaymentInterface::STATE_NEW => PaymentInterface::STATE_NEW,
             ])->setTemplatePath('@EasyShop/crud/Common/Label/paymentState.html.twig')
         ;
     }
@@ -148,7 +148,7 @@ abstract class PaymentCrudController extends SyliusCrudController
     public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [
-            ParameterBagInterface::class => '?'.ParameterBagInterface::class,
+            ParameterBagInterface::class => '?' . ParameterBagInterface::class,
         ]);
     }
 }

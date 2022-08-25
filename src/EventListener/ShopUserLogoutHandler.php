@@ -22,22 +22,13 @@ use Symfony\Component\Security\Http\Logout\DefaultLogoutSuccessHandler;
 
 final class ShopUserLogoutHandler extends DefaultLogoutSuccessHandler
 {
-    /** @var ChannelContextInterface */
-    private $channelContext;
-
-    /** @var CartStorageInterface */
-    private $cartStorage;
-
     public function __construct(
         HttpUtils $httpUtils,
         string $targetUrl,
-        ChannelContextInterface $channelContext,
-        CartStorageInterface $cartStorage
+        private readonly ChannelContextInterface $channelContext,
+        private readonly CartStorageInterface $cartStorage
     ) {
         parent::__construct($httpUtils, $targetUrl);
-
-        $this->channelContext = $channelContext;
-        $this->cartStorage = $cartStorage;
     }
 
     public function onLogoutSuccess(Request $request): Response

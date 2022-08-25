@@ -47,14 +47,10 @@ abstract class ReviewCrudController extends SyliusCrudController
         $actions = parent::configureActions($actions);
 
         $accept = Action::new('accept', 'sylius.ui.accept')->addCssClass('text-success')
-            ->displayIf(static function ($entity) {
-                return $entity->getStatus() == Review::STATUS_NEW;
-            })->linkToCrudAction("accept");
+            ->displayIf(static fn($entity) => $entity->getStatus() == Review::STATUS_NEW)->linkToCrudAction("accept");
 
         $reject = Action::new('reject', 'sylius.ui.reject')->addCssClass('text-warning')
-            ->displayIf(static function ($entity) {
-                return $entity->getStatus() == Review::STATUS_NEW;
-            })->linkToCrudAction("reject");
+            ->displayIf(static fn($entity) => $entity->getStatus() == Review::STATUS_NEW)->linkToCrudAction("reject");
 
         $actions
             ->add(Crud::PAGE_INDEX, $reject)
@@ -76,9 +72,9 @@ abstract class ReviewCrudController extends SyliusCrudController
             ->setRequired(true);
 
         yield ChoiceField::new('status', 'sylius.form.review.status.label')->setChoices([
-            "sylius.ui.".Review::STATUS_ACCEPTED => Review::STATUS_ACCEPTED,
-            "sylius.ui.".Review::STATUS_NEW => Review::STATUS_NEW,
-            "sylius.ui.".Review::STATUS_REJECTED => Review::STATUS_REJECTED
+            "sylius.ui." . Review::STATUS_ACCEPTED => Review::STATUS_ACCEPTED,
+            "sylius.ui." . Review::STATUS_NEW => Review::STATUS_NEW,
+            "sylius.ui." . Review::STATUS_REJECTED => Review::STATUS_REJECTED
         ])->renderAsBadges([
             Review::STATUS_ACCEPTED => 'success',
             Review::STATUS_NEW => 'info',
@@ -101,7 +97,7 @@ abstract class ReviewCrudController extends SyliusCrudController
         $entity = $context->getEntity()->getInstance();
 
         $sm = $this->get(Factory::class)->get($entity, "sylius_product_review");
-        if($sm->apply($transition)) {
+        if ($sm->apply($transition)) {
             $this->updateEntity($this->get('doctrine')->getManagerForClass($context->getEntity()->getFqcn()), $entity);
         }
 
@@ -115,8 +111,7 @@ abstract class ReviewCrudController extends SyliusCrudController
     public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [
-            Factory::class => '?'.FactoryInterface::class
+            Factory::class => '?' . FactoryInterface::class
         ]);
     }
-
 }

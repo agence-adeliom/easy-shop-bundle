@@ -44,7 +44,7 @@ abstract class ProductAssociationTypeCrudController extends SyliusCrudController
         ];
 
         yield TextField::new('code', 'sylius.ui.code')
-            ->setFormTypeOption('disabled', (in_array($pageName, [Crud::PAGE_EDIT]) ? 'disabled' : ''))
+            ->setFormTypeOption('disabled', ($pageName == Crud::PAGE_EDIT ? 'disabled' : ''))
             ->setColumns(12);
 
         yield FormField::addPanel('sylius.form.attribute.translations');

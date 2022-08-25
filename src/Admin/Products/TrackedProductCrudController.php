@@ -22,7 +22,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 
 abstract class TrackedProductCrudController extends AbstractCrudController
 {
-
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
@@ -36,7 +35,7 @@ abstract class TrackedProductCrudController extends AbstractCrudController
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
         $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
-        $queryBuilder->andWhere($queryBuilder->getRootAliases()[0].'.tracked = 1');
+        $queryBuilder->andWhere($queryBuilder->getRootAliases()[0] . '.tracked = 1');
         return $queryBuilder;
     }
 
@@ -66,7 +65,7 @@ abstract class TrackedProductCrudController extends AbstractCrudController
         $entity = $context->getEntity();
         $product = $entity->getInstance()->getProduct();
 
-        $objectClass = get_class($product);
+        $objectClass = $product::class;
         $reflectionClass = new \ReflectionClass($objectClass);
         if ($product instanceof Proxy) {
             $reflectionClass = $reflectionClass->getParentClass();
@@ -84,7 +83,7 @@ abstract class TrackedProductCrudController extends AbstractCrudController
         $entity = $context->getEntity();
         $product = $entity->getInstance()->getProduct();
 
-        $objectClass = get_class($product);
+        $objectClass = $product::class;
         $reflectionClass = new \ReflectionClass($objectClass);
         if ($product instanceof Proxy) {
             $reflectionClass = $reflectionClass->getParentClass();
@@ -105,5 +104,4 @@ abstract class TrackedProductCrudController extends AbstractCrudController
         yield NumberField::new('onHand', 'sylius.ui.available_on_hand');
         yield NumberField::new('onHold', 'sylius.ui.on_hold');
     }
-
 }

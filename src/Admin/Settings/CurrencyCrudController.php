@@ -33,5 +33,4 @@ abstract class CurrencyCrudController extends SyliusCrudController
     {
         yield CurrencyField::new('code', "sylius.ui.code")->showName()->showCode()->showSymbol();
     }
-
 }

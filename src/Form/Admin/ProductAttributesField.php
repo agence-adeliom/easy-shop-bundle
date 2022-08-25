@@ -2,9 +2,6 @@
 
 namespace Adeliom\EasyShopBundle\Form\Admin;
 
-
-use Adeliom\EasyEditorBundle\Form\EditorCollectionType;
-use Adeliom\EasyShopBundle\Form\Type\ProductBundle\ProductAssociationEntityType;
 use Adeliom\EasyShopBundle\Form\Type\ProductBundle\ProductAssociationsCollectionType;
 use Adeliom\EasyShopBundle\Form\Type\ProductBundle\ProductAttributesCollectionType;
 use App\Entity\Shop\Product\Product;
@@ -15,20 +12,47 @@ class ProductAttributesField implements FieldInterface
 {
     use FieldTrait;
 
-    public const OPTION_ALLOW_DRAG = 'allowDrag';
-    public const OPTION_ALLOW_ADD = 'allowAdd';
-    public const OPTION_ALLOW_DELETE = 'allowDelete';
-    public const OPTION_ENTRY_IS_COMPLEX = 'entryIsComplex';
-    public const OPTION_ENTRY_TYPE = 'entryType';
-    public const OPTION_SHOW_ENTRY_LABEL = 'showEntryLabel';
-    public const OPTION_RENDER_EXPANDED = 'renderExpanded';
+    /**
+     * @var string
+     */
+    final public const OPTION_ALLOW_DRAG = 'allowDrag';
+
+    /**
+     * @var string
+     */
+    final public const OPTION_ALLOW_ADD = 'allowAdd';
+
+    /**
+     * @var string
+     */
+    final public const OPTION_ALLOW_DELETE = 'allowDelete';
+
+    /**
+     * @var string
+     */
+    final public const OPTION_ENTRY_IS_COMPLEX = 'entryIsComplex';
+
+    /**
+     * @var string
+     */
+    final public const OPTION_ENTRY_TYPE = 'entryType';
+
+    /**
+     * @var string
+     */
+    final public const OPTION_SHOW_ENTRY_LABEL = 'showEntryLabel';
+
+    /**
+     * @var string
+     */
+    final public const OPTION_RENDER_EXPANDED = 'renderExpanded';
 
     /**
      * @param string|false|null $label
      */
     public static function new(string $propertyName, $label = null): self
     {
-        $field = (new self())
+        return (new self())
             ->setProperty($propertyName)
             ->setLabel($label)
             ->setTemplateName('crud/field/collection')
@@ -41,10 +65,7 @@ class ProductAttributesField implements FieldInterface
             ->setCustomOption(self::OPTION_ALLOW_DELETE, true)
             ->setCustomOption(self::OPTION_ENTRY_IS_COMPLEX, null)
             ->setCustomOption(self::OPTION_SHOW_ENTRY_LABEL, false)
-            ->setCustomOption(self::OPTION_RENDER_EXPANDED, false)
-        ;
-
-        return $field;
+            ->setCustomOption(self::OPTION_RENDER_EXPANDED, false);
     }
 
     public function allowDrag(bool $allow = true): self

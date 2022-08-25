@@ -33,15 +33,15 @@ abstract class ProductAttributeCrudController extends SyliusCrudController
     public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [
-            'sylius.form_registry.attribute_type' => '?'.FormTypeRegistryInterface::class,
-            'sylius.custom_factory.product_attribute' => '?'.AttributeFactoryInterface::class,
-            ParameterBagInterface::class => '?'.ParameterBagInterface::class,
+            'sylius.form_registry.attribute_type' => '?' . FormTypeRegistryInterface::class,
+            'sylius.custom_factory.product_attribute' => '?' . AttributeFactoryInterface::class,
+            ParameterBagInterface::class => '?' . ParameterBagInterface::class,
         ]);
     }
 
     public function configureActions(Actions $actions): Actions
     {
-        $url = $this->get(AdminUrlGenerator::class)->setController(get_class($this))->setAction(Action::NEW);
+        $url = $this->get(AdminUrlGenerator::class)->setController($this::class)->setAction(Action::NEW);
 
         $actions = parent::configureActions($actions);
         $actions->remove(Crud::PAGE_INDEX, Action::NEW);
@@ -106,7 +106,7 @@ abstract class ProductAttributeCrudController extends SyliusCrudController
         ];
 
         yield TextField::new('code', 'sylius.ui.code')
-            ->setFormTypeOption('disabled', (in_array($pageName, [Crud::PAGE_EDIT]) ? 'disabled' : ''))
+            ->setFormTypeOption('disabled', ($pageName == Crud::PAGE_EDIT ? 'disabled' : ''))
             ->setColumns(4);
         yield IntegerField::new('position', 'sylius.form.product_attribute.position')
             ->hideOnIndex()
@@ -120,15 +120,12 @@ abstract class ProductAttributeCrudController extends SyliusCrudController
             ->setColumns(4);
         yield BooleanField::new('translatable', 'sylius.form.attribute.translatable')->renderAsSwitch(in_array($pageName, [Crud::PAGE_EDIT, Crud::PAGE_NEW]));
 
-        if (in_array($pageName, [Crud::PAGE_NEW, Crud::PAGE_EDIT])) {
-            if (($attribute instanceof AttributeInterface) && $this->get('sylius.form_registry.attribute_type')->has($attribute->getType(), 'configuration')) {
-                yield FormTypeField::new('configuration', 'sylius.form_registry.attribute_type', $this->get('sylius.form_registry.attribute_type')->get($attribute->getType(), 'configuration'))
-                    ->setFormTypeOption("auto_initialize", false);
-            }
+        if (in_array($pageName, [Crud::PAGE_NEW, Crud::PAGE_EDIT]) && (($attribute instanceof AttributeInterface) && $this->get('sylius.form_registry.attribute_type')->has($attribute->getType(), 'configuration'))) {
+            yield FormTypeField::new('configuration', 'sylius.form_registry.attribute_type', $this->get('sylius.form_registry.attribute_type')->get($attribute->getType(), 'configuration'))
+                ->setFormTypeOption("auto_initialize", false);
         }
 
         yield FormField::addPanel('sylius.form.attribute.translations');
         yield TranslationField::new("translations", false, $fieldsConfig);
     }
-
 }

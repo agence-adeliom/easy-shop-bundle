@@ -8,7 +8,7 @@ class ConsoleListener
 {
     public function onConsoleCommand(ConsoleCommandEvent $event)
     {
-        switch($event->getCommand()->getName()){
+        switch ($event->getCommand()->getName()) {
             case 'sylius:fixtures:list':
             case 'sylius:fixtures:load':
             case 'sylius:install':

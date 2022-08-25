@@ -25,30 +25,15 @@ use Symfony\Component\Form\DataTransformerInterface;
 
 final class ProductsToProductAssociationsTransformer implements DataTransformerInterface
 {
-    /** @var FactoryInterface */
-    private $productAssociationFactory;
-
-    /** @var ProductRepositoryInterface */
-    private $productRepository;
-
-    /** @var RepositoryInterface */
-    private $productAssociationTypeRepository;
-
     /**
      * @var Collection|ProductAssociationInterface[]
      *
      * @psalm-var Collection<array-key, ProductAssociationInterface>
      */
-    private $productAssociations;
+    private \Doctrine\Common\Collections\Collection $productAssociations;
 
-    public function __construct(
-        FactoryInterface $productAssociationFactory,
-        ProductRepositoryInterface $productRepository,
-        RepositoryInterface $productAssociationTypeRepository
-    ) {
-        $this->productAssociationFactory = $productAssociationFactory;
-        $this->productRepository = $productRepository;
-        $this->productAssociationTypeRepository = $productAssociationTypeRepository;
+    public function __construct(private readonly FactoryInterface $productAssociationFactory, private readonly ProductRepositoryInterface $productRepository, private readonly RepositoryInterface $productAssociationTypeRepository)
+    {
     }
 
     public function transform($productAssociations)
@@ -87,9 +72,10 @@ final class ProductsToProductAssociationsTransformer implements DataTransformerI
 
             /** @var ProductAssociationInterface $productAssociation */
             $productAssociation = $this->getProductAssociationByTypeCode($productAssociationTypeCode);
-            if($productCodes instanceof Collection){
+            if ($productCodes instanceof Collection) {
                 $productCodes = $productCodes->toArray();
             }
+
             $this->setAssociatedProductsByProductCodes($productAssociation, $productCodes);
             $productAssociations->add($productAssociation);
         }

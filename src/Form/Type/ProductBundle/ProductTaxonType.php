@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Adeliom\EasyShopBundle\Form\Type\ProductBundle;
 
 use Sylius\Bundle\CoreBundle\Form\DataTransformer\ProductTaxonToTaxonTransformer;
@@ -16,20 +15,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class ProductTaxonType extends AbstractType
 {
-    /** @var FactoryInterface */
-    private $productTaxonFactory;
-
-    /** @var RepositoryInterface */
-    private $productTaxonRepository;
-
-    /** @var RepositoryInterface */
-    private $taxonRepository;
-
-    public function __construct(FactoryInterface $productTaxonFactory, RepositoryInterface $productTaxonRepository, RepositoryInterface $taxonRepository)
+    public function __construct(private readonly FactoryInterface $productTaxonFactory, private readonly RepositoryInterface $productTaxonRepository, private readonly RepositoryInterface $taxonRepository)
     {
-        $this->productTaxonFactory = $productTaxonFactory;
-        $this->productTaxonRepository = $productTaxonRepository;
-        $this->taxonRepository = $taxonRepository;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -62,9 +49,7 @@ final class ProductTaxonType extends AbstractType
         $resolver->setDefaults([
             'class' => $this->taxonRepository->getClassName(),
             'choice_name' => 'name',
-            'choice_label' => function ($item) {
-                return $item->getTree(" / ", true);
-            },
+            'choice_label' => static fn($item) => $item->getTree(" / ", true),
             'choice_value' => 'code',
         ]);
 

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Adeliom\EasyShopBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
@@ -30,9 +29,7 @@ final class Configuration implements ConfigurationInterface
                             ->validate()
                             ->ifTrue(
                                 /** @param mixed $pattern */
-                                function ($pattern) {
-                                    return !is_string($pattern);
-                                }
+                                static fn(mixed $pattern) => !is_string($pattern)
                             )
                                 ->thenInvalid('Invalid pattern "%s"')
                             ->end()

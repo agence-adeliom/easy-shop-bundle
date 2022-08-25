@@ -21,15 +21,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 final class ProductFilterConfigurationType extends AbstractType
 {
-    /** @var DataTransformerInterface */
-    private $productsToCodesTransformer;
-
-    private $model;
-
-    public function __construct(DataTransformerInterface $productsToCodesTransformer, string $model)
+    public function __construct(private readonly DataTransformerInterface $productsToCodesTransformer, private readonly string $model)
     {
-        $this->productsToCodesTransformer = $productsToCodesTransformer;
-        $this->model = $model;
     }
 
 

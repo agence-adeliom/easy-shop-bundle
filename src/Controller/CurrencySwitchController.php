@@ -18,7 +18,6 @@ use Sylius\Component\Core\Currency\CurrencyStorageInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Sylius\Component\Currency\Model\CurrencyInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,31 +26,11 @@ use Twig\Environment;
 
 final class CurrencySwitchController
 {
-    /** @var EngineInterface|Environment */
-    private $templatingEngine;
-
-    /** @var CurrencyContextInterface */
-    private $currencyContext;
-
-    /** @var CurrencyStorageInterface */
-    private $currencyStorage;
-
-    /** @var ChannelContextInterface */
-    private $channelContext;
-
     /**
      * @param EngineInterface|Environment $templatingEngine
      */
-    public function __construct(
-        object $templatingEngine,
-        CurrencyContextInterface $currencyContext,
-        CurrencyStorageInterface $currencyStorage,
-        ChannelContextInterface $channelContext
-    ) {
-        $this->templatingEngine = $templatingEngine;
-        $this->currencyContext = $currencyContext;
-        $this->currencyStorage = $currencyStorage;
-        $this->channelContext = $channelContext;
+    public function __construct(private readonly object $templatingEngine, private readonly CurrencyContextInterface $currencyContext, private readonly CurrencyStorageInterface $currencyStorage, private readonly ChannelContextInterface $channelContext)
+    {
     }
 
     public function renderAction(): Response
@@ -60,9 +39,7 @@ final class CurrencySwitchController
         $channel = $this->channelContext->getChannel();
 
         $availableCurrencies = array_map(
-            function (CurrencyInterface $currency) {
-                return $currency->getCode();
-            },
+            static fn(CurrencyInterface $currency) => $currency->getCode(),
             $channel->getCurrencies()->toArray()
         );
 

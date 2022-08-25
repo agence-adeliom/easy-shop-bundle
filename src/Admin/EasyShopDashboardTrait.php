@@ -4,9 +4,10 @@ namespace Adeliom\EasyShopBundle\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 
-trait EasyShopDashboardTrait {
-
-    public function getSyliusEntity(string $model){
+trait EasyShopDashboardTrait
+{
+    public function getSyliusEntity(string $model)
+    {
         $parameterBag = $this->container->get("parameter_bag");
         return $parameterBag->get(sprintf("sylius.model.%s.class", $model));
     }
@@ -61,5 +62,4 @@ trait EasyShopDashboardTrait {
         yield MenuItem::linkToCrud('sylius.ui.tax_rates', 'fas fa-money-bill', $this->getSyliusEntity("tax_rate"));
         yield MenuItem::linkToCrud('sylius.ui.api_users', 'fas fa-user-astronaut', $this->getSyliusEntity("admin_user"));
     }
-
 }

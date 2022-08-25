@@ -18,46 +18,34 @@ use App\Entity\Shop\Product\Product;
 use App\Entity\Shop\Promotion\PromotionRule;
 use App\Entity\Shop\Shipping\ShippingMethod;
 use Sylius\Bundle\CoreBundle\Form\Type\Product\ChannelPricingType;
+use Sylius\Bundle\CoreBundle\Form\Type\Promotion\Rule\ChannelBasedTotalOfItemsFromTaxonConfigurationType;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionRuleChoiceType;
 use Sylius\Bundle\ResourceBundle\Form\Registry\FormTypeRegistryInterface;
 use Sylius\Component\Channel\Repository\ChannelRepositoryInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Sylius\Bundle\CoreBundle\Form\Type\Promotion\Rule\ChannelBasedTotalOfItemsFromTaxonConfigurationType;
 use Symfony\Component\Validator\Constraints\Valid;
 
 final class PromotionRuleType extends AbstractType
 {
-    /** @var FormTypeRegistryInterface */
-    private $formTypeRegistry;
-
-    /** @var array */
-    private $rules;
-
-    private $entityClass;
-
-    public function __construct(array $rules, FormTypeRegistryInterface $formTypeRegistry, string $entityClass)
+    public function __construct(private readonly array $rules, private readonly FormTypeRegistryInterface $formTypeRegistry, private readonly string $entityClass)
     {
-        $this->formTypeRegistry = $formTypeRegistry;
-        $this->rules = $rules;
-        $this->entityClass = $entityClass;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $map = [];
-        foreach ($this->rules as $k => $v){
+        foreach (array_keys($this->rules) as $k) {
             $map[$k] = [$k];
         }
+
         $builder
             ->add('type', ChoiceMaskType::class, [
                 'label' => 'sylius.form.promotion_rule.type',
@@ -65,41 +53,43 @@ final class PromotionRuleType extends AbstractType
                 'map' => $map,
             ])
         ;
-        foreach ($this->rules as $form => $label){
+        foreach (array_keys($this->rules) as $form) {
             $ruleOptions = [
                 "label" => false,
                 'constraints' => [
                     new Valid()
                 ]
             ];
-            if($form == "contains_product"){
+            if ($form == "contains_product") {
                 $builder->add($form, \Adeliom\EasyShopBundle\Form\Type\PromotionBundle\ContainsProductConfigurationType::class, $ruleOptions);
-            }elseif($form == "has_taxon"){
+            } elseif ($form == "has_taxon") {
                 $builder->add($form, \Adeliom\EasyShopBundle\Form\Type\PromotionBundle\HasTaxonConfigurationType::class, $ruleOptions);
-            }elseif($form == "total_of_items_from_taxon"){
+            } elseif ($form == "total_of_items_from_taxon") {
                 $builder->add($form, \Adeliom\EasyShopBundle\Form\Type\PromotionBundle\ChannelBasedTotalOfItemsFromTaxonConfigurationType::class, $ruleOptions);
-            }else{
+            } else {
                 $builder->add($form, $this->formTypeRegistry->get($form, "default"), $ruleOptions);
             }
         }
 
         $builder->addModelTransformer(new CallbackTransformer(
-            function ($value){
-                if ($value){
+            static function ($value) {
+                if ($value) {
                     return [
                         'type' => $value->getType(),
                         $value->getType() => $value->getConfiguration()
                     ];
                 }
+
                 return $value;
             },
-            function ($value){
-                if ($value){
+            function ($value) {
+                if ($value) {
                     $obj = new $this->entityClass();
                     $obj->setType($value['type']);
                     $obj->setConfiguration($value['configuration']);
                     return $obj;
                 }
+
                 return $value;
             }
         ));
@@ -108,13 +98,13 @@ final class PromotionRuleType extends AbstractType
             $data = $event->getData();
             $form = $event->getForm();
 
-            foreach (array_keys($this->rules) as $rule){
+            foreach (array_keys($this->rules) as $rule) {
                 $form->remove($rule);
             }
 
             $data = [
                 "type" => $data["type"],
-                "configuration" => isset($data[$data["type"]]) ? $data[$data["type"]] : (isset($data["configuration"]) ? $data["configuration"] : []),
+                "configuration" => $data[$data["type"]] ?? $data["configuration"] ?? [],
             ];
             $event->setData($data);
 
@@ -133,13 +123,13 @@ final class PromotionRuleType extends AbstractType
                     new Valid()
                 ]
             ];
-            if($data["type"] == "contains_product"){
+            if ($data["type"] == "contains_product") {
                 $form->add('configuration', \Adeliom\EasyShopBundle\Form\Type\PromotionBundle\ContainsProductConfigurationType::class, $ruleOptions);
-            }elseif($data["type"] == "has_taxon"){
+            } elseif ($data["type"] == "has_taxon") {
                 $form->add('configuration', \Adeliom\EasyShopBundle\Form\Type\PromotionBundle\HasTaxonConfigurationType::class, $ruleOptions);
-            }elseif($data["type"] == "total_of_items_from_taxon"){
+            } elseif ($data["type"] == "total_of_items_from_taxon") {
                 $form->add('configuration', \Adeliom\EasyShopBundle\Form\Type\PromotionBundle\ChannelBasedTotalOfItemsFromTaxonConfigurationType::class, $ruleOptions);
-            }else{
+            } else {
                 $form->add('configuration', $this->formTypeRegistry->get($data["type"], "default"), $ruleOptions);
             }
         });

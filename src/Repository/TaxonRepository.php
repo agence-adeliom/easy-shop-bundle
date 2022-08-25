@@ -8,7 +8,7 @@ class TaxonRepository extends \Sylius\Bundle\TaxonomyBundle\Doctrine\ORM\TaxonRe
 {
     public function findOneBySlug(string $slug, string $locale): ?TaxonInterface
     {
-        $slugsArray = preg_split('~/~', $slug, -1, PREG_SPLIT_NO_EMPTY);
+        $slugsArray = preg_split('#/#', $slug, -1, PREG_SPLIT_NO_EMPTY);
         $slug = end($slugsArray);
         return $this->createQueryBuilder('o')
             ->addSelect('translation')

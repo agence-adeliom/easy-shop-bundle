@@ -24,42 +24,34 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class ChannelCollectionType extends AbstractType
 {
-    /** @var ChannelRepositoryInterface */
-    private $channelRepository;
-
-    public function __construct(ChannelRepositoryInterface $channelRepository)
+    public function __construct(private readonly ChannelRepositoryInterface $channelRepository)
     {
-        $this->channelRepository = $channelRepository;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'entries' => $this->channelRepository->findAll(),
-            'entry_name' => function (ChannelInterface $channel) {
-                return $channel->getCode();
-            },
+            'entry_name' => static fn(ChannelInterface $channel) => $channel->getCode(),
             'error_bubbling' => false,
         ]);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, static function (FormEvent $event): void {
             $productVariant = $event->getForm()->getParent()->getViewData()->getVariants()[0];
             $event->getForm()->add('channelPricings', \Sylius\Bundle\CoreBundle\Form\Type\ChannelCollectionType::class, [
                 'entry_type' => ChannelPricingType::class,
-                'entry_options' => function (ChannelInterface $channel) use ($productVariant) {
-                    return [
-                        'channel' => $channel,
-                        'product_variant' => $productVariant,
-                        'required' => false,
-                    ];
-                },
+                'entry_options' => static fn(ChannelInterface $channel) => [
+                    'channel' => $channel,
+                    'product_variant' => $productVariant,
+                    'required' => false,
+                ],
                 'label' => null,
             ]);
         });
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event): void {
+        $builder->addEventListener(FormEvents::POST_SUBMIT, static function (FormEvent $event): void {
             $event->setData($event->getData()['channelPricings']);
         });
     }

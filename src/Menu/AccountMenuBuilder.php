@@ -20,18 +20,13 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 final class AccountMenuBuilder
 {
+    /**
+     * @var string
+     */
     public const EVENT_NAME = 'sylius.menu.shop.account';
 
-    /** @var FactoryInterface */
-    private $factory;
-
-    /** @var EventDispatcherInterface */
-    private $eventDispatcher;
-
-    public function __construct(FactoryInterface $factory, EventDispatcherInterface $eventDispatcher)
+    public function __construct(private readonly FactoryInterface $factory, private readonly EventDispatcherInterface $eventDispatcher)
     {
-        $this->factory = $factory;
-        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function createMenu(array $options): ItemInterface

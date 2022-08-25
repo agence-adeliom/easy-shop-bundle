@@ -22,7 +22,7 @@ class ProductRepository extends \Sylius\Bundle\CoreBundle\Doctrine\ORM\ProductRe
 
     public function findOneByChannelAndSlug(ChannelInterface $channel, string $locale, string $slug): ?ProductInterface
     {
-        $slugsArray = preg_split('~/~', $slug, -1, PREG_SPLIT_NO_EMPTY);
+        $slugsArray = preg_split('#/#', $slug, -1, PREG_SPLIT_NO_EMPTY);
         $slug = end($slugsArray);
 
         $product = $this->createQueryBuilder('o')

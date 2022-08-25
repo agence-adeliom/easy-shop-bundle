@@ -21,23 +21,8 @@ use Sylius\Component\Core\Storage\CartStorageInterface;
 
 final class UserImpersonatedListener
 {
-    /** @var CartStorageInterface */
-    private $cartStorage;
-
-    /** @var ChannelContextInterface */
-    private $channelContext;
-
-    /** @var OrderRepositoryInterface */
-    private $orderRepository;
-
-    public function __construct(
-        CartStorageInterface $cartStorage,
-        ChannelContextInterface $channelContext,
-        OrderRepositoryInterface $orderRepository
-    ) {
-        $this->cartStorage = $cartStorage;
-        $this->channelContext = $channelContext;
-        $this->orderRepository = $orderRepository;
+    public function __construct(private readonly CartStorageInterface $cartStorage, private readonly ChannelContextInterface $channelContext, private readonly OrderRepositoryInterface $orderRepository)
+    {
     }
 
     public function onUserImpersonated(UserEvent $event): void

@@ -46,7 +46,7 @@ abstract class ZoneCrudController extends SyliusCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        $url = $this->get(AdminUrlGenerator::class)->setController(get_class($this))->setAction(Action::NEW);
+        $url = $this->get(AdminUrlGenerator::class)->setController($this::class)->setAction(Action::NEW);
 
         $newZoneCountries = Action::new('zoneCountries', 'sylius.ui.zone_consisting_of_countries')->linkToUrl((clone $url)->set("zoneType", ZoneInterface::TYPE_COUNTRY)->generateUrl())->createAsGlobalAction()->setCssClass("btn btn-primary");
         $newZoneProvinces = Action::new('zoneProvinces', 'sylius.ui.zone_consisting_of_provinces')->linkToUrl((clone $url)->set("zoneType", ZoneInterface::TYPE_PROVINCE)->generateUrl())->createAsGlobalAction()->setCssClass("btn btn-primary");
@@ -102,9 +102,7 @@ abstract class ZoneCrudController extends SyliusCrudController
             ];
 
             if ($zone->getType() === ZoneInterface::TYPE_ZONE) {
-                $entryOptions['entry_options']['choice_filter'] = static function (?ZoneInterface $subZone) use ($zone): bool {
-                    return $subZone !== null && $zone->getId() !== $subZone->getId();
-                };
+                $entryOptions['entry_options']['choice_filter'] = static fn(?ZoneInterface $subZone): bool => $subZone !== null && $zone->getId() !== $subZone->getId();
             }
 
             yield CollectionField::new("members", "sylius.ui.members")
@@ -138,5 +136,4 @@ abstract class ZoneCrudController extends SyliusCrudController
 
         return $zoneMemberEntryOptions[$zoneMemberType];
     }
-
 }

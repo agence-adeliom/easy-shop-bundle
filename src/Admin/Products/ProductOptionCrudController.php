@@ -47,7 +47,7 @@ abstract class ProductOptionCrudController extends SyliusCrudController
         ];
 
         yield TextField::new('code', 'sylius.ui.code')
-            ->setFormTypeOption('disabled', (in_array($pageName, [Crud::PAGE_EDIT]) ? 'disabled' : ''))
+            ->setFormTypeOption('disabled', ($pageName == Crud::PAGE_EDIT ? 'disabled' : ''))
             ->setColumns(6);
         yield IntegerField::new('position', 'sylius.form.option.position')
             ->setRequired(false)
@@ -65,5 +65,4 @@ abstract class ProductOptionCrudController extends SyliusCrudController
             ->setFormTypeOption("required", true)
             ->setFormTypeOption("button_add_label", 'sylius.form.option_value.add_value');
     }
-
 }

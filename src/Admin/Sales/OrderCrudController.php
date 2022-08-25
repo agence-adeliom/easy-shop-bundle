@@ -59,6 +59,10 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 abstract class OrderCrudController extends SyliusCrudController
 {
+    public function __construct(private \Doctrine\Persistence\ManagerRegistry $managerRegistry)
+    {
+    }
+
     public static function getResource(): string
     {
         return "order";
@@ -108,31 +112,31 @@ abstract class OrderCrudController extends SyliusCrudController
     public function configureFilters(Filters $filters): Filters
     {
         $filters
-            ->add(DateTimeFilter::new('createdAt','sylius.ui.date'))
-            ->add(EntityFilter::new('channel','sylius.ui.channel'))
-            ->add(EntityFilter::new('customer','sylius.ui.customer'))
-            ->add(ChoiceFilter::new('state','sylius.ui.state')->setChoices([
-                'sylius.ui.'.OrderInterface::STATE_CART => OrderInterface::STATE_CART,
-                'sylius.ui.'.OrderInterface::STATE_CANCELLED => OrderInterface::STATE_CANCELLED,
-                'sylius.ui.'.OrderInterface::STATE_FULFILLED => OrderInterface::STATE_FULFILLED,
-                'sylius.ui.'.OrderInterface::STATE_NEW => OrderInterface::STATE_NEW
+            ->add(DateTimeFilter::new('createdAt', 'sylius.ui.date'))
+            ->add(EntityFilter::new('channel', 'sylius.ui.channel'))
+            ->add(EntityFilter::new('customer', 'sylius.ui.customer'))
+            ->add(ChoiceFilter::new('state', 'sylius.ui.state')->setChoices([
+                'sylius.ui.' . OrderInterface::STATE_CART => OrderInterface::STATE_CART,
+                'sylius.ui.' . OrderInterface::STATE_CANCELLED => OrderInterface::STATE_CANCELLED,
+                'sylius.ui.' . OrderInterface::STATE_FULFILLED => OrderInterface::STATE_FULFILLED,
+                'sylius.ui.' . OrderInterface::STATE_NEW => OrderInterface::STATE_NEW
             ]))
-            ->add(ChoiceFilter::new('paymentState','sylius.ui.payment_state')->setChoices([
-                'sylius.ui.'.OrderPaymentStates::STATE_AUTHORIZED => OrderPaymentStates::STATE_AUTHORIZED,
-                'sylius.ui.'.OrderPaymentStates::STATE_AWAITING_PAYMENT => OrderPaymentStates::STATE_AWAITING_PAYMENT,
-                'sylius.ui.'.OrderPaymentStates::STATE_CANCELLED => OrderPaymentStates::STATE_CANCELLED,
-                'sylius.ui.'.OrderPaymentStates::STATE_PAID => OrderPaymentStates::STATE_PAID,
-                'sylius.ui.'.OrderPaymentStates::STATE_PARTIALLY_AUTHORIZED => OrderPaymentStates::STATE_PARTIALLY_AUTHORIZED,
-                'sylius.ui.'.OrderPaymentStates::STATE_PARTIALLY_PAID => OrderPaymentStates::STATE_PARTIALLY_PAID,
-                'sylius.ui.'.OrderPaymentStates::STATE_PARTIALLY_REFUNDED => OrderPaymentStates::STATE_PARTIALLY_REFUNDED,
-                'sylius.ui.'.OrderPaymentStates::STATE_REFUNDED => OrderPaymentStates::STATE_REFUNDED,
+            ->add(ChoiceFilter::new('paymentState', 'sylius.ui.payment_state')->setChoices([
+                'sylius.ui.' . OrderPaymentStates::STATE_AUTHORIZED => OrderPaymentStates::STATE_AUTHORIZED,
+                'sylius.ui.' . OrderPaymentStates::STATE_AWAITING_PAYMENT => OrderPaymentStates::STATE_AWAITING_PAYMENT,
+                'sylius.ui.' . OrderPaymentStates::STATE_CANCELLED => OrderPaymentStates::STATE_CANCELLED,
+                'sylius.ui.' . OrderPaymentStates::STATE_PAID => OrderPaymentStates::STATE_PAID,
+                'sylius.ui.' . OrderPaymentStates::STATE_PARTIALLY_AUTHORIZED => OrderPaymentStates::STATE_PARTIALLY_AUTHORIZED,
+                'sylius.ui.' . OrderPaymentStates::STATE_PARTIALLY_PAID => OrderPaymentStates::STATE_PARTIALLY_PAID,
+                'sylius.ui.' . OrderPaymentStates::STATE_PARTIALLY_REFUNDED => OrderPaymentStates::STATE_PARTIALLY_REFUNDED,
+                'sylius.ui.' . OrderPaymentStates::STATE_REFUNDED => OrderPaymentStates::STATE_REFUNDED,
             ]))
-            ->add(ChoiceFilter::new('shippingState','sylius.ui.shipping_state')->setChoices([
-                'sylius.ui.'.OrderShippingStates::STATE_CART => OrderShippingStates::STATE_CART,
-                'sylius.ui.'.OrderShippingStates::STATE_CANCELLED => OrderShippingStates::STATE_CANCELLED,
-                'sylius.ui.'.OrderShippingStates::STATE_PARTIALLY_SHIPPED => OrderShippingStates::STATE_PARTIALLY_SHIPPED,
-                'sylius.ui.'.OrderShippingStates::STATE_READY => OrderShippingStates::STATE_READY,
-                'sylius.ui.'.OrderShippingStates::STATE_SHIPPED => OrderShippingStates::STATE_SHIPPED,
+            ->add(ChoiceFilter::new('shippingState', 'sylius.ui.shipping_state')->setChoices([
+                'sylius.ui.' . OrderShippingStates::STATE_CART => OrderShippingStates::STATE_CART,
+                'sylius.ui.' . OrderShippingStates::STATE_CANCELLED => OrderShippingStates::STATE_CANCELLED,
+                'sylius.ui.' . OrderShippingStates::STATE_PARTIALLY_SHIPPED => OrderShippingStates::STATE_PARTIALLY_SHIPPED,
+                'sylius.ui.' . OrderShippingStates::STATE_READY => OrderShippingStates::STATE_READY,
+                'sylius.ui.' . OrderShippingStates::STATE_SHIPPED => OrderShippingStates::STATE_SHIPPED,
             ]))
         ;
 
@@ -141,25 +145,25 @@ abstract class OrderCrudController extends SyliusCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        if($pageName == Crud::PAGE_INDEX) {
+        if ($pageName == Crud::PAGE_INDEX) {
             yield DateTimeField::new('createdAt', 'sylius.ui.date');
             yield TextField::new('channel', 'sylius.ui.channel');
-            yield TextField::new('number', 'sylius.ui.code')->formatValue(function ($value, $entity) {
+            yield TextField::new('number', 'sylius.ui.code')->formatValue(static function ($value, $entity) {
                 if ($value) {
                     return "#" . $value;
                 }
             });
-            yield TextField::new('customer', 'sylius.ui.customer')->formatValue(function ($value, $entity) {
+            yield TextField::new('customer', 'sylius.ui.customer')->formatValue(static function ($value, $entity) {
                 if ($value) {
                     return '<strong>' . $entity->getCustomer()->getFullName() . "</strong><br>" . $entity->getCustomer()->getEmail();
                 }
             });
             yield ChoiceField::new('state', 'sylius.ui.state')
                 ->setChoices([
-                    'sylius.ui.'.OrderInterface::STATE_CART => OrderInterface::STATE_CART,
-                    'sylius.ui.'.OrderInterface::STATE_CANCELLED => OrderInterface::STATE_CANCELLED,
-                    'sylius.ui.'.OrderInterface::STATE_FULFILLED => OrderInterface::STATE_FULFILLED,
-                    'sylius.ui.'.OrderInterface::STATE_NEW => OrderInterface::STATE_NEW
+                    'sylius.ui.' . OrderInterface::STATE_CART => OrderInterface::STATE_CART,
+                    'sylius.ui.' . OrderInterface::STATE_CANCELLED => OrderInterface::STATE_CANCELLED,
+                    'sylius.ui.' . OrderInterface::STATE_FULFILLED => OrderInterface::STATE_FULFILLED,
+                    'sylius.ui.' . OrderInterface::STATE_NEW => OrderInterface::STATE_NEW
                 ])->setTemplatePath('@EasyShop/crud/Common/Label/orderStates.html.twig');
             yield ChoiceField::new('paymentState', 'sylius.ui.payment_state')
                 ->setChoices([
@@ -180,14 +184,14 @@ abstract class OrderCrudController extends SyliusCrudController
                     'sylius.ui.' . OrderShippingStates::STATE_READY => OrderShippingStates::STATE_READY,
                     'sylius.ui.' . OrderShippingStates::STATE_SHIPPED => OrderShippingStates::STATE_SHIPPED,
                 ])->setTemplatePath('@EasyShop/crud/Common/Label/shipmentStates.html.twig');
-            yield NumberField::new('total', 'sylius.ui.total')->formatValue(function ($value, $entity) {
+            yield NumberField::new('total', 'sylius.ui.total')->formatValue(static function ($value, $entity) {
                 $formatter = new \NumberFormatter($entity->getLocaleCode(), \NumberFormatter::CURRENCY);
                 return $formatter->formatCurrency($entity->getTotal() / 100, $entity->getCurrencyCode());
             })->setCssClass('text-md-end');
             yield CurrencyField::new('currencyCode', 'sylius.ui.currency');
         }
 
-        if($pageName == Crud::PAGE_EDIT){
+        if ($pageName == Crud::PAGE_EDIT) {
             yield FormTypeField::new('shippingAddress', 'sylius.ui.shipping_address', AddressType::class);
             yield FormTypeField::new('billingAddress', 'sylius.ui.billing_address', AddressType::class);
         }
@@ -217,19 +221,19 @@ abstract class OrderCrudController extends SyliusCrudController
         );
     }
 
-    public function paymentComplete(AdminContext $context){
+    public function paymentComplete(AdminContext $context)
+    {
         $request = $context->getRequest();
         $paymentId = $request->query->get('payment_id');
 
-        /** @var PaymentInterface|null $payment */
         $payment = $this->get('sylius.repository.payment')->find($paymentId);
-        if ($payment === null) {
+        if (!$payment instanceof \PaymentInterface) {
             throw new NotFoundHttpException(sprintf('The payment with id %s has not been found', $paymentId));
         }
 
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->managerRegistry->getManager();
         $sm = $this->get(Factory::class)->get($payment, "sylius_payment");
-        if($sm->apply(PaymentTransitions::TRANSITION_COMPLETE)) {
+        if ($sm->apply(PaymentTransitions::TRANSITION_COMPLETE)) {
             $em->persist($payment);
             $em->flush();
 
@@ -242,19 +246,19 @@ abstract class OrderCrudController extends SyliusCrudController
         return new RedirectResponse($request->headers->get('referer'));
     }
 
-    public function paymentRefund(AdminContext $context){
+    public function paymentRefund(AdminContext $context)
+    {
         $request = $context->getRequest();
         $paymentId = $request->query->get('payment_id');
 
-        /** @var PaymentInterface|null $payment */
         $payment = $this->get('sylius.repository.payment')->find($paymentId);
-        if ($payment === null) {
+        if (!$payment instanceof \PaymentInterface) {
             throw new NotFoundHttpException(sprintf('The payment with id %s has not been found', $paymentId));
         }
 
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->managerRegistry->getManager();
         $sm = $this->get(Factory::class)->get($payment, "sylius_payment");
-        if($sm->apply(PaymentTransitions::TRANSITION_REFUND)) {
+        if ($sm->apply(PaymentTransitions::TRANSITION_REFUND)) {
             $em->persist($payment);
             $em->flush();
 
@@ -276,34 +280,31 @@ abstract class OrderCrudController extends SyliusCrudController
         $order = $context->getEntity()->getInstance();
         $shipmentId = $request->query->get('shipment_id');
 
-        /** @var ShipmentInterface|null $shipment */
         $shipment = $this->get('sylius.repository.shipment')->find($shipmentId);
-        if ($shipment === null) {
+        if (!$shipment instanceof \ShipmentInterface) {
             throw new NotFoundHttpException(sprintf('The shipment with id %s has not been found', $shipmentId));
         }
-        $em = $this->getDoctrine()->getManager();
-        $sm = $this->get(Factory::class)->get($shipment, "sylius_shipment");
-        if($request->get('tracking')){
-            if($sm->apply(ShipmentTransitions::TRANSITION_SHIP)) {
-                $shipment->setTracking($request->get('tracking'));
-                $em->persist($shipment);
-                $em->flush();
 
-                $this->get(Sender::class)->send(
-                    Emails::SHIPMENT_CONFIRMATION,
-                    [$order->getCustomer()->getEmail()],
-                    [
-                        'shipment' => $shipment,
-                        'order' => $order,
-                        'channel' => $order->getChannel(),
-                        'localeCode' => $order->getLocaleCode(),
-                    ]
-                );
-                $this->addFlash(
-                    'success',
-                    'sylius.shipment.shipped'
-                );
-            }
+        $em = $this->managerRegistry->getManager();
+        $sm = $this->get(Factory::class)->get($shipment, "sylius_shipment");
+        if ($request->get('tracking') && $sm->apply(ShipmentTransitions::TRANSITION_SHIP)) {
+            $shipment->setTracking($request->get('tracking'));
+            $em->persist($shipment);
+            $em->flush();
+            $this->get(Sender::class)->send(
+                Emails::SHIPMENT_CONFIRMATION,
+                [$order->getCustomer()->getEmail()],
+                [
+                    'shipment' => $shipment,
+                    'order' => $order,
+                    'channel' => $order->getChannel(),
+                    'localeCode' => $order->getLocaleCode(),
+                ]
+            );
+            $this->addFlash(
+                'success',
+                'sylius.shipment.shipped'
+            );
         }
 
         return new RedirectResponse($request->headers->get('referer'));
@@ -349,9 +350,8 @@ abstract class OrderCrudController extends SyliusCrudController
             throw new HttpException(Response::HTTP_FORBIDDEN, 'Invalid csrf token.');
         }
 
-        /** @var ShipmentInterface|null $shipment */
         $shipment = $this->get('sylius.repository.shipment')->find($shipmentId);
-        if ($shipment === null) {
+        if (!$shipment instanceof \ShipmentInterface) {
             throw new NotFoundHttpException(sprintf('The shipment with id %s has not been found', $shipmentId));
         }
 
@@ -383,7 +383,8 @@ abstract class OrderCrudController extends SyliusCrudController
         return $this->get('sylius.repository.channel')->findOneBy([]);
     }
 
-    public function statistics(AdminContext $context){
+    public function statistics(AdminContext $context)
+    {
         $request = $context->getRequest();
         /** @var ChannelInterface|null $channel */
         $channel = $this->findChannelByCodeOrFindFirst($request->query->has('channel') ? (string) $request->query->get('channel') : null);
@@ -450,19 +451,18 @@ abstract class OrderCrudController extends SyliusCrudController
     public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [
-            'sylius.repository.order' => '?'.OrderRepositoryInterface::class,
-            'sylius.repository.customer' => '?'.CustomerRepositoryInterface::class,
-            'sylius.repository.channel' => '?'.ChannelRepositoryInterface::class,
-            'sylius.repository.shipment' => '?'.ShipmentRepositoryInterface::class,
-            'sylius.repository.payment' => '?'.PaymentRepositoryInterface::class,
-            Factory::class => '?'.FactoryInterface::class,
-            Sender::class => '?'.SenderInterface::class,
-            CsrfTokenManager::class => '?'.CsrfTokenManagerInterface::class,
-            ParameterBagInterface::class => '?'.ParameterBagInterface::class,
-            DashboardStatisticsProviderInterface::class => '?'.DashboardStatisticsProviderInterface::class,
-            SalesDataProviderInterface::class => '?'.SalesDataProviderInterface::class,
-            MoneyFormatterInterface::class => '?'.MoneyFormatterInterface::class,
+            'sylius.repository.order' => '?' . OrderRepositoryInterface::class,
+            'sylius.repository.customer' => '?' . CustomerRepositoryInterface::class,
+            'sylius.repository.channel' => '?' . ChannelRepositoryInterface::class,
+            'sylius.repository.shipment' => '?' . ShipmentRepositoryInterface::class,
+            'sylius.repository.payment' => '?' . PaymentRepositoryInterface::class,
+            Factory::class => '?' . FactoryInterface::class,
+            Sender::class => '?' . SenderInterface::class,
+            CsrfTokenManager::class => '?' . CsrfTokenManagerInterface::class,
+            ParameterBagInterface::class => '?' . ParameterBagInterface::class,
+            DashboardStatisticsProviderInterface::class => '?' . DashboardStatisticsProviderInterface::class,
+            SalesDataProviderInterface::class => '?' . SalesDataProviderInterface::class,
+            MoneyFormatterInterface::class => '?' . MoneyFormatterInterface::class,
         ]);
     }
-
 }

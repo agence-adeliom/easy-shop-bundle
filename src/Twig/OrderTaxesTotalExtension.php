@@ -24,8 +24,8 @@ class OrderTaxesTotalExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('sylius_order_tax_included', [$this, 'getIncludedTax']),
-            new TwigFunction('sylius_order_tax_excluded', [$this, 'getExcludedTax']),
+            new TwigFunction('sylius_order_tax_included', $this->getIncludedTax(...)),
+            new TwigFunction('sylius_order_tax_excluded', $this->getExcludedTax(...)),
         ];
     }
 
@@ -43,9 +43,7 @@ class OrderTaxesTotalExtension extends AbstractExtension
     {
         return array_reduce(
             $order->getAdjustmentsRecursively(AdjustmentInterface::TAX_ADJUSTMENT)->toArray(),
-            static function (int $total, BaseAdjustmentInterface $adjustment) use ($isNeutral) {
-                return $isNeutral === $adjustment->isNeutral() ? $total + $adjustment->getAmount() : $total;
-            },
+            static fn(int $total, BaseAdjustmentInterface $adjustment) => $isNeutral === $adjustment->isNeutral() ? $total + $adjustment->getAmount() : $total,
             0
         );
     }

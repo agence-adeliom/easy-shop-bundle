@@ -42,5 +42,4 @@ abstract class ExchangeRatesCrudController extends SyliusCrudController
             ->setFormTypeOption("rounding_mode", \NumberFormatter::ROUND_HALFEVEN)
         ;
     }
-
 }

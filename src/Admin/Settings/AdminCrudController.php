@@ -55,12 +55,9 @@ abstract class AdminCrudController extends SyliusCrudController
     public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [
-            'sylius.factory.admin_user' => '?'.FactoryInterface::class,
-            TranslatorInterface::class => '?'.TranslatorInterface::class,
-            ParameterBagInterface::class => '?'.ParameterBagInterface::class,
+            'sylius.factory.admin_user' => '?' . FactoryInterface::class,
+            TranslatorInterface::class => '?' . TranslatorInterface::class,
+            ParameterBagInterface::class => '?' . ParameterBagInterface::class,
         ]);
     }
-
-
-
 }

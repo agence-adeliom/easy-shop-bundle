@@ -2,19 +2,16 @@
 
 namespace Adeliom\EasyShopBundle\DependencyInjection;
 
-use Adeliom\EasyBlockBundle\Block\BlockInterface;
 use Adeliom\EasyShopBundle\Locale\LocaleSwitcherInterface;
 use Sylius\Bundle\CoreBundle\Checkout\CheckoutRedirectListener;
 use Sylius\Bundle\CoreBundle\Checkout\CheckoutResolver;
 use Sylius\Bundle\CoreBundle\Checkout\CheckoutStateUrlGenerator;
 use Sylius\Bundle\OrderBundle\DependencyInjection\SyliusOrderExtension;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
-use Symfony\Component\DependencyInjection\Loader\FileLoader;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
@@ -26,7 +23,7 @@ class EasyShopExtension extends Extension implements PrependExtensionInterface
     {
         $config = $this->processConfiguration($this->getConfiguration([], $container), $configs);
 
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yaml');
 
 
@@ -107,7 +104,7 @@ class EasyShopExtension extends Extension implements PrependExtensionInterface
 
         $container->setParameter("sylius.state_machine.class", "Sylius\Component\Resource\StateMachine\StateMachine");
 
-        foreach ($container->getExtensions() as $name => $extension) {
+        foreach (array_keys($container->getExtensions()) as $name) {
             switch ($name) {
                 case 'sylius_addressing':
                 case 'sylius_attribute':
@@ -128,30 +125,27 @@ class EasyShopExtension extends Extension implements PrependExtensionInterface
                 case 'sylius_user':
                     $configs = $container->getExtensionConfig($name);
 
-                    foreach($configs as $c){
-                        if(!empty($c["resources"])){
-                            foreach($c["resources"] as $r => $datas){
-
-                                if(!empty($c["resources"][$r]["classes"]["model"])){
-                                    $container->setParameter("sylius.model.".$r.".class", $c["resources"][$r]["classes"]["model"]);
+                    foreach ($configs as $c) {
+                        if (!empty($c["resources"])) {
+                            foreach ($c["resources"] as $r => $datas) {
+                                if (!empty($c["resources"][$r]["classes"]["model"])) {
+                                    $container->setParameter("sylius.model." . $r . ".class", $c["resources"][$r]["classes"]["model"]);
                                 }
 
-                                if($name == "sylius_review" && !empty($c["resources"][$r]["review"]["classes"]["model"])){
+                                if ($name == "sylius_review" && !empty($c["resources"][$r]["review"]["classes"]["model"])) {
                                     $container->setParameter("sylius.model.product_review.class", $c["resources"][$r]["review"]["classes"]["model"]);
                                 }
-
                             }
                         }
                     }
+
                     break;
             }
         }
-
-
     }
 
 
-    public function getAlias()
+    public function getAlias(): string
     {
         return 'easy_shop';
     }

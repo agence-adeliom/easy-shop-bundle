@@ -10,15 +10,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 final class TaxonFilterConfigurationType extends AbstractType
 {
-    /** @var DataTransformerInterface */
-    private $taxonsToCodesTransformer;
-
-    private $model;
-
-    public function __construct(DataTransformerInterface $taxonsToCodesTransformer, string $model)
+    public function __construct(private readonly DataTransformerInterface $taxonsToCodesTransformer, private readonly string $model)
     {
-        $this->taxonsToCodesTransformer = $taxonsToCodesTransformer;
-        $this->model = $model;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -30,9 +23,7 @@ final class TaxonFilterConfigurationType extends AbstractType
                 'multiple' => true,
                 'required' => false,
                 'choice_name' => 'fullname',
-                'choice_label' => function ($item) {
-                    return $item->getTree(" / ", true);
-                },
+                'choice_label' => static fn($item) => $item->getTree(" / ", true),
                 'choice_value' => 'code',
                 'attr' => [
                     'data-ea-widget' => "ea-autocomplete"

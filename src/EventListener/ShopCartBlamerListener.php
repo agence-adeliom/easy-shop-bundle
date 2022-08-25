@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Adeliom\EasyShopBundle\EventListener;
 
-use Sylius\Bundle\CoreBundle\SectionResolver\SectionProviderInterface;
 use Adeliom\EasyShopBundle\SectionResolver\ShopSection;
+use Sylius\Bundle\CoreBundle\SectionResolver\SectionProviderInterface;
 use Sylius\Bundle\UserBundle\Event\UserEvent;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\ShopUserInterface;
@@ -25,18 +25,8 @@ use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
 final class ShopCartBlamerListener
 {
-    /** @var CartContextInterface */
-    private $cartContext;
-
-    /** @var SectionProviderInterface */
-    private $uriBasedSectionContext;
-
-    public function __construct(
-        CartContextInterface $cartContext,
-        SectionProviderInterface $uriBasedSectionContext
-    ) {
-        $this->cartContext = $cartContext;
-        $this->uriBasedSectionContext = $uriBasedSectionContext;
+    public function __construct(private readonly CartContextInterface $cartContext, private readonly SectionProviderInterface $uriBasedSectionContext)
+    {
     }
 
     public function onImplicitLogin(UserEvent $userEvent): void
@@ -71,7 +61,7 @@ final class ShopCartBlamerListener
     private function blame(ShopUserInterface $user): void
     {
         $cart = $this->getCart();
-        if (null === $cart || null !== $cart->getCustomer()) {
+        if (!$cart instanceof \Sylius\Component\Core\Model\OrderInterface || null !== $cart->getCustomer()) {
             return;
         }
 
@@ -85,7 +75,7 @@ final class ShopCartBlamerListener
     {
         try {
             $cart = $this->cartContext->getCart();
-        } catch (CartNotFoundException $exception) {
+        } catch (CartNotFoundException) {
             return null;
         }
 

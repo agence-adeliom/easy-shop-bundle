@@ -33,9 +33,8 @@ abstract class ShippingCategoryCrudController extends SyliusCrudController
     public function configureFields(string $pageName): iterable
     {
         yield TextField::new('code', "sylius.ui.code")->setColumns(6)->setRequired(true)
-            ->setFormTypeOption('disabled', (in_array($pageName, [Crud::PAGE_EDIT]) ? 'disabled' : ''));
+            ->setFormTypeOption('disabled', ($pageName == Crud::PAGE_EDIT ? 'disabled' : ''));
         yield TextField::new('name', 'sylius.form.shipping_category.name')->setColumns(6)->setRequired(true);
         yield TextareaField::new('description', 'sylius.form.shipping_category.description')->hideOnIndex();
     }
-
 }

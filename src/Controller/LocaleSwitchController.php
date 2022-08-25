@@ -16,7 +16,6 @@ namespace Adeliom\EasyShopBundle\Controller;
 use Adeliom\EasyShopBundle\Locale\LocaleSwitcherInterface;
 use Sylius\Component\Locale\Context\LocaleContextInterface;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -25,31 +24,11 @@ use Twig\Environment;
 
 final class LocaleSwitchController
 {
-    /** @var EngineInterface|Environment */
-    private $templatingEngine;
-
-    /** @var LocaleContextInterface */
-    private $localeContext;
-
-    /** @var LocaleProviderInterface */
-    private $localeProvider;
-
-    /** @var LocaleSwitcherInterface */
-    private $localeSwitcher;
-
     /**
      * @param EngineInterface|Environment $templatingEngine
      */
-    public function __construct(
-        object $templatingEngine,
-        LocaleContextInterface $localeContext,
-        LocaleProviderInterface $localeProvider,
-        LocaleSwitcherInterface $localeSwitcher
-    ) {
-        $this->templatingEngine = $templatingEngine;
-        $this->localeContext = $localeContext;
-        $this->localeProvider = $localeProvider;
-        $this->localeSwitcher = $localeSwitcher;
+    public function __construct(private readonly object $templatingEngine, private readonly LocaleContextInterface $localeContext, private readonly LocaleProviderInterface $localeProvider, private readonly LocaleSwitcherInterface $localeSwitcher)
+    {
     }
 
     public function renderAction(): Response

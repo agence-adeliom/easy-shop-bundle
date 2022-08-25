@@ -20,29 +20,12 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class ProductAssociationEntityType extends AbstractType
 {
-    /** @var RepositoryInterface */
-    private $productAssociationTypeRepository;
-
-    /** @var RepositoryInterface */
-    private $productRepository;
-
-    /** @var DataTransformerInterface */
-    private $productsToProductAssociationsTransformer;
-
-    public function __construct(
-        RepositoryInterface $productAssociationTypeRepository,
-        RepositoryInterface $productRepository,
-        DataTransformerInterface $productsToProductAssociationsTransformer
-    ) {
-        $this->productAssociationTypeRepository = $productAssociationTypeRepository;
-        $this->productRepository = $productRepository;
-        $this->productsToProductAssociationsTransformer = $productsToProductAssociationsTransformer;
+    public function __construct(private readonly RepositoryInterface $productAssociationTypeRepository, private readonly RepositoryInterface $productRepository, private readonly DataTransformerInterface $productsToProductAssociationsTransformer)
+    {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void

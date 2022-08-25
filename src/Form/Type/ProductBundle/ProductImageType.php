@@ -16,10 +16,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class ProductImageType extends AbstractType
 {
-    protected $parameterBag;
-    public function __construct(ParameterBag $parameterBag)
+    public function __construct(protected ParameterBag $parameterBag)
     {
-        $this->parameterBag = $parameterBag;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -37,12 +35,8 @@ final class ProductImageType extends AbstractType
                     'label' => 'sylius.ui.product_variants',
                     'multiple' => true,
                     'required' => false,
-                    'choice_label' => function($v){
-                        return $v->getDescriptor();
-                    },
-                    'choice_value' => function($v){
-                        return $v->getCode();
-                    },
+                    'choice_label' => static fn($v) => $v->getDescriptor(),
+                    'choice_value' => static fn($v) => $v->getCode(),
                     'attr' => [
                         'data-ea-widget' => "ea-autocomplete"
                     ],
@@ -61,28 +55,31 @@ final class ProductImageType extends AbstractType
         ]);
 
         $builder->addModelTransformer(new CallbackTransformer(
-            function ($value){
-                if($value){
+            static function ($value) {
+                if ($value) {
                     return [
                         "type" => $value->getType(),
                         "path" => $value->getPath(),
                         "productVariants" => $value->getProductVariants()->toArray(),
                     ];
                 }
+
                 return $value;
             },
-            function ($value) use ($class){
-                if($value){
+            static function ($value) use ($class) {
+                if ($value) {
                     $image = new $class();
                     $image->setType($value["type"]);
                     $image->setPath($value["path"]);
-                    if(isset($value["productVariants"])){
-                        foreach ($value["productVariants"] as $variant){
+                    if (isset($value["productVariants"])) {
+                        foreach ($value["productVariants"] as $variant) {
                             $image->addProductVariant($variant);
                         }
                     }
+
                     return $image;
                 }
+
                 return $value;
             }
         ));

@@ -21,8 +21,7 @@ use Twig\TwigFunction;
 
 class OrderItemsSubtotalExtension extends AbstractExtension
 {
-    /** @var OrderItemsSubtotalCalculatorInterface */
-    private $calculator;
+    private readonly \Adeliom\EasyShopBundle\Calculator\OrderItemsSubtotalCalculatorInterface $calculator;
 
     public function __construct(?OrderItemsSubtotalCalculatorInterface $calculator = null)
     {
@@ -41,7 +40,7 @@ class OrderItemsSubtotalExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('sylius_order_items_subtotal', [$this, 'getSubtotal']),
+            new TwigFunction('sylius_order_items_subtotal', $this->getSubtotal(...)),
         ];
     }
 

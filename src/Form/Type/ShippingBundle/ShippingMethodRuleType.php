@@ -17,8 +17,6 @@ use Sylius\Bundle\ShippingBundle\Form\Type\Rule\TotalWeightGreaterThanOrEqualCon
 use Sylius\Bundle\ShippingBundle\Form\Type\Rule\TotalWeightLessThanOrEqualConfigurationType;
 use Sylius\Bundle\ShippingBundle\Form\Type\ShippingMethodRuleChoiceType;
 use Sylius\Component\Shipping\Model\ShippingMethodRule;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -26,11 +24,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class ShippingMethodRuleType extends AbstractConfigurableShippingMethodElementType
 {
-    protected $rules;
-    public function __construct(string $dataClass, array $validationGroups, FormTypeRegistryInterface $formTypeRegistry, $rules)
+    public function __construct(string $dataClass, array $validationGroups, FormTypeRegistryInterface $formTypeRegistry, protected $rules)
     {
         parent::__construct($dataClass, $validationGroups, $formTypeRegistry);
-        $this->rules = $rules;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options = []): void
@@ -61,12 +57,11 @@ final class ShippingMethodRuleType extends AbstractConfigurableShippingMethodEle
 
 
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::POST_SET_DATA, static function (FormEvent $event) {
             $data = $event->getData();
             $form = $event->getForm();
             $parent = $form->getParent();
-
-            if($parent && $data) {
+            if ($parent && $data) {
                 /** @var ShippingMethodRule $rule */
                 $rule = $data;
                 $form->remove("configuration");
@@ -74,17 +69,17 @@ final class ShippingMethodRuleType extends AbstractConfigurableShippingMethodEle
             }
         });
 
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($rules) {
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, static function (FormEvent $event) use ($rules) {
             $data = $event->getData();
             $form = $event->getForm();
             $parent = $form->getParent();
             $data["configuration"] = $data[$data["type"]];
-
             unset($rules[$data["type"]]);
-            foreach ($rules as $rule){
+            foreach ($rules as $rule) {
                 $form->remove($rule);
                 unset($data[$rule]);
             }
+
             $event->setData($data);
         });
     }

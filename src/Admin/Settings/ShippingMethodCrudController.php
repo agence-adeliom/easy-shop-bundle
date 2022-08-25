@@ -11,7 +11,6 @@ use Adeliom\EasyShopBundle\Form\Type\ShippingBundle\ShippingMethodRuleType;
 use App\Entity\Shop\Shipping\ShippingMethod;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
@@ -76,23 +75,15 @@ abstract class ShippingMethodCrudController extends SyliusCrudController
     public function configureActions(Actions $actions): Actions
     {
         $archive = Action::new('archive', 'sylius.ui.archive')->addCssClass('text-warning')
-            ->displayIf(static function ($entity) {
-                return $entity->getArchivedAt() == null;
-            })->linkToCrudAction("archive");
+            ->displayIf(static fn($entity) => $entity->getArchivedAt() == null)->linkToCrudAction("archive");
 
         $restore = Action::new('restore', 'sylius.ui.restore')->addCssClass('text-warning')
-            ->displayIf(static function ($entity) {
-                return $entity->getArchivedAt() != null;
-            })->linkToCrudAction("restore");
+            ->displayIf(static fn($entity) => $entity->getArchivedAt() != null)->linkToCrudAction("restore");
 
         $archiveButton = Action::new('archive', 'sylius.ui.archive')
-            ->displayIf(static function ($entity) {
-                return $entity->getArchivedAt() == null;
-            })->linkToCrudAction("archive")->setCssClass("btn btn-warning");
+            ->displayIf(static fn($entity) => $entity->getArchivedAt() == null)->linkToCrudAction("archive")->setCssClass("btn btn-warning");
         $restoreButton = Action::new('restore', 'sylius.ui.restore')
-            ->displayIf(static function ($entity) {
-                return $entity->getArchivedAt() != null;
-            })->linkToCrudAction("restore")->setCssClass("btn btn-warning");
+            ->displayIf(static fn($entity) => $entity->getArchivedAt() != null)->linkToCrudAction("restore")->setCssClass("btn btn-warning");
 
         $actions->add(Crud::PAGE_INDEX, $archive);
         $actions->add(Crud::PAGE_INDEX, $restore);
@@ -149,7 +140,7 @@ abstract class ShippingMethodCrudController extends SyliusCrudController
             ]
         ];
         yield TextField::new('code', 'sylius.ui.code')
-            ->setFormTypeOption('disabled', (in_array($pageName, [Crud::PAGE_EDIT]) ? 'disabled' : ''))
+            ->setFormTypeOption('disabled', ($pageName == Crud::PAGE_EDIT ? 'disabled' : ''))
             ->setRequired(true);
         yield FormTypeField::new('zone', 'sylius.form.shipping_method.zone', ZoneChoiceType::class)
             ->setFormTypeOption("zone_scope", Scope::SHIPPING)->setRequired(true);
@@ -178,9 +169,7 @@ abstract class ShippingMethodCrudController extends SyliusCrudController
         yield FormField::addPanel('sylius.form.shipping_method.translations');
         yield TranslationField::new("translations", false, $fieldsConfig)->hideOnIndex();
 
-        yield BooleanField::new('archivedAt', 'sylius.ui.archival')->onlyOnIndex()->renderAsSwitch(false)->formatValue(function ($value){
-            return !is_null($value);
-        });
+        yield BooleanField::new('archivedAt', 'sylius.ui.archival')->onlyOnIndex()->renderAsSwitch(false)->formatValue(static fn($value) => !is_null($value));
     }
 
     public function createNewFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
@@ -188,5 +177,4 @@ abstract class ShippingMethodCrudController extends SyliusCrudController
         $formOptions->set("allow_extra_fields", true);
         return parent::createNewFormBuilder($entityDto, $formOptions, $context);
     }
-
 }

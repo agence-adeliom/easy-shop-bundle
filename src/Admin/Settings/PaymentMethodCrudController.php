@@ -36,7 +36,7 @@ abstract class PaymentMethodCrudController extends SyliusCrudController
         return array_merge(parent::getSubscribedServices(), [
             'sylius.custom_factory.payment_method' => '?' . PaymentMethodFactoryInterface::class,
             TranslatorInterface::class => '?' . TranslatorInterface::class,
-            ParameterBagInterface::class => '?'.ParameterBagInterface::class,
+            ParameterBagInterface::class => '?' . ParameterBagInterface::class,
         ]);
     }
 
@@ -58,13 +58,14 @@ abstract class PaymentMethodCrudController extends SyliusCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        $url = $this->get(AdminUrlGenerator::class)->setController(get_class($this))->setAction(Action::NEW);
+        $url = $this->get(AdminUrlGenerator::class)->setController($this::class)->setAction(Action::NEW);
         $actions = parent::configureActions($actions);
 
         foreach ($this->get(ParameterBagInterface::class)->get('sylius.gateway_factories') as $gatewayFactory => $gatewayFactoryName) {
             $newAdd = Action::new($gatewayFactoryName, $gatewayFactoryName)->linkToUrl((clone $url)->set("gatewayFactory", $gatewayFactory)->set("gatewayFactoryName", $gatewayFactoryName)->generateUrl())->createAsGlobalAction()->setCssClass("btn btn-primary");
             $actions->add(Crud::PAGE_INDEX, $newAdd);
         }
+
         $actions->remove(Crud::PAGE_INDEX, Action::NEW);
 
         return $actions;
@@ -101,13 +102,13 @@ abstract class PaymentMethodCrudController extends SyliusCrudController
         yield FormField::addPanel("sylius.ui.details")->collapsible()->renderCollapsed(false);
 
         yield TextField::new('code', "sylius.ui.code")
-            ->setFormTypeOption('disabled', (in_array($pageName, [Crud::PAGE_EDIT]) ? 'disabled' : ''))
+            ->setFormTypeOption('disabled', ($pageName == Crud::PAGE_EDIT ? 'disabled' : ''))
             ->setColumns(6);
 
-        yield IntegerField::new('position','sylius.form.payment_method.position')
+        yield IntegerField::new('position', 'sylius.form.payment_method.position')
             ->setColumns(6);
 
-        yield BooleanField::new('enabled','sylius.form.payment_method.enabled')->renderAsSwitch(in_array($pageName, [Crud::PAGE_NEW, Crud::PAGE_EDIT]));
+        yield BooleanField::new('enabled', 'sylius.form.payment_method.enabled')->renderAsSwitch(in_array($pageName, [Crud::PAGE_NEW, Crud::PAGE_EDIT]));
 
         yield FormTypeField::new('channels', 'sylius.form.payment_method.channels', ChannelChoiceType::class)->hideOnIndex()
             ->setFormTypeOptions(['multiple' => true, 'expanded' => true, "attr" => ["data-ea-widget" => "ea-autocomplete"]]);
@@ -116,12 +117,10 @@ abstract class PaymentMethodCrudController extends SyliusCrudController
 
         yield TextField::new('gatewayConfig.gatewayName')
             ->setLabel('sylius.form.gateway_config.type')
-            ->formatValue(function ($value){
-                return $this->get(TranslatorInterface::class)->trans($value);
-            })
+            ->formatValue(fn($value) => $this->get(TranslatorInterface::class)->trans($value))
             ->setFormTypeOption('disabled', 'disabled')->onlyOnIndex();
 
-        if ($subject){
+        if ($subject) {
             yield FormTypeField::new('gatewayConfig', 'sylius.ui.gateway_configuration', GatewayConfigType::class)->hideOnIndex()
                 ->setFormTypeOptions(['data' => $subject->getGatewayConfig()])->onlyOnForms();
         }
@@ -148,7 +147,5 @@ abstract class PaymentMethodCrudController extends SyliusCrudController
         ];
 
         yield TranslationField::new("translations", 'sylius.ui.content', $fieldsConfig)->hideOnIndex();
-
     }
-
 }

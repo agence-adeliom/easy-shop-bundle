@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Adeliom\EasyShopBundle\AttributeType\Configuration;
 
-use Adeliom\EasyMediaBundle\Form\EasyMediaType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 

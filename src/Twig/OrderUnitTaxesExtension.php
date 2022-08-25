@@ -13,8 +13,8 @@ class OrderUnitTaxesExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('sylius_admin_order_unit_tax_included', [$this, 'getIncludedTax']),
-            new TwigFunction('sylius_admin_order_unit_tax_excluded', [$this, 'getExcludedTax']),
+            new TwigFunction('sylius_admin_order_unit_tax_included', $this->getIncludedTax(...)),
+            new TwigFunction('sylius_admin_order_unit_tax_excluded', $this->getExcludedTax(...)),
         ];
     }
 
@@ -30,14 +30,10 @@ class OrderUnitTaxesExtension extends AbstractExtension
 
     private function getAmount(OrderItemInterface $orderItem, bool $neutral): int
     {
-        $total = array_reduce(
+        return array_reduce(
             $orderItem->getAdjustmentsRecursively(AdjustmentInterface::TAX_ADJUSTMENT)->toArray(),
-            static function (int $total, BaseAdjustmentInterface $adjustment) use ($neutral) {
-                return $neutral === $adjustment->isNeutral() ? $total + $adjustment->getAmount() : $total;
-            },
+            static fn(int $total, BaseAdjustmentInterface $adjustment) => $neutral === $adjustment->isNeutral() ? $total + $adjustment->getAmount() : $total,
             0
         );
-
-        return $total;
     }
 }

@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Adeliom\EasyShopBundle\EventListener;
 
-use Sylius\Bundle\CoreBundle\SectionResolver\SectionProviderInterface;
 use Adeliom\EasyShopBundle\SectionResolver\ShopSection;
+use Sylius\Bundle\CoreBundle\SectionResolver\SectionProviderInterface;
 use Sylius\Bundle\UserBundle\UserEvents;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
@@ -29,33 +29,8 @@ use Webmozart\Assert\Assert;
 
 final class CustomerEmailUpdaterListener
 {
-    /** @var GeneratorInterface */
-    private $tokenGenerator;
-
-    /** @var ChannelContextInterface */
-    private $channelContext;
-
-    /** @var EventDispatcherInterface */
-    private $eventDispatcher;
-
-    /** @var SessionInterface */
-    private $session;
-
-    /** @var SectionProviderInterface */
-    private $uriBasedSectionContext;
-
-    public function __construct(
-        GeneratorInterface $tokenGenerator,
-        ChannelContextInterface $channelContext,
-        EventDispatcherInterface $eventDispatcher,
-        SessionInterface $session,
-        SectionProviderInterface $uriBasedSectionContext
-    ) {
-        $this->tokenGenerator = $tokenGenerator;
-        $this->channelContext = $channelContext;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->session = $session;
-        $this->uriBasedSectionContext = $uriBasedSectionContext;
+    public function __construct(private readonly GeneratorInterface $tokenGenerator, private readonly ChannelContextInterface $channelContext, private readonly EventDispatcherInterface $eventDispatcher, private readonly SessionInterface $session, private readonly SectionProviderInterface $uriBasedSectionContext)
+    {
     }
 
     public function eraseVerification(GenericEvent $event): void

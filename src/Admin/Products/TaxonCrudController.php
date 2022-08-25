@@ -49,17 +49,13 @@ abstract class TaxonCrudController extends SyliusCrudController
     public function configureActions(Actions $actions): Actions
     {
 
-        $viewTaxon = Action::new('viewTaxon', 'Voir la page', 'fa fa-eye')->linkToUrl(function (TaxonInterface $taxon) {
-            return $this->get(RouterInterface::class)->generate('sylius_shop_product_index', [
-                'slug' => $taxon->getTree()
-            ]);
-        })->setHtmlAttributes(["target" => "_blank"]);
+        $viewTaxon = Action::new('viewTaxon', 'Voir la page', 'fa fa-eye')->linkToUrl(fn(TaxonInterface $taxon) => $this->get(RouterInterface::class)->generate('sylius_shop_product_index', [
+            'slug' => $taxon->getTree()
+        ]))->setHtmlAttributes(["target" => "_blank"]);
 
-        $viewTaxonButton = Action::new('viewTaxon', 'Voir la page', 'fa fa-eye')->linkToUrl(function (TaxonInterface $taxon) {
-            return $this->get(RouterInterface::class)->generate('sylius_shop_product_index', [
-                'slug' => $taxon->getTree()
-            ]);
-        })->setHtmlAttributes(["target" => "_blank"])->setCssClass("btn btn-info");
+        $viewTaxonButton = Action::new('viewTaxon', 'Voir la page', 'fa fa-eye')->linkToUrl(fn(TaxonInterface $taxon) => $this->get(RouterInterface::class)->generate('sylius_shop_product_index', [
+            'slug' => $taxon->getTree()
+        ]))->setHtmlAttributes(["target" => "_blank"])->setCssClass("btn btn-info");
         $actions->add(Crud::PAGE_INDEX, $viewTaxon);
         $actions->add(Crud::PAGE_DETAIL, $viewTaxonButton);
         $actions->add(Crud::PAGE_EDIT, $viewTaxonButton);
@@ -69,7 +65,7 @@ abstract class TaxonCrudController extends SyliusCrudController
     public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [
-            RouterInterface::class => '?'.RouterInterface::class,
+            RouterInterface::class => '?' . RouterInterface::class,
         ]);
     }
 
@@ -94,12 +90,11 @@ abstract class TaxonCrudController extends SyliusCrudController
             ]
         ];
 
-        yield TextField::new('code','sylius.ui.code');
-        yield TextField::new('name','sylius.ui.name')->onlyOnIndex();
+        yield TextField::new('code', 'sylius.ui.code');
+        yield TextField::new('name', 'sylius.ui.name')->onlyOnIndex();
         yield AssociationField::new('parent', 'sylius.form.taxon.parent')->autocomplete()->listSelector()->listDisplayColumns([1, 2]);
         yield BooleanField::new('enabled', 'sylius.form.taxon.enabled')->renderAsSwitch(in_array($pageName, [Crud::PAGE_NEW, Crud::PAGE_EDIT]));
         yield FormField::addPanel('sylius.form.taxon.name')->collapsible();
         yield TranslationField::new("translations", false, $fieldsConfig);
     }
-
 }

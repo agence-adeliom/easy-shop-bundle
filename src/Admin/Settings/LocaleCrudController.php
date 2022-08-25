@@ -35,5 +35,4 @@ abstract class LocaleCrudController extends SyliusCrudController
     {
         yield LocaleField::new('code')->showName()->showCode();
     }
-
 }

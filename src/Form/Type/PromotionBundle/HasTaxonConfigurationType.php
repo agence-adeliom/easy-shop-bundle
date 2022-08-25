@@ -13,9 +13,7 @@ declare(strict_types=1);
 
 namespace Adeliom\EasyShopBundle\Form\Type\PromotionBundle;
 
-use Adeliom\EasyFieldsBundle\Form\ChoiceMaskType;
 use App\Entity\Shop\Product\Product;
-use EasyCorp\Bundle\EasyAdminBundle\Form\Type\CrudAutocompleteType;
 use Sylius\Bundle\CoreBundle\Form\Type\Product\ChannelPricingType;
 use Sylius\Bundle\ProductBundle\Form\Type\ProductAutocompleteChoiceType;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionRuleChoiceType;
@@ -28,25 +26,12 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\ReversedTransformer;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Type;
 
 final class HasTaxonConfigurationType extends AbstractType
 {
-    /** @var RepositoryInterface */
-    private $taxonRepository;
-
-    /** @var DataTransformerInterface */
-    private $taxonsToCodesTransformer;
-
-    public function __construct(RepositoryInterface $taxonRepository, DataTransformerInterface $taxonsToCodesTransformer)
+    public function __construct(private readonly RepositoryInterface $taxonRepository, private readonly DataTransformerInterface $taxonsToCodesTransformer)
     {
-        $this->taxonRepository = $taxonRepository;
-        $this->taxonsToCodesTransformer = $taxonsToCodesTransformer;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -59,9 +44,7 @@ final class HasTaxonConfigurationType extends AbstractType
                 'attr' => [
                     "data-ea-widget" => "ea-autocomplete"
                 ],
-                'choice_value' => function ($entity) {
-                    return $entity ? $entity->getCode() : '';
-                },
+                'choice_value' => static fn($entity) => $entity ? $entity->getCode() : '',
                 'constraints' => [
                     new NotBlank(['groups' => ['sylius']])
                 ],

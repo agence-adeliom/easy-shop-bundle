@@ -73,9 +73,7 @@ abstract class CustomerCrudController extends SyliusCrudController
             ->setPageTitle(Crud::PAGE_INDEX, "sylius.ui.manage_customers")
             ->setPageTitle(Crud::PAGE_NEW, "sylius.ui.new_customer")
             ->setPageTitle(Crud::PAGE_EDIT, "sylius.ui.edit_customer")
-            ->setPageTitle(Crud::PAGE_DETAIL, function ($entity) {
-                return sprintf('%s<br/><small>%s</small>', $entity->getFullName(), $entity->getEmail());
-            })
+            ->setPageTitle(Crud::PAGE_DETAIL, static fn($entity) => sprintf('%s<br/><small>%s</small>', $entity->getFullName(), $entity->getEmail()))
             ->setEntityLabelInSingular('sylius.ui.customer')
             ->setEntityLabelInPlural('sylius.ui.customers')
             ->setFormOptions([
@@ -151,7 +149,7 @@ abstract class CustomerCrudController extends SyliusCrudController
         parent::processUploadedFiles($form);
         global $createUser;
         $createUser = false;
-        if($form->getData() instanceof CustomerInterface){
+        if ($form->getData() instanceof CustomerInterface) {
             $createUser = $form->get("createUser")->getData() == "yes";
         }
     }
@@ -159,15 +157,16 @@ abstract class CustomerCrudController extends SyliusCrudController
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
         global $createUser;
-        if(!$createUser){
-            if($entityInstance->getUser() && $entityInstance->getUser()->getId()){
+        if (!$createUser) {
+            if ($entityInstance->getUser() && $entityInstance->getUser()->getId()) {
                 $user = $entityInstance->getUser();
                 $user->setEnabled(false);
                 $entityInstance->setUser($user);
-            }else{
+            } else {
                 $entityInstance->setUser(null);
             }
         }
+
         parent::updateEntity($entityManager, $entityInstance);
     }
 
@@ -188,7 +187,7 @@ abstract class CustomerCrudController extends SyliusCrudController
 
         $customer = $context->getEntity()->getInstance();
         /** @var ShopUserInterface $user */
-        if($user = $customer->getUser()){
+        if ($user = $customer->getUser()) {
             $this->get('sylius.security.shop_user_impersonator')->impersonate($user);
             $this->addFlash('success', $this->get(TranslatorInterface::class)->trans(
                 'sylius.customer.impersonate',
@@ -202,7 +201,8 @@ abstract class CustomerCrudController extends SyliusCrudController
         return new RedirectResponse($context->getRequest()->headers->get('referer'));
     }
 
-    public function showOrders(AdminContext $context){
+    public function showOrders(AdminContext $context)
+    {
         $orderCrud = $context->getCrudControllers()->findCrudFqcnByEntityFqcn($this->get(ParameterBagInterface::class)->get('sylius.model.order.class'));
         return $this->redirect(
             $this->get(AdminUrlGenerator::class)
@@ -217,13 +217,12 @@ abstract class CustomerCrudController extends SyliusCrudController
     public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [
-            'sylius.customer_statistics_provider' => '?'.CustomerStatisticsProviderInterface::class,
-            'sylius.factory.customer' => '?'.FactoryInterface::class,
-            'sylius.factory.shop_user' => '?'.FactoryInterface::class,
-            'sylius.security.shop_user_impersonator' => '?'.UserImpersonatorInterface::class,
-            TranslatorInterface::class => '?'.TranslatorInterface::class,
-            ParameterBagInterface::class => '?'.ParameterBagInterface::class,
+            'sylius.customer_statistics_provider' => '?' . CustomerStatisticsProviderInterface::class,
+            'sylius.factory.customer' => '?' . FactoryInterface::class,
+            'sylius.factory.shop_user' => '?' . FactoryInterface::class,
+            'sylius.security.shop_user_impersonator' => '?' . UserImpersonatorInterface::class,
+            TranslatorInterface::class => '?' . TranslatorInterface::class,
+            ParameterBagInterface::class => '?' . ParameterBagInterface::class,
         ]);
     }
-
 }

@@ -12,6 +12,9 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 final class EasyMediaAttributeType implements AttributeTypeInterface
 {
+    /**
+     * @var string
+     */
     public const TYPE = 'easy_media';
 
     public function getStorageType(): string

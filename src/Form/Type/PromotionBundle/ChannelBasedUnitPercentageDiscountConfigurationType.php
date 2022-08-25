@@ -14,12 +14,10 @@ final class ChannelBasedUnitPercentageDiscountConfigurationType extends Abstract
     {
         $resolver->setDefaults([
             'entry_type' => UnitPercentageDiscountConfigurationType::class,
-            'entry_options' => function (ChannelInterface $channel) {
-                return [
-                    'label' => $channel->getName(),
-                    'currency' => $channel->getBaseCurrency()->getCode(),
-                ];
-            },
+            'entry_options' => static fn(ChannelInterface $channel) => [
+                'label' => $channel->getName(),
+                'currency' => $channel->getBaseCurrency()->getCode(),
+            ],
             'constraints' => [
                 new Valid()
             ]

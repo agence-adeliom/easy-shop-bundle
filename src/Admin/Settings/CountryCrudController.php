@@ -38,5 +38,4 @@ abstract class CountryCrudController extends SyliusCrudController
         yield BooleanField::new('enabled', "sylius.ui.enabled")->renderAsSwitch(in_array($pageName, [Crud::PAGE_NEW, Crud::PAGE_EDIT]));
         yield CollectionField::new("provinces", "sylius.form.country.provinces")->hideOnIndex()->setEntryType(ProvinceType::class);
     }
-
 }

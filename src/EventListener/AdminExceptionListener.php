@@ -4,21 +4,13 @@ namespace Adeliom\EasyShopBundle\EventListener;
 
 use EasyCorp\Bundle\EasyAdminBundle\Exception\EntityRemoveException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
-use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AdminExceptionListener
 {
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-
-    public function __construct(TranslatorInterface $translator)
+    public function __construct(private readonly TranslatorInterface $translator)
     {
-        $this->translator = $translator;
     }
 
     public function onKernelException(ExceptionEvent $event)
@@ -33,12 +25,14 @@ class AdminExceptionListener
             $bag = $request->getSession()->getFlashBag();
             $newBag = [];
             foreach ($bag->all() as $type => $messages) {
-                if($type == "error"){
+                if ($type == "error") {
                     $type = "danger";
                 }
-                if(!isset($newBag[$type])){
+
+                if (!isset($newBag[$type])) {
                     $newBag[$type] = [];
                 }
+
                 foreach ($messages as $message) {
                     $newBag[$type][] = $message;
                 }
@@ -54,6 +48,5 @@ class AdminExceptionListener
 
             $event->setResponse(new RedirectResponse($request->headers->get('referer')));
         }
-
     }
 }

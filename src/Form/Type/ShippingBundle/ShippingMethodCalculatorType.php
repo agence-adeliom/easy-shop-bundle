@@ -21,8 +21,6 @@ use Sylius\Bundle\ShippingBundle\Form\Type\Rule\TotalWeightLessThanOrEqualConfig
 use Sylius\Bundle\ShippingBundle\Form\Type\ShippingMethodRuleChoiceType;
 use Sylius\Component\Core\OrderProcessing\ShippingChargesProcessor;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -31,15 +29,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class ShippingMethodCalculatorType extends AbstractType
 {
-    /** @var array */
-    private $calculators;
-
     /**
      * @param array $calculators
      */
-    public function __construct($calculators)
+    public function __construct(private $calculators)
     {
-        $this->calculators = $calculators;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options = []): void
@@ -53,9 +47,10 @@ final class ShippingMethodCalculatorType extends AbstractType
                 ],
                 "map" => call_user_func(function () {
                     $map = [];
-                    foreach ($this->calculators as $key => $calculator) {
+                    foreach (array_keys($this->calculators) as $key) {
                         $map[$key] = [$key];
                     }
+
                     return $map;
                 })
             ])
@@ -63,12 +58,11 @@ final class ShippingMethodCalculatorType extends AbstractType
             ->add("per_unit_rate", ChannelBasedPerUnitRateConfigurationType::class, ["label" => false])
         ;
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, static function (FormEvent $event) {
             $data = $event->getData();
             $form = $event->getForm();
             $parent = $form->getParent();
-
-            if($data) {
+            if ($data) {
                 /** @var ShippingMethod $shipping */
                 $shipping = $parent->getData();
                 $configurations = $shipping->getConfiguration();
@@ -80,25 +74,23 @@ final class ShippingMethodCalculatorType extends AbstractType
             }
         });
 
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, static function (FormEvent $event) {
             $data = $event->getData();
             $form = $event->getForm();
             $keys = array_diff(array_keys($data), ["type", $data["type"]]);
-
-            foreach ($keys as $key){
+            foreach ($keys as $key) {
                 unset($data[$key]);
                 $form->remove($key);
             }
+
             $event->setData($data);
         });
 
-        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::SUBMIT, static function (FormEvent $event) {
             $data = $event->getData();
             $form = $event->getForm();
-
             $keys = array_diff(array_keys($data), ["type", $data["type"]]);
-
-            foreach ($keys as $key){
+            foreach ($keys as $key) {
                 unset($data[$key]);
                 $form->remove($key);
             }
@@ -116,7 +108,7 @@ final class ShippingMethodCalculatorType extends AbstractType
         $resolver->setDefault("compound", true);
     }
 
-    public function getParent()
+    public function getParent(): ?string
     {
         return TextType::class;
     }

@@ -40,11 +40,11 @@ abstract class PromotionCrudController extends SyliusCrudController
     public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [
-            'sylius.factory.promotion_coupon' => '?'.PromotionCouponFactoryInterface::class,
-            'sylius.manager.promotion_coupon' => '?'.EntityManagerInterface::class,
-            'sylius.repository.promotion_coupon' => '?'.PromotionCouponRepositoryInterface::class,
-            'sylius.promotion_coupon_generator' => '?'.PromotionCouponGeneratorInterface::class,
-            ParameterBagInterface::class => '?'.ParameterBagInterface::class,
+            'sylius.factory.promotion_coupon' => '?' . PromotionCouponFactoryInterface::class,
+            'sylius.manager.promotion_coupon' => '?' . EntityManagerInterface::class,
+            'sylius.repository.promotion_coupon' => '?' . PromotionCouponRepositoryInterface::class,
+            'sylius.promotion_coupon_generator' => '?' . PromotionCouponGeneratorInterface::class,
+            ParameterBagInterface::class => '?' . ParameterBagInterface::class,
         ]);
     }
 
@@ -70,9 +70,7 @@ abstract class PromotionCrudController extends SyliusCrudController
         $actions = parent::configureActions($actions);
 
         $viewCoupon = Action::new('manageCoupon', 'sylius.ui.manage_coupons', 'fas fa-ticket-alt')
-            ->displayIf(static function ($entity) {
-                return $entity->isCouponBased();
-            })->linkToCrudAction("manageCoupon");
+            ->displayIf(static fn($entity) => $entity->isCouponBased())->linkToCrudAction("manageCoupon");
 
         $actions
             ->add(Crud::PAGE_INDEX, $viewCoupon);
@@ -83,15 +81,15 @@ abstract class PromotionCrudController extends SyliusCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        yield TextField::new('code','sylius.ui.code')
-            ->setFormTypeOption('disabled', (in_array($pageName, [Crud::PAGE_EDIT]) ? 'disabled' : ''))
+        yield TextField::new('code', 'sylius.ui.code')
+            ->setFormTypeOption('disabled', ($pageName == Crud::PAGE_EDIT ? 'disabled' : ''))
             ->setRequired(true)->setColumns(6);
-        yield TextField::new('name','sylius.form.promotion.name')->setRequired(true)->setColumns(6);
-        yield TextareaField::new('description','sylius.form.promotion.description')->setColumns(12)->hideOnIndex();
-        yield IntegerField::new('usageLimit','sylius.form.promotion.usage_limit')->setColumns(6);
-        yield IntegerField::new('priority','sylius.form.promotion.priority')->setColumns(6)->setHelp('sylius.form.promotion.priority-help');
-        yield BooleanField::new('exclusive','sylius.form.promotion.exclusive')->setColumns(6)->hideOnIndex()->setHelp('sylius.form.promotion.exclusive-help');
-        yield BooleanField::new('couponBased','sylius.form.promotion.coupon_based')->setColumns(6)->renderAsSwitch(in_array($pageName, [Crud::PAGE_EDIT, Crud::PAGE_NEW]));
+        yield TextField::new('name', 'sylius.form.promotion.name')->setRequired(true)->setColumns(6);
+        yield TextareaField::new('description', 'sylius.form.promotion.description')->setColumns(12)->hideOnIndex();
+        yield IntegerField::new('usageLimit', 'sylius.form.promotion.usage_limit')->setColumns(6);
+        yield IntegerField::new('priority', 'sylius.form.promotion.priority')->setColumns(6)->setHelp('sylius.form.promotion.priority-help');
+        yield BooleanField::new('exclusive', 'sylius.form.promotion.exclusive')->setColumns(6)->hideOnIndex()->setHelp('sylius.form.promotion.exclusive-help');
+        yield BooleanField::new('couponBased', 'sylius.form.promotion.coupon_based')->setColumns(6)->renderAsSwitch(in_array($pageName, [Crud::PAGE_EDIT, Crud::PAGE_NEW]));
 
         yield FormTypeField::new('channels', 'sylius.form.promotion.channels', ChannelChoiceType::class)->hideOnIndex()
             ->setFormTypeOptions(['multiple' => true, 'expanded' => true]);
@@ -126,7 +124,7 @@ abstract class PromotionCrudController extends SyliusCrudController
             $coupon = $form->getData();
             $this->get("sylius.manager.promotion_coupon")->persist($coupon);
             $this->get("sylius.manager.promotion_coupon")->flush();
-            $url = $this->get(AdminUrlGenerator::class)->setController(get_class($this))->setEntityId($coupon->getPromotion()->getId())->setAction("manageCoupon")->generateUrl();
+            $url = $this->get(AdminUrlGenerator::class)->setController($this::class)->setEntityId($coupon->getPromotion()->getId())->setAction("manageCoupon")->generateUrl();
             return $this->redirect($url);
         }
 
@@ -145,7 +143,7 @@ abstract class PromotionCrudController extends SyliusCrudController
             $instruction = $form->getData();
             $this->get('sylius.promotion_coupon_generator')->generate($context->getEntity()->getInstance(), $instruction);
 
-            $url = $this->get(AdminUrlGenerator::class)->setController(get_class($this))->setEntityId($context->getEntity()->getPrimaryKeyValue())->setAction("manageCoupon")->generateUrl();
+            $url = $this->get(AdminUrlGenerator::class)->setController($this::class)->setEntityId($context->getEntity()->getPrimaryKeyValue())->setAction("manageCoupon")->generateUrl();
             return $this->redirect($url);
         }
 
@@ -157,22 +155,25 @@ abstract class PromotionCrudController extends SyliusCrudController
 
     public function batchDeleteCoupons(AdminContext $context): Response
     {
-        foreach ($context->getRequest()->get("batchActionEntityIds", []) as $i){
+        $coupon = null;
+        foreach ($context->getRequest()->get("batchActionEntityIds", []) as $i) {
             $coupon = $this->get("sylius.repository.promotion_coupon")->find($i);
             if (!$coupon) {
                 continue;
             }
+
             $this->get("sylius.manager.promotion_coupon")->remove($coupon);
             $this->get("sylius.manager.promotion_coupon")->flush();
         }
-        $url = $this->get(AdminUrlGenerator::class)->setController(get_class($this))->setEntityId($coupon->getPromotion()->getId())->setAction("manageCoupon")->generateUrl();
+
+        $url = $this->get(AdminUrlGenerator::class)->setController($this::class)->setEntityId($coupon->getPromotion()->getId())->setAction("manageCoupon")->generateUrl();
         return $this->redirect($url);
     }
 
     public function editCoupon(AdminContext $context): Response
     {
         $coupon = $this->get('sylius.repository.promotion_coupon')->find($context->getRequest()->query->get("couponId"));
-        if (!($coupon instanceof PromotionCouponInterface)){
+        if (!($coupon instanceof PromotionCouponInterface)) {
             throw new NotFoundHttpException();
         }
 
@@ -182,7 +183,7 @@ abstract class PromotionCrudController extends SyliusCrudController
             $coupon = $form->getData();
             $this->get("sylius.manager.promotion_coupon")->persist($coupon);
             $this->get("sylius.manager.promotion_coupon")->flush();
-            $url = $this->get(AdminUrlGenerator::class)->setController(get_class($this))->setEntityId($coupon->getPromotion()->getId())->setAction("manageCoupon")->generateUrl();
+            $url = $this->get(AdminUrlGenerator::class)->setController($this::class)->setEntityId($coupon->getPromotion()->getId())->setAction("manageCoupon")->generateUrl();
             return $this->redirect($url);
         }
 
@@ -195,14 +196,14 @@ abstract class PromotionCrudController extends SyliusCrudController
     public function deleteCoupon(AdminContext $context): Response
     {
         $coupon = $this->get('sylius.repository.promotion_coupon')->find($context->getRequest()->query->get("couponId"));
-        if (!($coupon instanceof PromotionCouponInterface)){
+        if (!($coupon instanceof PromotionCouponInterface)) {
             throw new NotFoundHttpException();
         }
 
         $this->get("sylius.manager.promotion_coupon")->remove($coupon);
         $this->get("sylius.manager.promotion_coupon")->flush();
 
-        $url = $this->get(AdminUrlGenerator::class)->setController(get_class($this))->setEntityId($coupon->getPromotion()->getId())->setAction("manageCoupon")->generateUrl();
+        $url = $this->get(AdminUrlGenerator::class)->setController($this::class)->setEntityId($coupon->getPromotion()->getId())->setAction("manageCoupon")->generateUrl();
         return $this->redirect($url);
     }
 }

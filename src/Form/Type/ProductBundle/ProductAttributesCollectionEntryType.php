@@ -22,35 +22,16 @@ use Sylius\Component\Product\Model\ProductAssociationTypeInterface;
 use Sylius\Component\Product\Model\ProductAttributeInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\CallbackTransformer;
-use Symfony\Component\Form\DataTransformerInterface;
-use Symfony\Component\Form\Extension\Core\EventListener\ResizeFormListener;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class ProductAttributesCollectionEntryType extends AbstractType
 {
-    /** @var FormTypeRegistryInterface */
-    private $formTypeRegistry;
-
-    /** @var RepositoryInterface */
-    private $localeRepository;
-
-    public function __construct(
-        FormTypeRegistryInterface $formTypeRegistry,
-        RepositoryInterface $localeRepository
-    ) {
-        $this->formTypeRegistry = $formTypeRegistry;
-        $this->localeRepository = $localeRepository;
+    public function __construct(private readonly FormTypeRegistryInterface $formTypeRegistry, private readonly RepositoryInterface $localeRepository)
+    {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -73,7 +54,7 @@ final class ProductAttributesCollectionEntryType extends AbstractType
                 ]);
                 $required = false;
             }
-        }else{
+        } else {
             $builder->add("value", $this->formTypeRegistry->get($attribute->getType(), "default"), [
                 'label' => $attribute->getName(),
                 'required' => $required,
