@@ -141,12 +141,12 @@ abstract class ShipmentCrudController extends SyliusCrudController
         $order = $shipment->getOrder();
 
         $em = $this->managerRegistry->getManager();
-        $sm = $this->get(Factory::class)->get($shipment, "sylius_shipment");
+        $sm = $this->container->get(Factory::class)->get($shipment, "sylius_shipment");
         if ($request->get('tracking') && $sm->apply(ShipmentTransitions::TRANSITION_SHIP)) {
             $shipment->setTracking($request->get('tracking'));
             $em->persist($shipment);
             $em->flush();
-            $this->get(Sender::class)->send(
+            $this->container->get(Sender::class)->send(
                 Emails::SHIPMENT_CONFIRMATION,
                 [$order->getCustomer()->getEmail()],
                 [
@@ -174,11 +174,11 @@ abstract class ShipmentCrudController extends SyliusCrudController
         /** @var OrderInterface|null $order */
         $order = $shipment->getOrder();
 
-        if (!$this->get(CsrfTokenManager::class)->isTokenValid(new CsrfToken($shipment->getId(), (string) $request->query->get('_csrf_token')))) {
+        if (!$this->container->get(CsrfTokenManager::class)->isTokenValid(new CsrfToken($shipment->getId(), (string) $request->query->get('_csrf_token')))) {
             throw new HttpException(Response::HTTP_FORBIDDEN, 'Invalid csrf token.');
         }
 
-        $this->get(Sender::class)->send(
+        $this->container->get(Sender::class)->send(
             Emails::SHIPMENT_CONFIRMATION,
             [$order->getCustomer()->getEmail()],
             [
@@ -200,13 +200,13 @@ abstract class ShipmentCrudController extends SyliusCrudController
     public function showOrder(AdminContext $context)
     {
         /** @var ParameterBagInterface $bag */
-        $bag = $this->get(ParameterBagInterface::class);
+        $bag = $this->container->get(ParameterBagInterface::class);
 
         $order = $context->getEntity()->getInstance()->getOrder();
         $crud = $context->getCrudControllers()->findCrudFqcnByEntityFqcn($bag->get('sylius.model.order.class'));
 
         return $this->redirect(
-            $this->get(AdminUrlGenerator::class)
+            $this->container->get(AdminUrlGenerator::class)
                 ->setController($crud)
                 ->setAction(Action::DETAIL)
                 ->set(EA::ENTITY_ID, $order->getId())

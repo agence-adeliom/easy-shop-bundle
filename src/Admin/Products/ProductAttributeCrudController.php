@@ -41,12 +41,12 @@ abstract class ProductAttributeCrudController extends SyliusCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        $url = $this->get(AdminUrlGenerator::class)->setController($this::class)->setAction(Action::NEW);
+        $url = $this->container->get(AdminUrlGenerator::class)->setController($this::class)->setAction(Action::NEW);
 
         $actions = parent::configureActions($actions);
         $actions->remove(Crud::PAGE_INDEX, Action::NEW);
 
-        foreach (array_reverse($this->get(ParameterBagInterface::class)->get("sylius.attribute.attribute_types")) as $type => $name) {
+        foreach (array_reverse($this->container->get(ParameterBagInterface::class)->get("sylius.attribute.attribute_types")) as $type => $name) {
             $actionType = Action::new($type, $name)
                 ->linkToUrl((clone $url)->set("attributeType", $type)->generateUrl())
                 ->createAsGlobalAction()
@@ -69,7 +69,7 @@ abstract class ProductAttributeCrudController extends SyliusCrudController
     {
         global $attributeType;
         /** @var ProductAttributeInterface $entity */
-        $entity = $this->get('sylius.custom_factory.product_attribute')->createTyped($attributeType);
+        $entity = $this->container->get('sylius.custom_factory.product_attribute')->createTyped($attributeType);
         return $entity;
     }
 
@@ -93,7 +93,7 @@ abstract class ProductAttributeCrudController extends SyliusCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        $context = $this->get(AdminContextProvider::class)->getContext();
+        $context = $this->container->get(AdminContextProvider::class)->getContext();
         $subject = $context->getEntity();
         $attribute = $subject->getInstance();
 
@@ -120,8 +120,8 @@ abstract class ProductAttributeCrudController extends SyliusCrudController
             ->setColumns(4);
         yield BooleanField::new('translatable', 'sylius.form.attribute.translatable')->renderAsSwitch(in_array($pageName, [Crud::PAGE_EDIT, Crud::PAGE_NEW]));
 
-        if (in_array($pageName, [Crud::PAGE_NEW, Crud::PAGE_EDIT]) && (($attribute instanceof AttributeInterface) && $this->get('sylius.form_registry.attribute_type')->has($attribute->getType(), 'configuration'))) {
-            yield FormTypeField::new('configuration', 'sylius.form_registry.attribute_type', $this->get('sylius.form_registry.attribute_type')->get($attribute->getType(), 'configuration'))
+        if (in_array($pageName, [Crud::PAGE_NEW, Crud::PAGE_EDIT]) && (($attribute instanceof AttributeInterface) && $this->container->get('sylius.form_registry.attribute_type')->has($attribute->getType(), 'configuration'))) {
+            yield FormTypeField::new('configuration', 'sylius.form_registry.attribute_type', $this->container->get('sylius.form_registry.attribute_type')->get($attribute->getType(), 'configuration'))
                 ->setFormTypeOption("auto_initialize", false);
         }
 

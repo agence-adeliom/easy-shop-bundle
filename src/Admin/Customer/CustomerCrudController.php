@@ -46,8 +46,8 @@ abstract class CustomerCrudController extends SyliusCrudController
 
     public function createEntity(string $entityFqcn)
     {
-        $customer = $this->get('sylius.factory.customer')->createNew();
-        $customer->setUser($this->get('sylius.factory.shop_user')->createNew());
+        $customer = $this->container->get('sylius.factory.customer')->createNew();
+        $customer->setUser($this->container->get('sylius.factory.shop_user')->createNew());
         return $customer;
     }
 
@@ -86,7 +86,7 @@ abstract class CustomerCrudController extends SyliusCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        $context = $this->get(AdminContextProvider::class)->getContext();
+        $context = $this->container->get(AdminContextProvider::class)->getContext();
         $subject = $context->getEntity();
 
         yield FormField::addPanel("sylius.ui.customer_details");
@@ -173,7 +173,7 @@ abstract class CustomerCrudController extends SyliusCrudController
     public function detail(AdminContext $context)
     {
         $request = $context->getRequest();
-        $customerStatistics = $this->get('sylius.customer_statistics_provider')->getCustomerStatistics($context->getEntity()->getInstance());
+        $customerStatistics = $this->container->get('sylius.customer_statistics_provider')->getCustomerStatistics($context->getEntity()->getInstance());
         $request->attributes->set("statistics", $customerStatistics);
 
         return parent::detail($context);
@@ -188,8 +188,8 @@ abstract class CustomerCrudController extends SyliusCrudController
         $customer = $context->getEntity()->getInstance();
         /** @var ShopUserInterface $user */
         if ($user = $customer->getUser()) {
-            $this->get('sylius.security.shop_user_impersonator')->impersonate($user);
-            $this->addFlash('success', $this->get(TranslatorInterface::class)->trans(
+            $this->container->get('sylius.security.shop_user_impersonator')->impersonate($user);
+            $this->addFlash('success', $this->container->get(TranslatorInterface::class)->trans(
                 'sylius.customer.impersonate',
                 [
                     '%name%' => $user->getEmailCanonical(),
@@ -203,9 +203,9 @@ abstract class CustomerCrudController extends SyliusCrudController
 
     public function showOrders(AdminContext $context)
     {
-        $orderCrud = $context->getCrudControllers()->findCrudFqcnByEntityFqcn($this->get(ParameterBagInterface::class)->get('sylius.model.order.class'));
+        $orderCrud = $context->getCrudControllers()->findCrudFqcnByEntityFqcn($this->container->get(ParameterBagInterface::class)->get('sylius.model.order.class'));
         return $this->redirect(
-            $this->get(AdminUrlGenerator::class)
+            $this->container->get(AdminUrlGenerator::class)
                 ->setController($orderCrud)
                 ->setEntityId(null)
                 ->setAction(Action::INDEX)

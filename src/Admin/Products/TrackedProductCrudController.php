@@ -71,7 +71,7 @@ abstract class TrackedProductCrudController extends AbstractCrudController
             $reflectionClass = $reflectionClass->getParentClass();
         }
 
-        $url = $this->get(AdminUrlGenerator::class)
+        $url = $this->container->get(AdminUrlGenerator::class)
             ->setController($context->getCrudControllers()->findCrudFqcnByEntityFqcn($reflectionClass->getName()))
             ->setAction('edit')
             ->setEntityId($product->getId());
@@ -89,7 +89,7 @@ abstract class TrackedProductCrudController extends AbstractCrudController
             $reflectionClass = $reflectionClass->getParentClass();
         }
 
-        $url = $this->get(AdminUrlGenerator::class)
+        $url = $this->container->get(AdminUrlGenerator::class)
             ->setController($context->getCrudControllers()->findCrudFqcnByEntityFqcn($reflectionClass->getName()))
             ->setAction('editVariant')
             ->setEntityId($product->getId())

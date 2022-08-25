@@ -58,10 +58,10 @@ abstract class PaymentMethodCrudController extends SyliusCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        $url = $this->get(AdminUrlGenerator::class)->setController($this::class)->setAction(Action::NEW);
+        $url = $this->container->get(AdminUrlGenerator::class)->setController($this::class)->setAction(Action::NEW);
         $actions = parent::configureActions($actions);
 
-        foreach ($this->get(ParameterBagInterface::class)->get('sylius.gateway_factories') as $gatewayFactory => $gatewayFactoryName) {
+        foreach ($this->container->get(ParameterBagInterface::class)->get('sylius.gateway_factories') as $gatewayFactory => $gatewayFactoryName) {
             $newAdd = Action::new($gatewayFactoryName, $gatewayFactoryName)->linkToUrl((clone $url)->set("gatewayFactory", $gatewayFactory)->set("gatewayFactoryName", $gatewayFactoryName)->generateUrl())->createAsGlobalAction()->setCssClass("btn btn-primary");
             $actions->add(Crud::PAGE_INDEX, $newAdd);
         }
@@ -82,7 +82,7 @@ abstract class PaymentMethodCrudController extends SyliusCrudController
     public function createEntity(string $entityFqcn)
     {
         global $gatewayFactory, $gatewayFactoryName;
-        $syliusPaymentMethod = $this->get('sylius.custom_factory.payment_method')->createWithGateway($gatewayFactory);
+        $syliusPaymentMethod = $this->container->get('sylius.custom_factory.payment_method')->createWithGateway($gatewayFactory);
         $gatewayconfig = $syliusPaymentMethod->getGatewayConfig();
         $gatewayconfig->setGatewayName($gatewayFactoryName);
         /**
@@ -96,7 +96,7 @@ abstract class PaymentMethodCrudController extends SyliusCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        $context = $this->get(AdminContextProvider::class)->getContext();
+        $context = $this->container->get(AdminContextProvider::class)->getContext();
         $subject = $context->getEntity()->getInstance();
 
         yield FormField::addPanel("sylius.ui.details")->collapsible()->renderCollapsed(false);
@@ -117,7 +117,7 @@ abstract class PaymentMethodCrudController extends SyliusCrudController
 
         yield TextField::new('gatewayConfig.gatewayName')
             ->setLabel('sylius.form.gateway_config.type')
-            ->formatValue(fn($value) => $this->get(TranslatorInterface::class)->trans($value))
+            ->formatValue(fn($value) => $this->container->get(TranslatorInterface::class)->trans($value))
             ->setFormTypeOption('disabled', 'disabled')->onlyOnIndex();
 
         if ($subject) {

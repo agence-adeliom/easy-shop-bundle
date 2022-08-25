@@ -116,15 +116,15 @@ abstract class PromotionCrudController extends SyliusCrudController
 
     public function createCoupon(AdminContext $context): Response
     {
-        $coupon = $this->get("sylius.factory.promotion_coupon")->createForPromotion($context->getEntity()->getInstance());
+        $coupon = $this->container->get("sylius.factory.promotion_coupon")->createForPromotion($context->getEntity()->getInstance());
         $form = $this->createForm(PromotionCouponType::class, $coupon);
 
         $form->handleRequest($context->getRequest());
         if ($form->isSubmitted() && $form->isValid()) {
             $coupon = $form->getData();
-            $this->get("sylius.manager.promotion_coupon")->persist($coupon);
-            $this->get("sylius.manager.promotion_coupon")->flush();
-            $url = $this->get(AdminUrlGenerator::class)->setController($this::class)->setEntityId($coupon->getPromotion()->getId())->setAction("manageCoupon")->generateUrl();
+            $this->container->get("sylius.manager.promotion_coupon")->persist($coupon);
+            $this->container->get("sylius.manager.promotion_coupon")->flush();
+            $url = $this->container->get(AdminUrlGenerator::class)->setController($this::class)->setEntityId($coupon->getPromotion()->getId())->setAction("manageCoupon")->generateUrl();
             return $this->redirect($url);
         }
 
@@ -141,9 +141,9 @@ abstract class PromotionCrudController extends SyliusCrudController
         $form->handleRequest($context->getRequest());
         if ($form->isSubmitted() && $form->isValid()) {
             $instruction = $form->getData();
-            $this->get('sylius.promotion_coupon_generator')->generate($context->getEntity()->getInstance(), $instruction);
+            $this->container->get('sylius.promotion_coupon_generator')->generate($context->getEntity()->getInstance(), $instruction);
 
-            $url = $this->get(AdminUrlGenerator::class)->setController($this::class)->setEntityId($context->getEntity()->getPrimaryKeyValue())->setAction("manageCoupon")->generateUrl();
+            $url = $this->container->get(AdminUrlGenerator::class)->setController($this::class)->setEntityId($context->getEntity()->getPrimaryKeyValue())->setAction("manageCoupon")->generateUrl();
             return $this->redirect($url);
         }
 
@@ -157,22 +157,22 @@ abstract class PromotionCrudController extends SyliusCrudController
     {
         $coupon = null;
         foreach ($context->getRequest()->get("batchActionEntityIds", []) as $i) {
-            $coupon = $this->get("sylius.repository.promotion_coupon")->find($i);
+            $coupon = $this->container->get("sylius.repository.promotion_coupon")->find($i);
             if (!$coupon) {
                 continue;
             }
 
-            $this->get("sylius.manager.promotion_coupon")->remove($coupon);
-            $this->get("sylius.manager.promotion_coupon")->flush();
+            $this->container->get("sylius.manager.promotion_coupon")->remove($coupon);
+            $this->container->get("sylius.manager.promotion_coupon")->flush();
         }
 
-        $url = $this->get(AdminUrlGenerator::class)->setController($this::class)->setEntityId($coupon->getPromotion()->getId())->setAction("manageCoupon")->generateUrl();
+        $url = $this->container->get(AdminUrlGenerator::class)->setController($this::class)->setEntityId($coupon->getPromotion()->getId())->setAction("manageCoupon")->generateUrl();
         return $this->redirect($url);
     }
 
     public function editCoupon(AdminContext $context): Response
     {
-        $coupon = $this->get('sylius.repository.promotion_coupon')->find($context->getRequest()->query->get("couponId"));
+        $coupon = $this->container->get('sylius.repository.promotion_coupon')->find($context->getRequest()->query->get("couponId"));
         if (!($coupon instanceof PromotionCouponInterface)) {
             throw new NotFoundHttpException();
         }
@@ -181,9 +181,9 @@ abstract class PromotionCrudController extends SyliusCrudController
         $form->handleRequest($context->getRequest());
         if ($form->isSubmitted() && $form->isValid()) {
             $coupon = $form->getData();
-            $this->get("sylius.manager.promotion_coupon")->persist($coupon);
-            $this->get("sylius.manager.promotion_coupon")->flush();
-            $url = $this->get(AdminUrlGenerator::class)->setController($this::class)->setEntityId($coupon->getPromotion()->getId())->setAction("manageCoupon")->generateUrl();
+            $this->container->get("sylius.manager.promotion_coupon")->persist($coupon);
+            $this->container->get("sylius.manager.promotion_coupon")->flush();
+            $url = $this->container->get(AdminUrlGenerator::class)->setController($this::class)->setEntityId($coupon->getPromotion()->getId())->setAction("manageCoupon")->generateUrl();
             return $this->redirect($url);
         }
 
@@ -195,15 +195,15 @@ abstract class PromotionCrudController extends SyliusCrudController
 
     public function deleteCoupon(AdminContext $context): Response
     {
-        $coupon = $this->get('sylius.repository.promotion_coupon')->find($context->getRequest()->query->get("couponId"));
+        $coupon = $this->container->get('sylius.repository.promotion_coupon')->find($context->getRequest()->query->get("couponId"));
         if (!($coupon instanceof PromotionCouponInterface)) {
             throw new NotFoundHttpException();
         }
 
-        $this->get("sylius.manager.promotion_coupon")->remove($coupon);
-        $this->get("sylius.manager.promotion_coupon")->flush();
+        $this->container->get("sylius.manager.promotion_coupon")->remove($coupon);
+        $this->container->get("sylius.manager.promotion_coupon")->flush();
 
-        $url = $this->get(AdminUrlGenerator::class)->setController($this::class)->setEntityId($coupon->getPromotion()->getId())->setAction("manageCoupon")->generateUrl();
+        $url = $this->container->get(AdminUrlGenerator::class)->setController($this::class)->setEntityId($coupon->getPromotion()->getId())->setAction("manageCoupon")->generateUrl();
         return $this->redirect($url);
     }
 }

@@ -21,7 +21,7 @@ abstract class AdminCrudController extends SyliusCrudController
 
     public function createEntity(string $entityFqcn)
     {
-        return $this->get('sylius.factory.admin_user')->createNew();
+        return $this->container->get('sylius.factory.admin_user')->createNew();
     }
 
     public function configureCrud(Crud $crud): Crud

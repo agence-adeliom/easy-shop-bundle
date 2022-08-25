@@ -25,7 +25,7 @@ abstract class SyliusCrudController extends AbstractCrudController
 
     public function createEditForm(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormInterface
     {
-        $initializeEvent = $this->get("event_dispatcher")->dispatch(new ResourceControllerEvent($entityDto->getInstance()), sprintf("sylius.%s.initialize_update", static::getResource()));
+        $initializeEvent = $this->container->get("event_dispatcher")->dispatch(new ResourceControllerEvent($entityDto->getInstance()), sprintf("sylius.%s.initialize_update", static::getResource()));
         $initializeEventResponse = $initializeEvent->getResponse();
         if (null !== $initializeEventResponse && $initializeEventResponse instanceof Response) {
             $initializeEventResponse->send();
@@ -37,7 +37,7 @@ abstract class SyliusCrudController extends AbstractCrudController
 
     public function createNewForm(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormInterface
     {
-        $initializeEvent = $this->get("event_dispatcher")->dispatch(new ResourceControllerEvent($entityDto->getInstance()), sprintf("sylius.%s.initialize_create", static::getResource()));
+        $initializeEvent = $this->container->get("event_dispatcher")->dispatch(new ResourceControllerEvent($entityDto->getInstance()), sprintf("sylius.%s.initialize_create", static::getResource()));
         $initializeEventResponse = $initializeEvent->getResponse();
         if (null !== $initializeEventResponse && $initializeEventResponse instanceof Response) {
             $initializeEventResponse->send();
@@ -50,24 +50,24 @@ abstract class SyliusCrudController extends AbstractCrudController
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
         $entityManager->persist($entityInstance);
-        $this->get("event_dispatcher")->dispatch(new ResourceControllerEvent($entityInstance), sprintf("sylius.%s.pre_update", static::getResource()));
+        $this->container->get("event_dispatcher")->dispatch(new ResourceControllerEvent($entityInstance), sprintf("sylius.%s.pre_update", static::getResource()));
         $entityManager->flush();
-        $this->get("event_dispatcher")->dispatch(new ResourceControllerEvent($entityInstance), sprintf("sylius.%s.post_update", static::getResource()));
+        $this->container->get("event_dispatcher")->dispatch(new ResourceControllerEvent($entityInstance), sprintf("sylius.%s.post_update", static::getResource()));
     }
 
     public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        $this->get("event_dispatcher")->dispatch(new ResourceControllerEvent($entityInstance), sprintf("sylius.%s.pre_create", static::getResource()));
+        $this->container->get("event_dispatcher")->dispatch(new ResourceControllerEvent($entityInstance), sprintf("sylius.%s.pre_create", static::getResource()));
         $entityManager->persist($entityInstance);
         $entityManager->flush();
-        $this->get("event_dispatcher")->dispatch(new ResourceControllerEvent($entityInstance), sprintf("sylius.%s.post_create", static::getResource()));
+        $this->container->get("event_dispatcher")->dispatch(new ResourceControllerEvent($entityInstance), sprintf("sylius.%s.post_create", static::getResource()));
     }
 
     public function deleteEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        $this->get("event_dispatcher")->dispatch(new ResourceControllerEvent($entityInstance), sprintf("sylius.%s.pre_delete", static::getResource()));
+        $this->container->get("event_dispatcher")->dispatch(new ResourceControllerEvent($entityInstance), sprintf("sylius.%s.pre_delete", static::getResource()));
         $entityManager->remove($entityInstance);
         $entityManager->flush();
-        $this->get("event_dispatcher")->dispatch(new ResourceControllerEvent($entityInstance), sprintf("sylius.%s.post_delete", static::getResource()));
+        $this->container->get("event_dispatcher")->dispatch(new ResourceControllerEvent($entityInstance), sprintf("sylius.%s.post_delete", static::getResource()));
     }
 }

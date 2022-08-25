@@ -199,9 +199,9 @@ abstract class OrderCrudController extends SyliusCrudController
 
     public function showCustomer(AdminContext $context)
     {
-        $customerCrud = $context->getCrudControllers()->findCrudFqcnByEntityFqcn($this->get(ParameterBagInterface::class)->get('sylius.model.customer.class'));
+        $customerCrud = $context->getCrudControllers()->findCrudFqcnByEntityFqcn($this->container->get(ParameterBagInterface::class)->get('sylius.model.customer.class'));
         return $this->redirect(
-            $this->get(AdminUrlGenerator::class)
+            $this->container->get(AdminUrlGenerator::class)
                 ->setController($customerCrud)
                 ->setAction(Action::DETAIL)
                 ->set(EA::ENTITY_ID, $context->getRequest()->query->get("customerId"))
@@ -211,9 +211,9 @@ abstract class OrderCrudController extends SyliusCrudController
 
     public function showShipment(AdminContext $context)
     {
-        $shipmentCrud = $context->getCrudControllers()->findCrudFqcnByEntityFqcn($this->get(ParameterBagInterface::class)->get('sylius.model.shipment.class'));
+        $shipmentCrud = $context->getCrudControllers()->findCrudFqcnByEntityFqcn($this->container->get(ParameterBagInterface::class)->get('sylius.model.shipment.class'));
         return $this->redirect(
-            $this->get(AdminUrlGenerator::class)
+            $this->container->get(AdminUrlGenerator::class)
                 ->setController($shipmentCrud)
                 ->setAction(Action::DETAIL)
                 ->set(EA::ENTITY_ID, $context->getRequest()->query->get("shipmentId"))
@@ -226,13 +226,13 @@ abstract class OrderCrudController extends SyliusCrudController
         $request = $context->getRequest();
         $paymentId = $request->query->get('payment_id');
 
-        $payment = $this->get('sylius.repository.payment')->find($paymentId);
+        $payment = $this->container->get('sylius.repository.payment')->find($paymentId);
         if (!$payment instanceof \PaymentInterface) {
             throw new NotFoundHttpException(sprintf('The payment with id %s has not been found', $paymentId));
         }
 
         $em = $this->managerRegistry->getManager();
-        $sm = $this->get(Factory::class)->get($payment, "sylius_payment");
+        $sm = $this->container->get(Factory::class)->get($payment, "sylius_payment");
         if ($sm->apply(PaymentTransitions::TRANSITION_COMPLETE)) {
             $em->persist($payment);
             $em->flush();
@@ -251,13 +251,13 @@ abstract class OrderCrudController extends SyliusCrudController
         $request = $context->getRequest();
         $paymentId = $request->query->get('payment_id');
 
-        $payment = $this->get('sylius.repository.payment')->find($paymentId);
+        $payment = $this->container->get('sylius.repository.payment')->find($paymentId);
         if (!$payment instanceof \PaymentInterface) {
             throw new NotFoundHttpException(sprintf('The payment with id %s has not been found', $paymentId));
         }
 
         $em = $this->managerRegistry->getManager();
-        $sm = $this->get(Factory::class)->get($payment, "sylius_payment");
+        $sm = $this->container->get(Factory::class)->get($payment, "sylius_payment");
         if ($sm->apply(PaymentTransitions::TRANSITION_REFUND)) {
             $em->persist($payment);
             $em->flush();
@@ -280,18 +280,18 @@ abstract class OrderCrudController extends SyliusCrudController
         $order = $context->getEntity()->getInstance();
         $shipmentId = $request->query->get('shipment_id');
 
-        $shipment = $this->get('sylius.repository.shipment')->find($shipmentId);
+        $shipment = $this->container->get('sylius.repository.shipment')->find($shipmentId);
         if (!$shipment instanceof \ShipmentInterface) {
             throw new NotFoundHttpException(sprintf('The shipment with id %s has not been found', $shipmentId));
         }
 
         $em = $this->managerRegistry->getManager();
-        $sm = $this->get(Factory::class)->get($shipment, "sylius_shipment");
+        $sm = $this->container->get(Factory::class)->get($shipment, "sylius_shipment");
         if ($request->get('tracking') && $sm->apply(ShipmentTransitions::TRANSITION_SHIP)) {
             $shipment->setTracking($request->get('tracking'));
             $em->persist($shipment);
             $em->flush();
-            $this->get(Sender::class)->send(
+            $this->container->get(Sender::class)->send(
                 Emails::SHIPMENT_CONFIRMATION,
                 [$order->getCustomer()->getEmail()],
                 [
@@ -316,11 +316,11 @@ abstract class OrderCrudController extends SyliusCrudController
         /** @var OrderInterface|null $order */
         $order = $context->getEntity()->getInstance();
 
-        if (!$this->get(CsrfTokenManager::class)->isTokenValid(new CsrfToken($order->getId(), (string) $request->query->get('_csrf_token')))) {
+        if (!$this->container->get(CsrfTokenManager::class)->isTokenValid(new CsrfToken($order->getId(), (string) $request->query->get('_csrf_token')))) {
             throw new HttpException(Response::HTTP_FORBIDDEN, 'Invalid csrf token.');
         }
 
-        $this->get(Sender::class)->send(
+        $this->container->get(Sender::class)->send(
             Emails::ORDER_CONFIRMATION_RESENT,
             [$order->getCustomer()->getEmail()],
             [
@@ -346,16 +346,16 @@ abstract class OrderCrudController extends SyliusCrudController
         $order = $context->getEntity()->getInstance();
         $shipmentId = $request->query->get('shipment_id');
 
-        if (!$this->get(CsrfTokenManager::class)->isTokenValid(new CsrfToken($shipmentId, (string) $request->query->get('_csrf_token')))) {
+        if (!$this->container->get(CsrfTokenManager::class)->isTokenValid(new CsrfToken($shipmentId, (string) $request->query->get('_csrf_token')))) {
             throw new HttpException(Response::HTTP_FORBIDDEN, 'Invalid csrf token.');
         }
 
-        $shipment = $this->get('sylius.repository.shipment')->find($shipmentId);
+        $shipment = $this->container->get('sylius.repository.shipment')->find($shipmentId);
         if (!$shipment instanceof \ShipmentInterface) {
             throw new NotFoundHttpException(sprintf('The shipment with id %s has not been found', $shipmentId));
         }
 
-        $this->get(Sender::class)->send(
+        $this->container->get(Sender::class)->send(
             Emails::SHIPMENT_CONFIRMATION,
             [$order->getCustomer()->getEmail()],
             [
@@ -377,10 +377,10 @@ abstract class OrderCrudController extends SyliusCrudController
     private function findChannelByCodeOrFindFirst(?string $channelCode): ?ChannelInterface
     {
         if (null !== $channelCode) {
-            return $this->get('sylius.repository.channel')->findOneByCode($channelCode);
+            return $this->container->get('sylius.repository.channel')->findOneByCode($channelCode);
         }
 
-        return $this->get('sylius.repository.channel')->findOneBy([]);
+        return $this->container->get('sylius.repository.channel')->findOneBy([]);
     }
 
     public function statistics(AdminContext $context)
@@ -409,9 +409,9 @@ abstract class OrderCrudController extends SyliusCrudController
 
     public function getRawData(ChannelInterface $channel, \DateTimeInterface $startDate, \DateTimeInterface $endDate, string $interval): array
     {
-        $moneyFormatter = $this->get(MoneyFormatterInterface::class);
-        $statisticsProvider = $this->get(DashboardStatisticsProviderInterface::class);
-        $salesDataProvider = $this->get(SalesDataProviderInterface::class);
+        $moneyFormatter = $this->container->get(MoneyFormatterInterface::class);
+        $statisticsProvider = $this->container->get(DashboardStatisticsProviderInterface::class);
+        $salesDataProvider = $this->container->get(SalesDataProviderInterface::class);
 
         /** @var DashboardStatistics $statistics */
         $statistics = $statisticsProvider->getStatisticsForChannelInPeriod($channel, $startDate, $endDate);
@@ -442,8 +442,8 @@ abstract class OrderCrudController extends SyliusCrudController
                 'average_order_value' => $moneyFormatter->format($statistics->getAverageOrderValue(), $currencyCode, $channel->getDefaultLocale()),
             ],
             'latest' => [
-                "customer" => $this->get('sylius.repository.customer')->findLatest(5),
-                "order" => $this->get('sylius.repository.order')->findLatest(5),
+                "customer" => $this->container->get('sylius.repository.customer')->findLatest(5),
+                "order" => $this->container->get('sylius.repository.order')->findLatest(5),
             ]
         ];
     }

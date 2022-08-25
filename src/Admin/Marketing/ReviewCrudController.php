@@ -96,16 +96,16 @@ abstract class ReviewCrudController extends SyliusCrudController
     {
         $entity = $context->getEntity()->getInstance();
 
-        $sm = $this->get(Factory::class)->get($entity, "sylius_product_review");
+        $sm = $this->container->get(Factory::class)->get($entity, "sylius_product_review");
         if ($sm->apply($transition)) {
-            $this->updateEntity($this->get('doctrine')->getManagerForClass($context->getEntity()->getFqcn()), $entity);
+            $this->updateEntity($this->container->get('doctrine')->getManagerForClass($context->getEntity()->getFqcn()), $entity);
         }
 
         if (null !== $referrer = $context->getReferrer()) {
             return $this->redirect($referrer);
         }
 
-        return $this->redirect($this->get(AdminUrlGenerator::class)->setAction(Action::INDEX)->unset(EA::ENTITY_ID)->generateUrl());
+        return $this->redirect($this->container->get(AdminUrlGenerator::class)->setAction(Action::INDEX)->unset(EA::ENTITY_ID)->generateUrl());
     }
 
     public static function getSubscribedServices(): array

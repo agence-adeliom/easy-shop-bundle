@@ -101,26 +101,26 @@ abstract class ShippingMethodCrudController extends SyliusCrudController
     {
         $entity = $context->getEntity()->getInstance();
         $entity->setArchivedAt(new \DateTime());
-        $this->updateEntity($this->get('doctrine')->getManagerForClass($context->getEntity()->getFqcn()), $entity);
+        $this->updateEntity($this->container->get('doctrine')->getManagerForClass($context->getEntity()->getFqcn()), $entity);
 
         if (null !== $referrer = $context->getReferrer()) {
             return $this->redirect($referrer);
         }
 
-        return $this->redirect($this->get(AdminUrlGenerator::class)->setAction(Action::INDEX)->unset(EA::ENTITY_ID)->generateUrl());
+        return $this->redirect($this->container->get(AdminUrlGenerator::class)->setAction(Action::INDEX)->unset(EA::ENTITY_ID)->generateUrl());
     }
 
     public function restore(AdminContext $context): Response
     {
         $entity = $context->getEntity()->getInstance();
         $entity->setArchivedAt(null);
-        $this->updateEntity($this->get('doctrine')->getManagerForClass($context->getEntity()->getFqcn()), $entity);
+        $this->updateEntity($this->container->get('doctrine')->getManagerForClass($context->getEntity()->getFqcn()), $entity);
 
         if (null !== $referrer = $context->getReferrer()) {
             return $this->redirect($referrer);
         }
 
-        return $this->redirect($this->get(AdminUrlGenerator::class)->setAction(Action::INDEX)->unset(EA::ENTITY_ID)->generateUrl());
+        return $this->redirect($this->container->get(AdminUrlGenerator::class)->setAction(Action::INDEX)->unset(EA::ENTITY_ID)->generateUrl());
     }
 
     public function configureFields(string $pageName): iterable

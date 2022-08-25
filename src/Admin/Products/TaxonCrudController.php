@@ -49,11 +49,11 @@ abstract class TaxonCrudController extends SyliusCrudController
     public function configureActions(Actions $actions): Actions
     {
 
-        $viewTaxon = Action::new('viewTaxon', 'Voir la page', 'fa fa-eye')->linkToUrl(fn(TaxonInterface $taxon) => $this->get(RouterInterface::class)->generate('sylius_shop_product_index', [
+        $viewTaxon = Action::new('viewTaxon', 'Voir la page', 'fa fa-eye')->linkToUrl(fn(TaxonInterface $taxon) => $this->container->get(RouterInterface::class)->generate('sylius_shop_product_index', [
             'slug' => $taxon->getTree()
         ]))->setHtmlAttributes(["target" => "_blank"]);
 
-        $viewTaxonButton = Action::new('viewTaxon', 'Voir la page', 'fa fa-eye')->linkToUrl(fn(TaxonInterface $taxon) => $this->get(RouterInterface::class)->generate('sylius_shop_product_index', [
+        $viewTaxonButton = Action::new('viewTaxon', 'Voir la page', 'fa fa-eye')->linkToUrl(fn(TaxonInterface $taxon) => $this->container->get(RouterInterface::class)->generate('sylius_shop_product_index', [
             'slug' => $taxon->getTree()
         ]))->setHtmlAttributes(["target" => "_blank"])->setCssClass("btn btn-info");
         $actions->add(Crud::PAGE_INDEX, $viewTaxon);

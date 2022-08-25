@@ -99,7 +99,7 @@ abstract class ProductCrudController extends SyliusCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        $url = $this->get(AdminUrlGenerator::class)->setController($this::class)->setAction(Action::NEW);
+        $url = $this->container->get(AdminUrlGenerator::class)->setController($this::class)->setAction(Action::NEW);
 
         $actions = parent::configureActions($actions);
         $addTypes = [ 'simple_product', 'configurable_product' ];
@@ -123,7 +123,7 @@ abstract class ProductCrudController extends SyliusCrudController
                 $slug = $taxon->getTree() . "/" . $slug;
             }
 
-            return $this->get(RouterInterface::class)->generate('sylius_shop_product_show', [
+            return $this->container->get(RouterInterface::class)->generate('sylius_shop_product_show', [
                 'slug' => $slug
             ]);
         })->setHtmlAttributes(["target" => "_blank"]);
@@ -134,7 +134,7 @@ abstract class ProductCrudController extends SyliusCrudController
                 $slug = $taxon->getTree() . "/" . $slug;
             }
 
-            return $this->get(RouterInterface::class)->generate('sylius_shop_product_show', [
+            return $this->container->get(RouterInterface::class)->generate('sylius_shop_product_show', [
                 'slug' => $slug
             ]);
         })->setHtmlAttributes(["target" => "_blank"])->setCssClass("btn btn-info");
@@ -268,14 +268,14 @@ abstract class ProductCrudController extends SyliusCrudController
     {
         yield FormField::addPanel("Taxonomy")->collapsible()->renderCollapsed();
         yield AssociationField::new('mainTaxon', 'sylius.ui.main_taxon')
-            ->setFormTypeOption('class', $this->get(ParameterBagInterface::class)->get('sylius.model.taxon.class'))
+            ->setFormTypeOption('class', $this->container->get(ParameterBagInterface::class)->get('sylius.model.taxon.class'))
             ->setFormTypeOption('choice_value', "code")
             ->setFormTypeOption('choice_label', static fn($item) => $item->getTree(" / ", true));
 
         yield AssociationField::new('productTaxons')
             ->setFormType(ProductTaxonType::class)
-            ->setFormTypeOption('class', $this->get(ParameterBagInterface::class)->get('sylius.model.taxon.class'))
-            ->setFormTypeOption('product', $this->get(AdminContextProvider::class)->getContext()->getEntity()->getInstance())
+            ->setFormTypeOption('class', $this->container->get(ParameterBagInterface::class)->get('sylius.model.taxon.class'))
+            ->setFormTypeOption('product', $this->container->get(AdminContextProvider::class)->getContext()->getEntity()->getInstance())
             ->hideOnIndex();
     }
 
@@ -288,7 +288,7 @@ abstract class ProductCrudController extends SyliusCrudController
 
     public function associationFields(string $pageName, AdminContext $context): iterable
     {
-        $autocompleteEndpointUrl = $this->get(AdminUrlGenerator::class)
+        $autocompleteEndpointUrl = $this->container->get(AdminUrlGenerator::class)
             ->unsetAll()
             ->set('page', 1) // The autocomplete should always start on the first page
             ->setController(self::class)
@@ -305,7 +305,7 @@ abstract class ProductCrudController extends SyliusCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        $context = $this->get(AdminContextProvider::class)->getContext();
+        $context = $this->container->get(AdminContextProvider::class)->getContext();
 
         yield from $this->informationFields($pageName, $context);
         yield from $this->mediaFields($pageName, $context);
@@ -341,10 +341,10 @@ abstract class ProductCrudController extends SyliusCrudController
     public function createEntity(string $entityFqcn)
     {
         if ($this->isSimpleProduct()) {
-            return $this->get('sylius.factory.product')->createWithVariant();
+            return $this->container->get('sylius.factory.product')->createWithVariant();
         }
 
-        return $this->get('sylius.factory.product')->createNew();
+        return $this->container->get('sylius.factory.product')->createNew();
     }
 
     protected function isSimpleProduct(): bool
@@ -353,7 +353,7 @@ abstract class ProductCrudController extends SyliusCrudController
         /**
          * @var ProductInterface $entity
          */
-        $entity = $this->get(AdminContextProvider::class)->getContext()->getEntity()->getInstance();
+        $entity = $this->container->get(AdminContextProvider::class)->getContext()->getEntity()->getInstance();
         return ((!empty($productType) && $productType === 'simple_product') || (!empty($entity) && $entity->getId() && $entity->isSimple()));
     }
 
@@ -369,15 +369,15 @@ abstract class ProductCrudController extends SyliusCrudController
 
     public function createVariant(AdminContext $context): Response
     {
-        $variant = $this->get('sylius.factory.product_variant')->createForProduct($context->getEntity()->getInstance());
+        $variant = $this->container->get('sylius.factory.product_variant')->createForProduct($context->getEntity()->getInstance());
         $form = $this->createForm(ProductVariantType::class, $variant);
 
         $form->handleRequest($context->getRequest());
         if ($form->isSubmitted() && $form->isValid()) {
             $variant = $form->getData();
-            $this->get('sylius.manager.product_variant')->persist($variant);
-            $this->get('sylius.manager.product_variant')->flush();
-            $url = $this->get(AdminUrlGenerator::class)->setController($this::class)->setEntityId($variant->getProduct()->getId())->setAction("manageVariants")->generateUrl();
+            $this->container->get('sylius.manager.product_variant')->persist($variant);
+            $this->container->get('sylius.manager.product_variant')->flush();
+            $url = $this->container->get(AdminUrlGenerator::class)->setController($this::class)->setEntityId($variant->getProduct()->getId())->setAction("manageVariants")->generateUrl();
             return $this->redirect($url);
         }
 
@@ -389,19 +389,19 @@ abstract class ProductCrudController extends SyliusCrudController
 
     public function editVariant(AdminContext $context): Response
     {
-        $variant = $this->get('sylius.repository.product_variant')->find($context->getRequest()->query->get("variantId"));
+        $variant = $this->container->get('sylius.repository.product_variant')->find($context->getRequest()->query->get("variantId"));
         if (!($variant instanceof ProductVariantInterface)) {
             throw new NotFoundHttpException();
         }
 
-        $this->get("event_dispatcher")->dispatch(new GenericEvent($variant), sprintf("sylius.%s.initialize_update", "product_variant"));
+        $this->container->get("event_dispatcher")->dispatch(new GenericEvent($variant), sprintf("sylius.%s.initialize_update", "product_variant"));
         $form = $this->createForm(ProductVariantType::class, $variant);
         $form->handleRequest($context->getRequest());
         if ($form->isSubmitted() && $form->isValid()) {
             $variant = $form->getData();
-            $this->get('sylius.manager.product_variant')->persist($variant);
-            $this->get('sylius.manager.product_variant')->flush();
-            $url = $this->get(AdminUrlGenerator::class)->setController($this::class)->setEntityId($variant->getProduct()->getId())->setAction("manageVariants")->generateUrl();
+            $this->container->get('sylius.manager.product_variant')->persist($variant);
+            $this->container->get('sylius.manager.product_variant')->flush();
+            $url = $this->container->get(AdminUrlGenerator::class)->setController($this::class)->setEntityId($variant->getProduct()->getId())->setAction("manageVariants")->generateUrl();
             return $this->redirect($url);
         }
 
@@ -413,15 +413,15 @@ abstract class ProductCrudController extends SyliusCrudController
 
     public function deleteVariant(AdminContext $context): Response
     {
-        $variant = $this->get('sylius.repository.product_variant')->find($context->getRequest()->query->get("variantId"));
+        $variant = $this->container->get('sylius.repository.product_variant')->find($context->getRequest()->query->get("variantId"));
         if (!($variant instanceof ProductVariantInterface)) {
             throw new NotFoundHttpException();
         }
 
-        $this->get('sylius.manager.product_variant')->remove($variant);
-        $this->get('sylius.manager.product_variant')->flush();
+        $this->container->get('sylius.manager.product_variant')->remove($variant);
+        $this->container->get('sylius.manager.product_variant')->flush();
 
-        $url = $this->get(AdminUrlGenerator::class)->setController($this::class)->setEntityId($variant->getProduct()->getId())->setAction("manageVariants")->generateUrl();
+        $url = $this->container->get(AdminUrlGenerator::class)->setController($this::class)->setEntityId($variant->getProduct()->getId())->setAction("manageVariants")->generateUrl();
         return $this->redirect($url);
     }
 
@@ -429,16 +429,16 @@ abstract class ProductCrudController extends SyliusCrudController
     {
         $coupon = null;
         foreach ($context->getRequest()->get("batchActionEntityIds", []) as $i) {
-            $coupon = $this->get('sylius.repository.product_variant')->find($i);
+            $coupon = $this->container->get('sylius.repository.product_variant')->find($i);
             if (!$coupon) {
                 continue;
             }
 
-            $this->get('sylius.manager.product_variant')->remove($coupon);
-            $this->get('sylius.manager.product_variant')->flush();
+            $this->container->get('sylius.manager.product_variant')->remove($coupon);
+            $this->container->get('sylius.manager.product_variant')->flush();
         }
 
-        $url = $this->get(AdminUrlGenerator::class)->setController($this::class)->setEntityId($coupon->getPromotion()->getId())->setAction("manageVariants")->generateUrl();
+        $url = $this->container->get(AdminUrlGenerator::class)->setController($this::class)->setEntityId($coupon->getPromotion()->getId())->setAction("manageVariants")->generateUrl();
         return $this->redirect($url);
     }
 
@@ -449,10 +449,10 @@ abstract class ProductCrudController extends SyliusCrudController
         $form->handleRequest($context->getRequest());
         if ($form->isSubmitted() && $form->isValid()) {
             $product = $form->getData();
-            $this->get('sylius.manager.product')->persist($product);
-            $this->get('sylius.manager.product')->flush();
+            $this->container->get('sylius.manager.product')->persist($product);
+            $this->container->get('sylius.manager.product')->flush();
 
-            $url = $this->get(AdminUrlGenerator::class)->setController($this::class)->setEntityId($context->getEntity()->getPrimaryKeyValue())->setAction("manageVariants")->generateUrl();
+            $url = $this->container->get(AdminUrlGenerator::class)->setController($this::class)->setEntityId($context->getEntity()->getPrimaryKeyValue())->setAction("manageVariants")->generateUrl();
             return $this->redirect($url);
         }
 
@@ -465,7 +465,7 @@ abstract class ProductCrudController extends SyliusCrudController
     public function manageStock(AdminContext $context): Response
     {
         /** @var Pagerfanta $tracked */
-        $tracked = $this->get('sylius.repository.product_variant')->createPaginator([
+        $tracked = $this->container->get('sylius.repository.product_variant')->createPaginator([
             "tracked" => true
         ]);
         $tracked->setMaxPerPage(25);
