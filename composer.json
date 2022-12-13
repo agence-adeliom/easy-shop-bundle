@@ -1,23 +1,19 @@
 {
-    "name": "agence-adeliom/easy-shop-bundle",
+    "name": "sprinute1234/easy-shop-bundle",
     "type": "symfony-bundle",
-    "version": "2.0.0",
+    "version": "1.0.0",
     "description": "Symfony Shop bundle for EasyAdmin based on Sylius",
     "keywords": ["symfony", "shop", "e-commerce", "sylius", "easyadmin"],
-    "homepage": "https://github.com/agence-adeliom/easy-shop-bundle",
+    "homepage": "https://github.com/sprinute1234",
     "support": {
-        "issues": "https://github.com/agence-adeliom/easy-shop-bundle/issues",
-        "source": "https://github.com/agence-adeliom/easy-shop-bundle"
+        "issues": "https://github.com/sprinute1234/issues",
+        "source": "https://github.com/sprinute1234"
     },
     "license": "MIT",
     "authors": [
         {
-            "name": "Arnaud RITTI",
-            "homepage": "https://github.com/arnaud-ritti"
-        },
-        {
-            "name": "Jerome ENGELN",
-            "homepage": "https://github.com/JeromeEngelnAdeliom"
+            "name": "Sprinute1234",
+            "homepage": "https://github.com/sprinute1234"
         }
     ],
     "require": {
